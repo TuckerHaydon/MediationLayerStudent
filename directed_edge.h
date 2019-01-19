@@ -8,21 +8,19 @@
 
 class DirectedEdge {
   private:
-    Node* source_;
-    Node* sink_;
+    const Node* source_;
+    const Node* sink_;
     double cost_;
 
   public:
-    DirectedEdge(Node* source = &Node::NULL_NODE, 
-                 Node* sink = &Node::NULL_NODE, 
+    DirectedEdge(const Node* source = &Node::NULL_NODE, 
+                 const Node* sink = &Node::NULL_NODE, 
                  double cost = std::numeric_limits<double>::max()) 
       : source_(source), sink_(sink), cost_(cost) {};
 
-    bool SetCost(double cost);
     double Cost() const;
-
-    Node* Source() const;
-    Node* Sink() const;
+    const Node* Source() const;
+    const Node* Sink() const;
 
 };
 

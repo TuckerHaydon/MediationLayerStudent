@@ -9,13 +9,13 @@
 #include "dijkstra.h"
 
 namespace{
-  typedef std::vector<Node*> path_t;
+  typedef std::vector<const Node*> path_t;
 
   struct Path {
-    std::vector<DirectedEdge*> path_;
+    std::vector<const DirectedEdge*> path_;
     double score_;
 
-    Path(const std::vector<DirectedEdge*>& path, double score) 
+    Path(const std::vector<const DirectedEdge*>& path, double score) 
       : path_(path),
         score_(score) 
     {};
@@ -51,7 +51,7 @@ namespace{
   }
 }
 
-path_t Dijkstra::Run(Node* start, Node* end) const {
+path_t Dijkstra::Run(const Node* start, const Node* end) const {
   TicToc();
 
   // Paths from the start with a score equal 
@@ -59,12 +59,12 @@ path_t Dijkstra::Run(Node* start, Node* end) const {
   std::priority_queue<Path, std::vector<Path>, std::greater<Path>> paths;
 
   // Expand starting node
-  const std::vector<DirectedEdge*>& edges = this->graph_->GetEdges(start);
+  const std::vector<const DirectedEdge*>& edges = this->graph_->GetEdges(start);
   std::for_each(
       edges.begin(),
       edges.end(),
-      [&](DirectedEdge* edge) mutable {
-        std::vector<DirectedEdge*> path = {edge};
+      [&](const DirectedEdge* edge) mutable {
+        std::vector<const DirectedEdge*> path = {edge};
         paths.emplace(path, edge->Cost());
       });
 
@@ -78,7 +78,7 @@ path_t Dijkstra::Run(Node* start, Node* end) const {
     // Get next node
     Path path_to_explore = paths.top();
     paths.pop();
-    Node* n = path_to_explore.path_.back()->Sink();
+    const Node* n = path_to_explore.path_.back()->Sink();
 
     // Check terminal conditions
     if(*n == *end) {
@@ -86,7 +86,7 @@ path_t Dijkstra::Run(Node* start, Node* end) const {
       std::for_each(
           path_to_explore.path_.begin(),
           path_to_explore.path_.end(),
-          [&](DirectedEdge* edge) mutable {
+          [&](const DirectedEdge* edge) mutable {
             solution.push_back(edge->Source());
           });
       solution.push_back(end);
@@ -96,14 +96,14 @@ path_t Dijkstra::Run(Node* start, Node* end) const {
     }
 
     // Expand the path 
-    const std::vector<DirectedEdge*>& edges = this->graph_->GetEdges(n);
+    const std::vector<const DirectedEdge*>& edges = this->graph_->GetEdges(n);
     std::for_each(
         edges.begin(),
         edges.end(),
-        [&](DirectedEdge* edge) mutable {
+        [&](const DirectedEdge* edge) mutable {
 
           // Copy old path and push new edge onto it
-          std::vector<DirectedEdge*> edges_new = path_to_explore.path_;
+          std::vector<const DirectedEdge*> edges_new = path_to_explore.path_;
           edges_new.push_back(edge);
 
           double score_new = path_to_explore.score_ + edge->Cost();

@@ -25,9 +25,9 @@
 
 int main(int argc, char** argv) {
 
-  Node a("a"), b("b"), c("c"), d("d"), e("e"), f("f"), g("g");
+  const Node a("a"), b("b"), c("c"), d("d"), e("e"), f("f"), g("g");
 
-  DirectedEdge e1(&a, &b, 1), 
+  const DirectedEdge e1(&a, &b, 1), 
                e2(&a, &c, 2), 
                e3(&b, &d, 3), 
                e4(&c, &e, 2), 
@@ -38,14 +38,14 @@ int main(int argc, char** argv) {
   Graph graph;
   graph.AddEdges({&e1, &e2, &e3, &e4, &e5, &e6, &e7});
 
-  Dijkstra dijkstra(&graph);
-  std::vector<Node*> path = dijkstra.Run(&a, &g);
+  const Dijkstra dijkstra(&graph);
+  std::vector<const Node*> path = dijkstra.Run(&a, &g);
 
   std::cout << "Path:" << std::endl;
   std::for_each(
       path.begin(),
       path.end(),
-      [](Node* node){
+      [](const Node* node){
         std::cout << node->Id() << std::endl;
       });
 

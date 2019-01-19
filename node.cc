@@ -4,7 +4,7 @@
 
 Node Node::NULL_NODE("NULL");
 
-bool Node::operator==(const Node& other) {
+bool Node::operator==(const Node& other) const {
   return this->id_ == other.id_;
 }
 

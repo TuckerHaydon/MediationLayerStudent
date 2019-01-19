@@ -15,7 +15,7 @@ class Node {
 
     const std::string& Id() const;
 
-    bool operator==(const Node& other);
+    bool operator==(const Node& other) const;
 };
 
 #endif
