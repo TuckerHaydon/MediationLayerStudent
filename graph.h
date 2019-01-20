@@ -1,7 +1,7 @@
 // Author: Tucker Haydon
 
-#ifndef PATH_PLANNING_GRAPH_H
-#define PATH_PLANNING_GRAPH_H
+#ifndef PATHING_GRAPH_H
+#define PATHING_GRAPH_H
 
 #include <map>
 #include <vector>

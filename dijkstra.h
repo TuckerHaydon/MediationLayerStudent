@@ -1,7 +1,7 @@
 // Author: Tucker Haydon
 
-#ifndef PATH_PLANNING_DIJKSTRA_H
-#define PATH_PLANNING_DIJKSTRA_H
+#ifndef PATHING_DIJKSTRA_H
+#define PATHING_DIJKSTRA_H
 
 #include "graph.h"
 namespace pathing {

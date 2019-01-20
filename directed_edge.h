@@ -1,6 +1,6 @@
 // Author: Tucker Haydon
-#ifndef PATH_PLANNING_DIRECTED_EDGE_H
-#define PATH_PLANNING_DIRECTED_EDGE_H
+#ifndef PATHING_DIRECTED_EDGE_H
+#define PATHING_DIRECTED_EDGE_H
 
 #include <limits>
 

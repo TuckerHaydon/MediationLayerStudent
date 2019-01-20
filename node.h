@@ -1,6 +1,6 @@
 // Author: Tucker Haydon
-#ifndef PATH_PLANNING_NODE_H
-#define PATH_PLANNING_NODE_H
+#ifndef PATHING_NODE_H
+#define PATHING_NODE_H
 
 #include <string>
 
