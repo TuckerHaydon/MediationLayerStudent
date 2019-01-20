@@ -7,11 +7,11 @@ namespace pathing {
     return this->cost_;
   }
   
-  const Node* DirectedEdge::Source() const {
+  const Node& DirectedEdge::Source() const {
     return this->source_;
   }
   
-  const Node* DirectedEdge::Sink() const {
+  const Node& DirectedEdge::Sink() const {
     return this->sink_;
   }
 }

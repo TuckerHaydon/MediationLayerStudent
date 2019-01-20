@@ -4,14 +4,15 @@
 #define PATHING_DIJKSTRA_H
 
 #include "graph.h"
+
 namespace pathing {
   class Dijkstra {
     private:
-      Graph* graph_;
+      const Graph* graph_;
   
     public:
-      Dijkstra(Graph* graph) : graph_(graph) {};
-      std::vector<const Node*> Run(const Node* start, const Node* end) const;
+      Dijkstra(const Graph* graph) : graph_(graph) {};
+      std::vector<Node> Run(const Node& start, const Node& end) const;
   };
 }
 

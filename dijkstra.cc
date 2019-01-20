@@ -11,10 +11,10 @@
 namespace pathing {
   namespace {
     struct Path {
-      std::vector<const DirectedEdge*> path_;
+      std::vector<DirectedEdge> path_;
       double score_;
   
-      Path(const std::vector<const DirectedEdge*>& path, double score) 
+      Path(const std::vector<DirectedEdge>& path, double score) 
         : path_(path),
           score_(score) 
       {};
@@ -49,22 +49,22 @@ namespace pathing {
       }
     }
   }
-  std::vector<const Node*> Dijkstra::Run(const Node* start, const Node* end) const {
+  std::vector<Node> Dijkstra::Run(const Node& start, const Node& end) const {
     TicToc();
   
     // Paths from the start with a score equal 
     // to the total distance travelled
     std::priority_queue<Path, std::vector<Path>, std::greater<Path>> paths;
-    std::map<const Node*, bool> visited_nodes;
+    std::map<Node, bool> visited_nodes;
   
     // Expand starting node
-    const std::vector<const DirectedEdge*>& edges = this->graph_->GetEdges(start);
+    const std::vector<DirectedEdge>& edges = this->graph_->Edges(start);
     std::for_each(
         edges.begin(),
         edges.end(),
-        [&](const DirectedEdge* edge) mutable {
-          std::vector<const DirectedEdge*> path = {edge};
-          paths.emplace(path, edge->Cost());
+        [&](const DirectedEdge& edge) mutable {
+          std::vector<DirectedEdge> path = {edge};
+          paths.emplace(path, edge.Cost());
         });
   
     while(true) {
@@ -77,17 +77,17 @@ namespace pathing {
       // Get next node
       Path path_to_explore = paths.top();
       paths.pop();
-      const Node* n = path_to_explore.path_.back()->Sink();
+      const Node n = path_to_explore.path_.back().Sink();
       visited_nodes[n] = true;
   
       // Check terminal conditions
-      if(*n == *end) {
-        std::vector<const Node*> solution;
+      if(n == end) {
+        std::vector<Node> solution;
         std::for_each(
             path_to_explore.path_.begin(),
             path_to_explore.path_.end(),
-            [&](const DirectedEdge* edge) mutable {
-              solution.push_back(edge->Source());
+            [&](const DirectedEdge& edge) mutable {
+              solution.push_back(edge.Source());
             });
         solution.push_back(end);
   
@@ -96,21 +96,21 @@ namespace pathing {
       }
   
       // Expand the path 
-      const std::vector<const DirectedEdge*>& edges = this->graph_->GetEdges(n);
+      const std::vector<DirectedEdge>& edges = this->graph_->Edges(n);
       std::for_each(
           edges.begin(),
           edges.end(),
-          [&](const DirectedEdge* edge) mutable {
+          [&](const DirectedEdge& edge) mutable {
             // If the end of the edge has already been visited, pass
-            if(visited_nodes.find(edge->Sink()) != visited_nodes.end()) {
+            if(visited_nodes.find(edge.Sink()) != visited_nodes.end()) {
               return;
             }
   
             // Copy old path and push new edge onto it
-            std::vector<const DirectedEdge*> edges_new = path_to_explore.path_;
+            std::vector<DirectedEdge> edges_new = path_to_explore.path_;
             edges_new.push_back(edge);
   
-            double score_new = path_to_explore.score_ + edge->Cost();
+            double score_new = path_to_explore.score_ + edge.Cost();
   
             paths.emplace(edges_new, score_new);
           });

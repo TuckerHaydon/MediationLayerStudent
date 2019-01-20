@@ -12,15 +12,15 @@
 namespace pathing{
   class Graph {
     private: 
-      std::map<const Node*, std::vector<const DirectedEdge*>> edge_graph_;
-      static std::vector<const DirectedEdge*> EMPTY_EDGE_LIST;
+      std::map<Node, std::vector<DirectedEdge>> edge_graph_;
+      static std::vector<DirectedEdge> EMPTY_EDGE_LIST;
   
     public:
       Graph(){};
-      const std::vector<const DirectedEdge*>& GetEdges(const Node* node) const;
+      const std::vector<DirectedEdge>& Edges(const Node& node) const;
   
-      bool AddEdge(const DirectedEdge* edge);
-      bool AddEdges(const std::vector<const DirectedEdge*>& edges);
+      bool AddEdge(const DirectedEdge& edge);
+      bool AddEdges(const std::vector<DirectedEdge>& edges);
   };
 }
 

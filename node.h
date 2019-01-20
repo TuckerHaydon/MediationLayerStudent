@@ -7,7 +7,7 @@
 namespace pathing {
   class Node {
     private:
-      std::string id_;
+      const std::string id_;
   
     public:
       static Node NULL_NODE;
@@ -17,6 +17,7 @@ namespace pathing {
       const std::string& Id() const;
   
       bool operator==(const Node& other) const;
+      bool operator<(const Node& other) const;
   };
 }
 
