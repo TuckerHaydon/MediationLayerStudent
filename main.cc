@@ -23,20 +23,22 @@
  *     c - 2 - e
  */
 
-int main(int argc, char** argv) {
+using namespace pathing;
 
+int main(int argc, char** argv) {
   const Node a("a"), b("b"), c("c"), d("d"), e("e"), f("f"), g("g");
 
   const DirectedEdge e1(&a, &b, 1), 
                e2(&a, &c, 2), 
                e3(&b, &d, 3), 
                e4(&c, &e, 2), 
-               e5(&d, &f, 0.5), 
+               e5(&d, &f, 0), 
                e6(&e, &f, 1),
-               e7(&f, &g, 1);
+               e7(&f, &g, 1),
+               t1(&f, &d, 0); 
 
   Graph graph;
-  graph.AddEdges({&e1, &e2, &e3, &e4, &e5, &e6, &e7});
+  graph.AddEdges({&e1, &e2, &e3, &e4, &e5, &e6, &e7, &t1});
 
   const Dijkstra dijkstra(&graph);
   std::vector<const Node*> path = dijkstra.Run(&a, &g);

@@ -1,28 +1,29 @@
 // Author: Tucker Haydon
-#ifndef MEDIATION_LAYER_DIRECTED_EDGE_H
-#define MEDIATION_LAYER_DIRECTED_EDGE_H
+#ifndef PATH_PLANNING_DIRECTED_EDGE_H
+#define PATH_PLANNING_DIRECTED_EDGE_H
 
 #include <limits>
 
 #include "node.h"
 
-class DirectedEdge {
-  private:
-    const Node* source_;
-    const Node* sink_;
-    double cost_;
-
-  public:
-    DirectedEdge(const Node* source = &Node::NULL_NODE, 
-                 const Node* sink = &Node::NULL_NODE, 
-                 double cost = std::numeric_limits<double>::max()) 
-      : source_(source), sink_(sink), cost_(cost) {};
-
-    double Cost() const;
-    const Node* Source() const;
-    const Node* Sink() const;
-
-};
-
+namespace pathing {
+  class DirectedEdge {
+    private:
+      const Node* source_;
+      const Node* sink_;
+      double cost_;
+  
+    public:
+      DirectedEdge(const Node* source = &Node::NULL_NODE, 
+                   const Node* sink = &Node::NULL_NODE, 
+                   double cost = std::numeric_limits<double>::max()) 
+        : source_(source), sink_(sink), cost_(cost) {};
+  
+      double Cost() const;
+      const Node* Source() const;
+      const Node* Sink() const;
+  
+  };
+}
 
 #endif
