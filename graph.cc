@@ -27,4 +27,21 @@ namespace pathing {
     });
     return true;
   }
+
+  bool Graph::AddEdge(const UndirectedEdge& edge) {
+    for(const DirectedEdge& directed_edge: edge.DirectedEdges()) {
+      this->AddEdge(directed_edge);
+    }
+    return true;
+  }
+
+  bool Graph::AddEdges(const std::vector<UndirectedEdge>& edges) {
+    std::for_each(
+        edges.begin(),
+        edges.end(),
+        [this](const UndirectedEdge& edge){
+          this->AddEdge(edge);
+        });
+    return true;
+  }
 }

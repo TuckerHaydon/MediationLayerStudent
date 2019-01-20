@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "directed_edge.h"
+#include "undirected_edge.h"
 #include "node.h"
 
 namespace pathing{
@@ -21,6 +22,9 @@ namespace pathing{
   
       bool AddEdge(const DirectedEdge& edge);
       bool AddEdges(const std::vector<DirectedEdge>& edges);
+
+      bool AddEdge(const UndirectedEdge& edge);
+      bool AddEdges(const std::vector<UndirectedEdge>& edges);
   };
 }
 
