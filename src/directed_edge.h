@@ -14,8 +14,8 @@ namespace pathing {
       double cost_;
   
     public:
-      DirectedEdge(const Node source = Node::NULL_NODE, 
-                   const Node sink = Node::NULL_NODE, 
+      DirectedEdge(const Node& source = Node::NULL_NODE, 
+                   const Node& sink = Node::NULL_NODE, 
                    double cost = std::numeric_limits<double>::max()) 
         : source_(source), sink_(sink), cost_(cost) {};
   

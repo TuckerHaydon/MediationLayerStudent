@@ -3,7 +3,7 @@
 #ifndef PATHING_GRAPH_H
 #define PATHING_GRAPH_H
 
-#include <map>
+#include <unordered_map>
 #include <vector>
 
 #include "directed_edge.h"
@@ -13,7 +13,7 @@
 namespace pathing{
   class Graph {
     private: 
-      std::map<Node, std::vector<DirectedEdge>> edge_graph_;
+      std::unordered_map<Node, std::vector<DirectedEdge>, Node::Hash> edge_graph_;
       static std::vector<DirectedEdge> EMPTY_EDGE_LIST;
   
     public:

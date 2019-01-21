@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <chrono>
 #include <iostream>
+#include <unordered_map>
 
 #include "dijkstra.h"
 
@@ -55,7 +56,7 @@ namespace pathing {
     // Paths from the start with a score equal 
     // to the total distance travelled
     std::priority_queue<Path, std::vector<Path>, std::greater<Path>> paths;
-    std::map<Node, bool> visited_nodes;
+    std::unordered_map<Node, bool, Node::Hash> visited_nodes;
   
     // Expand starting node
     const std::vector<DirectedEdge>& edges = this->graph_->Edges(start);
