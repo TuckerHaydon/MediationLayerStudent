@@ -6,8 +6,9 @@
 #include <chrono>
 #include <iostream>
 #include <unordered_map>
+#include <sstream>
 
-#include "dijkstra.h"
+#include "a_star.h"
 
 namespace pathing {
   namespace {
@@ -28,6 +29,40 @@ namespace pathing {
        return this->score_ > rhs.score_; 
       }
     };
+
+    double Heuristic(const Node& a, const Node& b) {
+      std::string id_a = a.Id(); 
+      std::string id_b = b.Id();
+
+      id_a.erase(id_a.begin());
+      id_a.erase(id_a.end()-1);
+      id_b.erase(id_b.begin());
+      id_b.erase(id_b.end()-1);
+
+      double a_pos[2], b_pos[2];
+
+      {
+        std::istringstream id_a_ss(id_a);
+        std::string s;
+        size_t idx = 0;
+    	  while (getline(id_a_ss, s, ',')) {
+          a_pos[idx] = std::stod(s);
+          ++idx;
+    	  }
+      }
+
+      {
+        std::istringstream id_b_ss(id_b);
+        std::string s;
+        size_t idx = 0;
+    	  while (getline(id_b_ss, s, ',')) {
+          b_pos[idx] = std::stod(s);
+          ++idx;
+    	  }
+      }
+
+      return std::sqrt( std::pow(a_pos[0] - b_pos[0],2) + std::pow(a_pos[1] - b_pos[1],2));
+    }
   
     void TicToc() {
       static bool tic{false};
@@ -45,19 +80,19 @@ namespace pathing {
         end = Time::now();
         duration_t elapsed_time = end - start;
         ms elapsed_ms = std::chrono::duration_cast<ms>(elapsed_time);
-        std::cout << "Dijkstra finished in " << elapsed_ms.count() << " ms" << std::endl;
+        std::cout << "A* finished in " << elapsed_ms.count() << " ms" << std::endl;
         tic = false;
       }
     }
   }
-  std::vector<Node> Dijkstra::Run(const Node& start, const Node& end) const {
+  std::vector<Node> AStar::Run(const Node& start, const Node& end) const {
     TicToc();
   
     // Paths from the start with a score equal 
     // to the total distance travelled
     std::priority_queue<Path, std::vector<Path>, std::greater<Path>> paths;
     std::unordered_map<Node, bool, Node::Hash> visited_nodes;
-  
+ 
     // Expand starting node
     const std::vector<DirectedEdge>& edges = this->graph_->Edges(start);
     std::for_each(
@@ -65,7 +100,7 @@ namespace pathing {
         edges.end(),
         [&](const DirectedEdge& edge) mutable {
           std::vector<DirectedEdge> path = {edge};
-          paths.emplace(path, edge.Cost());
+          paths.emplace(path, edge.Cost() + Heuristic(edge.Sink(), end));
         });
   
     while(true) {
@@ -112,7 +147,7 @@ namespace pathing {
             std::vector<DirectedEdge> edges_new = path_to_explore.path_;
             edges_new.push_back(edge);
   
-            double score_new = path_to_explore.score_ + edge.Cost();
+            double score_new = path_to_explore.score_ + edge.Cost() + Heuristic(edge.Sink(), end);
   
             paths.emplace(edges_new, score_new);
           });

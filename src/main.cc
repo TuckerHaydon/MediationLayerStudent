@@ -11,6 +11,7 @@
 #include "graph.h"
 #include "dijkstra.h"
 #include "occupancy_grid.h"
+#include "a_star.h"
 
 
 /**   Simple Graph
@@ -42,22 +43,31 @@ int main(int argc, char** argv) {
   // Graph graph;
   // graph.AddEdges({e1, e2, e3, e4, e5, e6});
   // graph.AddEdges({u1});
+  
+  if(argc != 1) {    
+    std::string file_path = argv[1];
 
-  Node start("(0,0)"), end("(0,2)");
+    Node start("(0,0)"), end("(10,10)");
 
-  OccupancyGrid occupancy_grid("/Users/tuckerhaydon/Workspace/mediation-layer/c++/data/grid.data");
-  Graph graph = occupancy_grid.ToGraph();
+    OccupancyGrid occupancy_grid(file_path);
+    Graph graph = occupancy_grid.ToGraph();
 
-  const Dijkstra dijkstra(&graph);
-  std::vector<Node> path = dijkstra.Run(start, end);
+    // const Dijkstra dijkstra(&graph);
+    // std::vector<Node> path = dijkstra.Run(start, end);
 
-  std::cout << "Path:" << std::endl;
-  std::for_each(
-      path.begin(),
-      path.end(),
-      [](const Node& node){
-        std::cout << node.Id() << std::endl;
-      });
+    const AStar a_star(&graph);
+    std::vector<Node> path = a_star.Run(start, end);
+
+    std::cout << "Path:" << std::endl;
+    std::for_each(
+        path.begin(),
+        path.end(),
+        [](const Node& node){
+          std::cout << node.Id() << std::endl;
+        });
+  }
+
+
 
   return 0;
 }
