@@ -1,11 +1,11 @@
 // Author: Tucker Haydon
 
-#ifndef PATHING_A_STAR_H
-#define PATHING_A_STAR_H
+#ifndef PATH_PLANNING_A_STAR_H
+#define PATH_PLANNING_A_STAR_H
 
 #include "graph.h"
 
-namespace pathing {
+namespace path_planning {
   class AStar {
     private:
       const Graph* graph_;

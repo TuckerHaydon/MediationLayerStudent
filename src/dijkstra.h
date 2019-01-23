@@ -1,11 +1,11 @@
 // Author: Tucker Haydon
 
-#ifndef PATHING_DIJKSTRA_H
-#define PATHING_DIJKSTRA_H
+#ifndef PATH_PLANNING_DIJKSTRA_H
+#define PATH_PLANNING_DIJKSTRA_H
 
 #include "graph.h"
 
-namespace pathing {
+namespace path_planning {
   class Dijkstra {
     private:
       const Graph* graph_;

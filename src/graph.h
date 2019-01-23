@@ -1,7 +1,7 @@
 // Author: Tucker Haydon
 
-#ifndef PATHING_GRAPH_H
-#define PATHING_GRAPH_H
+#ifndef PATH_PLANNING_GRAPH_H
+#define PATH_PLANNING_GRAPH_H
 
 #include <unordered_map>
 #include <vector>
@@ -10,7 +10,7 @@
 #include "undirected_edge.h"
 #include "node.h"
 
-namespace pathing{
+namespace path_planning{
   class Graph {
     private: 
       std::unordered_map<Node, std::vector<DirectedEdge>, Node::Hash> edge_graph_;

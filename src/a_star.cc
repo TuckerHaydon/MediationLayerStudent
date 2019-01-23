@@ -10,7 +10,7 @@
 
 #include "a_star.h"
 
-namespace pathing {
+namespace path_planning {
   namespace {
     struct AStarNode {
       const std::shared_ptr<AStarNode> parent_;
@@ -79,8 +79,8 @@ namespace pathing {
     std::shared_ptr<AStarNode> AStarNode::NULL_NODE_PTR = nullptr;
 
     double Heuristic(const Node& a, const Node& b) {
-      std::string id_a = a.Id(); 
-      std::string id_b = b.Id();
+      std::string id_a = a.id_; 
+      std::string id_b = b.id_;
 
       id_a.erase(id_a.begin());
       id_a.erase(id_a.end()-1);
@@ -189,9 +189,9 @@ namespace pathing {
             std::shared_ptr<AStarNode> new_path_to_explore = 
               std::make_shared<AStarNode>(
                   path_to_explore, 
-                  edge.Sink(), 
-                  path_to_explore->cost_ + edge.Cost(),
-                  Heuristic(edge.Sink(), end));
+                  edge.sink_, 
+                  path_to_explore->cost_ + edge.cost_,
+                  Heuristic(edge.sink_, end));
 
             // If the path has not yet been explore, add it
             if(explored_paths.find(new_path_to_explore) == explored_paths.end()) {

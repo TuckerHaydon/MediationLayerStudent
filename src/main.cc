@@ -13,20 +13,7 @@
 #include "occupancy_grid.h"
 #include "a_star.h"
 
-
-/**   Simple Graph
- *     b - 3 - d
- *    /         \
- *   1           ?
- *  /             \
- * a               f - 1 - g
- *  \             /
- *   2           1
- *    \         /
- *     c - 2 - e
- */
-
-using namespace pathing;
+using namespace path_planning;
 
 void RunAStar(const Graph* graph, const Node& start, const Node& end) {
 
@@ -38,7 +25,7 @@ void RunAStar(const Graph* graph, const Node& start, const Node& end) {
         path.begin(),
         path.end(),
         [](const Node& node){
-          std::cout << node.Id() << std::endl;
+          std::cout << node.id_ << std::endl;
         });
 }
 
@@ -52,7 +39,7 @@ void RunDijkstra(const Graph* graph, const Node& start, const Node& end) {
         path.begin(),
         path.end(),
         [](const Node& node){
-          std::cout << node.Id() << std::endl;
+          std::cout << node.id_ << std::endl;
         });
 }
 
@@ -83,8 +70,6 @@ int main(int argc, char** argv) {
     RunDijkstra(&graph, start, end);
     RunAStar(&graph, start, end);
   }
-
-
 
   return 0;
 }

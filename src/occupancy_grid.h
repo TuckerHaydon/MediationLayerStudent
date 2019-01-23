@@ -1,11 +1,11 @@
 // Author: Tucker Haydon
 
-#ifndef PATHING_OCCUPANCY_GRID_H
-#define PATHING_OCCUPANCY_GRID_H
+#ifndef PATH_PLANNING_OCCUPANCY_GRID_H
+#define PATH_PLANNING_OCCUPANCY_GRID_H
 
 #include "graph.h"
 
-namespace pathing {
+namespace path_planning {
   class OccupancyGrid {
     private:
       bool** occupancy_grid_;
@@ -25,4 +25,5 @@ namespace pathing {
       Graph ToGraph();
   };
 }
+
 #endif

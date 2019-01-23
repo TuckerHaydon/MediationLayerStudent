@@ -4,7 +4,7 @@
 
 #include "graph.h"
 
-namespace pathing {
+namespace path_planning {
   std::vector<DirectedEdge> Graph::EMPTY_EDGE_LIST = {};
   
   const std::vector<DirectedEdge>& Graph::Edges(const Node& node) const {
@@ -16,7 +16,7 @@ namespace pathing {
   }
   
   bool Graph::AddEdge(const DirectedEdge& edge) {
-    this->edge_graph_[edge.Source()].push_back(edge);   
+    this->edge_graph_[edge.source_].push_back(edge);   
     return true;
   }
   

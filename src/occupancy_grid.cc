@@ -10,7 +10,7 @@
 #include <fstream>
 #include <iostream>
 
-namespace pathing {
+namespace path_planning {
 
   OccupancyGrid::OccupancyGrid(const std::string& file_path) {
     std::ifstream f(file_path);

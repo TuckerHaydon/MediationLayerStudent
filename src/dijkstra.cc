@@ -10,7 +10,7 @@
 
 #include "dijkstra.h"
 
-namespace pathing {
+namespace path_planning {
   namespace {
     struct DijkstraNode {
       const std::shared_ptr<DijkstraNode> parent_;
@@ -149,7 +149,7 @@ namespace pathing {
           edges.begin(),
           edges.end(),
           [&](const DirectedEdge& edge) mutable {
-            std::shared_ptr<DijkstraNode> new_path_to_explore = std::make_shared<DijkstraNode>(path_to_explore, edge.Sink(), path_to_explore->cost_ + edge.Cost());
+            std::shared_ptr<DijkstraNode> new_path_to_explore = std::make_shared<DijkstraNode>(path_to_explore, edge.sink_, path_to_explore->cost_ + edge.cost_);
 
             // If the path has not yet been explore, add it
             if(explored_paths.find(new_path_to_explore) == explored_paths.end()) {
