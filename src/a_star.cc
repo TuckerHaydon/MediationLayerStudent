@@ -12,23 +12,71 @@
 
 namespace pathing {
   namespace {
-    struct Path {
-      std::vector<DirectedEdge> path_;
-      double score_;
+    struct AStarNode {
+      const std::shared_ptr<AStarNode> parent_;
+      const Node node_;
+      const double cost_;
+      const double heuristic_;
+
+      static std::shared_ptr<AStarNode> NULL_NODE_PTR;
   
-      Path(const std::vector<DirectedEdge>& path, double score) 
-        : path_(path),
-          score_(score) 
+      AStarNode(const std::shared_ptr<AStarNode>& parent = NULL_NODE_PTR,
+                const Node& node = Node::NULL_NODE,
+                const double cost = std::numeric_limits<double>::max(),
+                const double heuristic = std::numeric_limits<double>::max()) 
+        : parent_(parent),
+          node_(node),
+          cost_(cost),
+          heuristic_(heuristic)
       {};
-  
-      bool operator<(const Path& rhs) const {
-       return this->score_ < rhs.score_; 
+
+      bool operator==(const AStarNode& rhs) const {
+        return this->node_ == rhs.node_;
       }
+
+      struct EqualsSharedPtr { 
+        bool operator()(const std::shared_ptr<AStarNode>& lhs, 
+                        const std::shared_ptr<AStarNode>& rhs) const {
+          return *lhs == *rhs;
+        }
+      };
   
-      bool operator>(const Path& rhs) const {
-       return this->score_ > rhs.score_; 
-      }
+      bool operator<(const AStarNode& rhs) const {
+       return this->cost_ + this->heuristic_ < rhs.cost_ + rhs.heuristic_; 
+      };
+
+      struct LessSharedPtr {
+        bool operator()(const std::shared_ptr<AStarNode>& lhs, 
+                       const std::shared_ptr<AStarNode>& rhs) const {
+          return *lhs < *rhs;
+        }
+      };
+  
+      bool operator>(const AStarNode& rhs) const {
+       return this->cost_ + this->heuristic_ > rhs.cost_ + rhs.heuristic_; 
+      };
+
+      struct GreaterSharedPtr {
+        bool operator()(const std::shared_ptr<AStarNode>& lhs, 
+                       const std::shared_ptr<AStarNode>& rhs) const {
+          return *lhs > *rhs;
+        }
+      };
+
+      struct Hash {
+        size_t operator()(const AStarNode& dijkstra_node) const {
+          return Node::Hash()(dijkstra_node.node_);
+        }
+      };
+
+      struct HashSharedPtr {
+        size_t operator()(const std::shared_ptr<AStarNode>& dijkstra_node_ptr) const {
+          return Hash()(*dijkstra_node_ptr);
+        }
+      };
     };
+
+    std::shared_ptr<AStarNode> AStarNode::NULL_NODE_PTR = nullptr;
 
     double Heuristic(const Node& a, const Node& b) {
       std::string id_a = a.Id(); 
@@ -85,71 +133,70 @@ namespace pathing {
       }
     }
   }
+
   std::vector<Node> AStar::Run(const Node& start, const Node& end) const {
     TicToc();
   
     // Paths from the start with a score equal 
     // to the total distance travelled
-    std::priority_queue<Path, std::vector<Path>, std::greater<Path>> paths;
-    std::unordered_map<Node, bool, Node::Hash> visited_nodes;
- 
-    // Expand starting node
-    const std::vector<DirectedEdge>& edges = this->graph_->Edges(start);
-    std::for_each(
-        edges.begin(),
-        edges.end(),
-        [&](const DirectedEdge& edge) mutable {
-          std::vector<DirectedEdge> path = {edge};
-          paths.emplace(path, edge.Cost() + Heuristic(edge.Sink(), end));
-        });
+    std::priority_queue<std::shared_ptr<AStarNode>, std::vector<std::shared_ptr<AStarNode>>, AStarNode::GreaterSharedPtr> paths_to_explore;
+    std::unordered_map<std::shared_ptr<AStarNode>, bool, AStarNode::HashSharedPtr, AStarNode::EqualsSharedPtr> explored_paths;
+
+    // Add starting node
+    paths_to_explore.push(std::make_shared<AStarNode>(AStarNode::NULL_NODE_PTR, start, 0.0, Heuristic(start, end)));
   
     while(true) {
       // If no solution found, return empty vector
-      if(paths.empty()) {
+      if(paths_to_explore.empty()) {
         TicToc();
         return {};
       }
+
   
       // Get next node
-      Path path_to_explore = paths.top();
-      paths.pop();
-      const Node n = path_to_explore.path_.back().Sink();
-      visited_nodes[n] = true;
+      const std::shared_ptr<AStarNode> path_to_explore = paths_to_explore.top();
+      paths_to_explore.pop();
+
+      // If it's already been explored, the previous path is shorter. Skip.
+      if(explored_paths.find(path_to_explore) != explored_paths.end()) {
+        continue;
+      }
+
+      explored_paths[path_to_explore] = true;
+      const Node& explored_node = path_to_explore->node_;
   
       // Check terminal conditions
-      if(n == end) {
+      if(explored_node == end) {
         std::vector<Node> solution;
-        std::for_each(
-            path_to_explore.path_.begin(),
-            path_to_explore.path_.end(),
-            [&](const DirectedEdge& edge) mutable {
-              solution.push_back(edge.Source());
-            });
-        solution.push_back(end);
+        std::shared_ptr<AStarNode> dijkstra_node_ptr = path_to_explore;
+        while(dijkstra_node_ptr->parent_ != AStarNode::NULL_NODE_PTR) {
+          solution.push_back(dijkstra_node_ptr->node_);
+          dijkstra_node_ptr = dijkstra_node_ptr->parent_;
+        }
   
-        std::cout << "Num visited: " << visited_nodes.size() << std::endl;
+        std::cout << "Num nodes explored: " << explored_paths.size() << std::endl;
+
         TicToc();
         return solution;
       }
   
       // Expand the path 
-      const std::vector<DirectedEdge>& edges = this->graph_->Edges(n);
+      const std::vector<DirectedEdge>& edges = this->graph_->Edges(explored_node);
       std::for_each(
           edges.begin(),
           edges.end(),
           [&](const DirectedEdge& edge) mutable {
-            // If the end of the edge has already been visited, pass
-            if(visited_nodes.find(edge.Sink()) != visited_nodes.end()) {
-              return;
+            std::shared_ptr<AStarNode> new_path_to_explore = 
+              std::make_shared<AStarNode>(
+                  path_to_explore, 
+                  edge.Sink(), 
+                  path_to_explore->cost_ + edge.Cost(),
+                  Heuristic(edge.Sink(), end));
+
+            // If the path has not yet been explore, add it
+            if(explored_paths.find(new_path_to_explore) == explored_paths.end()) {
+              paths_to_explore.push(new_path_to_explore);
             }
-  
-            // Copy old path and push new edge onto it
-            std::vector<DirectedEdge> edges_new = path_to_explore.path_;
-            edges_new.push_back(edge);
-  
-            double score_new = path_to_explore.score_ + edge.Cost() + Heuristic(edge.Sink(), end);
-  
-            paths.emplace(edges_new, score_new);
           });
     }  
   }

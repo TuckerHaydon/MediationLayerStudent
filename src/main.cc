@@ -28,6 +28,34 @@
 
 using namespace pathing;
 
+void RunAStar(const Graph* graph, const Node& start, const Node& end) {
+
+    const AStar a_star(graph);
+    std::vector<Node> path = a_star.Run(start, end);
+
+    std::cout << "Path:" << std::endl;
+    std::for_each(
+        path.begin(),
+        path.end(),
+        [](const Node& node){
+          std::cout << node.Id() << std::endl;
+        });
+}
+
+void RunDijkstra(const Graph* graph, const Node& start, const Node& end) {
+
+    const Dijkstra dijkstra(graph);
+    std::vector<Node> path = dijkstra.Run(start, end);
+
+    std::cout << "Path:" << std::endl;
+    std::for_each(
+        path.begin(),
+        path.end(),
+        [](const Node& node){
+          std::cout << node.Id() << std::endl;
+        });
+}
+
 int main(int argc, char** argv) {
   // const Node a("a"), b("b"), c("c"), d("d"), e("e"), f("f"), g("g");
 
@@ -47,24 +75,13 @@ int main(int argc, char** argv) {
   if(argc != 1) {    
     std::string file_path = argv[1];
 
-    Node start("(0,0)"), end("(19,19)");
+    Node start("(0,0)"), end("(4,4)");
 
     OccupancyGrid occupancy_grid(file_path);
     Graph graph = occupancy_grid.ToGraph();
 
-    const Dijkstra dijkstra(&graph);
-    std::vector<Node> path = dijkstra.Run(start, end);
-
-    // const AStar a_star(&graph);
-    // std::vector<Node> path = a_star.Run(start, end);
-
-    std::cout << "Path:" << std::endl;
-    std::for_each(
-        path.begin(),
-        path.end(),
-        [](const Node& node){
-          std::cout << node.Id() << std::endl;
-        });
+    RunDijkstra(&graph, start, end);
+    RunAStar(&graph, start, end);
   }
 
 
