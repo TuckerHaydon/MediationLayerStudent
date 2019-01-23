@@ -56,32 +56,3 @@ int main(int argc, char** argv) {
   return 0;
 }
 
-// std::string id_a = a.id_; 
-// std::string id_b = b.id_;
-// 
-// id_a.erase(id_a.begin());
-// id_a.erase(id_a.end()-1);
-// id_b.erase(id_b.begin());
-// id_b.erase(id_b.end()-1);
-// 
-// double a_pos[2], b_pos[2];
-// 
-// {
-//   std::istringstream id_a_ss(id_a);
-//   std::string s;
-//   size_t idx = 0;
-//   while (getline(id_a_ss, s, ',')) {
-//     a_pos[idx] = std::stod(s);
-//     ++idx;
-//   }
-// }
-// 
-// {
-//   std::istringstream id_b_ss(id_b);
-//   std::string s;
-//   size_t idx = 0;
-//   while (getline(id_b_ss, s, ',')) {
-//     b_pos[idx] = std::stod(s);
-//     ++idx;
-//   }
-// }
