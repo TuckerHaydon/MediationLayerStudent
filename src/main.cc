@@ -7,7 +7,6 @@
 
 #include "node.h"
 #include "directed_edge.h"
-#include "undirected_edge.h"
 #include "graph.h"
 #include "dijkstra.h"
 #include "occupancy_grid.h"
@@ -65,7 +64,7 @@ int main(int argc, char** argv) {
     Node start("(0,0)"), end("(4,4)");
 
     OccupancyGrid occupancy_grid(file_path);
-    Graph graph = occupancy_grid.ToGraph();
+    Graph graph(occupancy_grid);
 
     RunDijkstra(&graph, start, end);
     RunAStar(&graph, start, end);

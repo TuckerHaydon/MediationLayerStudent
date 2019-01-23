@@ -1,11 +1,44 @@
 // Author: Tucker Haydon
 //
 #include <algorithm>
+#include <sstream>
 
 #include "graph.h"
 
 namespace path_planning {
   std::vector<DirectedEdge> Graph::EMPTY_EDGE_LIST = {};
+
+  Graph::Graph(const OccupancyGrid& occupancy_grid) {
+
+    // Build node grid
+    Node node_grid[occupancy_grid.rows_][occupancy_grid.cols_];
+    for(size_t row = 0; row < occupancy_grid.rows_; ++row) {
+      for(size_t col = 0; col < occupancy_grid.cols_; ++col) {
+        std::stringstream ss;
+        ss << "(" << row << "," << col << ")";
+
+        node_grid[row][col] = Node(ss.str());
+      }
+    }
+
+    // Convert node grid to directed edges and add to graph
+    std::vector<DirectedEdge> edges;
+    for(int row = 0; row < occupancy_grid.rows_; ++row) {
+      for(int col = 0; col < occupancy_grid.cols_; ++col) {
+				// If current node is unreachable, pass	
+				if(occupancy_grid.occupancy_grid_[row][col]) { continue; }
+
+				// Else, create paths from nearby nodes into this one
+        if(row - 1 >= 0) { edges.emplace_back(node_grid[row - 1][col], node_grid[row][col], 1.0); }
+        if(col - 1 >= 0) { edges.emplace_back(node_grid[row][col - 1], node_grid[row][col], 1.0); }
+
+        if(row + 1 < occupancy_grid.rows_) { edges.emplace_back(node_grid[row + 1][col], node_grid[row][col], 1.0); }
+        if(col + 1 < occupancy_grid.cols_) { edges.emplace_back(node_grid[row][col + 1], node_grid[row][col], 1.0); }
+      }
+    }
+
+    this->AddEdges(edges);
+  }
   
   const std::vector<DirectedEdge>& Graph::Edges(const Node& node) const {
     try {
@@ -25,23 +58,6 @@ namespace path_planning {
         [this](const DirectedEdge& edge){ 
         this->AddEdge(edge); 
     });
-    return true;
-  }
-
-  bool Graph::AddEdge(const UndirectedEdge& edge) {
-    for(const DirectedEdge& directed_edge: edge.DirectedEdges()) {
-      this->AddEdge(directed_edge);
-    }
-    return true;
-  }
-
-  bool Graph::AddEdges(const std::vector<UndirectedEdge>& edges) {
-    std::for_each(
-        edges.begin(),
-        edges.end(),
-        [this](const UndirectedEdge& edge){
-          this->AddEdge(edge);
-        });
     return true;
   }
 }

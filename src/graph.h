@@ -7,8 +7,8 @@
 #include <vector>
 
 #include "directed_edge.h"
-#include "undirected_edge.h"
 #include "node.h"
+#include "occupancy_grid.h"
 
 namespace path_planning{
   class Graph {
@@ -18,13 +18,12 @@ namespace path_planning{
   
     public:
       Graph(){};
+      Graph(const OccupancyGrid& occupancy_grid);
+
       const std::vector<DirectedEdge>& Edges(const Node& node) const;
   
       bool AddEdge(const DirectedEdge& edge);
       bool AddEdges(const std::vector<DirectedEdge>& edges);
-
-      bool AddEdge(const UndirectedEdge& edge);
-      bool AddEdges(const std::vector<UndirectedEdge>& edges);
   };
 }
 

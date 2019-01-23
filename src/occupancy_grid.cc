@@ -3,7 +3,6 @@
 
 #include "occupancy_grid.h"
 #include "node.h"
-#include "undirected_edge.h"
 
 #include <sstream>
 #include <cstdlib>
@@ -50,40 +49,4 @@ namespace path_planning {
     }
     std::free(this->occupancy_grid_);
   }
-
-  Graph OccupancyGrid::ToGraph() {
-    Graph graph;
-
-    // Build node grid
-    Node node_grid[this->rows_][this->cols_];
-    for(size_t row = 0; row < this->rows_; ++row) {
-      for(size_t col = 0; col < this->cols_; ++col) {
-        std::stringstream ss;
-        ss << "(" << row << "," << col << ")";
-
-        node_grid[row][col] = Node(ss.str());
-      }
-    }
-
-    // Convert node grid to directed edges and add to graph
-    std::vector<DirectedEdge> edges;
-    for(int row = 0; row < this->rows_; ++row) {
-      for(int col = 0; col < this->cols_; ++col) {
-				// If current node is unreachable, pass	
-				if(this->occupancy_grid_[row][col]) { continue; }
-
-				// Else, create paths from nearby nodes into this one
-        if(row - 1 >= 0) { edges.emplace_back(node_grid[row - 1][col], node_grid[row][col], 1.0); }
-        if(col - 1 >= 0) { edges.emplace_back(node_grid[row][col - 1], node_grid[row][col], 1.0); }
-
-        if(row + 1 < this->rows_) { edges.emplace_back(node_grid[row + 1][col], node_grid[row][col], 1.0); }
-        if(col + 1 < this->cols_) { edges.emplace_back(node_grid[row][col + 1], node_grid[row][col], 1.0); }
-      }
-    }
-
-    graph.AddEdges(edges);
-
-    return graph;
-  }
-
 }
