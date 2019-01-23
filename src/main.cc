@@ -47,16 +47,16 @@ int main(int argc, char** argv) {
   if(argc != 1) {    
     std::string file_path = argv[1];
 
-    Node start("(0,0)"), end("(10,10)");
+    Node start("(0,0)"), end("(19,19)");
 
     OccupancyGrid occupancy_grid(file_path);
     Graph graph = occupancy_grid.ToGraph();
 
-    // const Dijkstra dijkstra(&graph);
-    // std::vector<Node> path = dijkstra.Run(start, end);
+    const Dijkstra dijkstra(&graph);
+    std::vector<Node> path = dijkstra.Run(start, end);
 
-    const AStar a_star(&graph);
-    std::vector<Node> path = a_star.Run(start, end);
+    // const AStar a_star(&graph);
+    // std::vector<Node> path = a_star.Run(start, end);
 
     std::cout << "Path:" << std::endl;
     std::for_each(
