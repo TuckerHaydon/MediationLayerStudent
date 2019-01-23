@@ -6,13 +6,9 @@
 #include "graph.h"
 
 namespace path_planning {
-  class AStar {
-    private:
-      const Graph* graph_;
-  
-    public:
-      AStar(const Graph* graph) : graph_(graph) {};
-      std::vector<Node> Run(const Node& start, const Node& end) const;
+  struct AStar {
+      AStar(){};
+      static std::vector<Node> Run(const Graph& graph, const Node& start, const Node& end);
   };
 }
 

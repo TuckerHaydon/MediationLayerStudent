@@ -97,7 +97,7 @@ namespace path_planning {
     }
   }
 
-  std::vector<Node> Dijkstra::Run(const Node& start, const Node& end) const {
+  std::vector<Node> Dijkstra::Run(const Graph& graph, const Node& start, const Node& end) {
     TicToc();
   
     // Paths from the start with a score equal 
@@ -144,7 +144,7 @@ namespace path_planning {
       }
   
       // Expand the path 
-      const std::vector<DirectedEdge>& edges = this->graph_->Edges(explored_node);
+      const std::vector<DirectedEdge>& edges = graph.Edges(explored_node);
       std::for_each(
           edges.begin(),
           edges.end(),

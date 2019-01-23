@@ -11,6 +11,10 @@
 #include "occupancy_grid.h"
 
 namespace path_planning{
+  /*
+   * Abstraction of a graph. A graph maintains a set of directed edges
+   * connecting various nodes.
+   */
   class Graph {
     private: 
       std::unordered_map<Node, std::vector<DirectedEdge>, Node::Hash> edge_graph_;

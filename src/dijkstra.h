@@ -6,13 +6,14 @@
 #include "graph.h"
 
 namespace path_planning {
-  class Dijkstra {
-    private:
-      const Graph* graph_;
-  
-    public:
-      Dijkstra(const Graph* graph) : graph_(graph) {};
-      std::vector<Node> Run(const Node& start, const Node& end) const;
+  /*
+   * Implementation of Dijkstra's path-finding algorithm.
+   */
+  struct Dijkstra {
+      Dijkstra(){};
+      static std::vector<Node> Run(const Graph& graph, 
+                                   const Node& start, 
+                                   const Node& end);
   };
 }
 
