@@ -23,7 +23,7 @@ void RunAStar(const Graph& graph, const Node& start, const Node& end) {
         path.begin(),
         path.end(),
         [](const Node& node){
-          std::cout << node.id_ << std::endl;
+          std::cout << node << std::endl;
         });
 }
 
@@ -36,15 +36,15 @@ void RunDijkstra(const Graph& graph, const Node& start, const Node& end) {
         path.begin(),
         path.end(),
         [](const Node& node){
-          std::cout << node.id_ << std::endl;
+          std::cout << node << std::endl;
         });
 }
 
 int main(int argc, char** argv) {
-  if(argc == 4) {
-    Node start{std::string(argv[1])};
-    Node end{std::string(argv[2])};
-    std::string file_path = argv[3];
+  if(argc == 6) {
+    Node start({std::stoi(argv[1]), std::stoi(argv[2])});
+    Node end({std::stoi(argv[3]), std::stoi(argv[4])});
+    std::string file_path = argv[5];
 
     OccupancyGrid occupancy_grid(file_path);
     Graph graph(occupancy_grid);
@@ -55,3 +55,33 @@ int main(int argc, char** argv) {
 
   return 0;
 }
+
+// std::string id_a = a.id_; 
+// std::string id_b = b.id_;
+// 
+// id_a.erase(id_a.begin());
+// id_a.erase(id_a.end()-1);
+// id_b.erase(id_b.begin());
+// id_b.erase(id_b.end()-1);
+// 
+// double a_pos[2], b_pos[2];
+// 
+// {
+//   std::istringstream id_a_ss(id_a);
+//   std::string s;
+//   size_t idx = 0;
+//   while (getline(id_a_ss, s, ',')) {
+//     a_pos[idx] = std::stod(s);
+//     ++idx;
+//   }
+// }
+// 
+// {
+//   std::istringstream id_b_ss(id_b);
+//   std::string s;
+//   size_t idx = 0;
+//   while (getline(id_b_ss, s, ',')) {
+//     b_pos[idx] = std::stod(s);
+//     ++idx;
+//   }
+// }

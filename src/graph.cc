@@ -1,7 +1,6 @@
 // Author: Tucker Haydon
 //
 #include <algorithm>
-#include <sstream>
 
 #include "graph.h"
 
@@ -14,10 +13,7 @@ namespace path_planning {
     Node node_grid[occupancy_grid.rows_][occupancy_grid.cols_];
     for(size_t row = 0; row < occupancy_grid.rows_; ++row) {
       for(size_t col = 0; col < occupancy_grid.cols_; ++col) {
-        std::stringstream ss;
-        ss << "(" << row << "," << col << ")";
-
-        node_grid[row][col] = Node(ss.str());
+        node_grid[row][col] = Node({static_cast<int64_t>(row), static_cast<int64_t>(col)});
       }
     }
 
@@ -38,8 +34,8 @@ namespace path_planning {
     }
 
     this->AddEdges(edges);
-  }
-  
+  } 
+
   const std::vector<DirectedEdge>& Graph::Edges(const Node& node) const {
     try {
       return this->edge_graph_.at(node);

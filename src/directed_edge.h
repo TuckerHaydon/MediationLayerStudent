@@ -13,14 +13,14 @@ namespace path_planning {
    * single source, sink, and cost.
    */
   struct DirectedEdge {
-      const Node source_;
-      const Node sink_;
-      double cost_;
+    const Node source_;
+    const Node sink_;
+    double cost_;
   
-      DirectedEdge(const Node& source = Node::NULL_NODE, 
-                   const Node& sink = Node::NULL_NODE, 
-                   double cost = std::numeric_limits<double>::max()) 
-        : source_(source), sink_(sink), cost_(cost) {}; 
+    DirectedEdge(const Node& source = Node::NULL_NODE, 
+                 const Node& sink = Node::NULL_NODE, 
+                 double cost = std::numeric_limits<double>::max()) 
+      : source_(source), sink_(sink), cost_(cost) {}; 
   };
 }
 
