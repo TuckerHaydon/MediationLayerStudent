@@ -9,10 +9,10 @@
 #include "occupancy_grid.h"
 
 namespace path_planning { 
-  class GNUVisualizer {
+  struct GNUVisualizer {
   
-    static Run(const OccupancyGrid& occupancy_grid, 
-               const std::vector<Node>& path);
+    static void Run(const OccupancyGrid& occupancy_grid, 
+                    const std::vector<Node>& path);
   };
 }
 

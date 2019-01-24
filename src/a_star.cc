@@ -7,6 +7,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <sstream>
+#include <memory>
 
 #include "a_star.h"
 
@@ -143,6 +144,7 @@ namespace path_planning {
           solution.push_back(dijkstra_node_ptr->node_);
           dijkstra_node_ptr = dijkstra_node_ptr->parent_;
         }
+        solution.push_back(start);
   
         std::cout << "Num nodes explored: " << explored_paths.size() << std::endl;
 
