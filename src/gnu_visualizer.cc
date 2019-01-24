@@ -45,8 +45,9 @@ namespace path_planning {
     plt.Forward("unset key");
 
     // Set plot bounds
+    // y is reversed to match the structure of the data file
     plt.Forward("set xrange [0:" + std::to_string(occupancy_grid.cols_) + "]");
-    plt.Forward("set yrange [0:" + std::to_string(occupancy_grid.rows_) + "]");
+    plt.Forward("set yrange [" + std::to_string(occupancy_grid.rows_) + ":0]");
 
     // Turn grid on
     plt.Forward("set grid");
