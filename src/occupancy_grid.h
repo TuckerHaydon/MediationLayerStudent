@@ -11,13 +11,16 @@ namespace path_planning {
 
   // Forward Declare
   class Graph;
+  class GNUVisualizer;
 
   class OccupancyGrid {
     private:
       bool** occupancy_grid_;
       size_t rows_, cols_;
       bool heap_allocated_{false};
+
       friend class Graph;
+      friend class GNUVisualizer;
 
     public:
       OccupancyGrid(const std::string& file_path);

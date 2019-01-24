@@ -11,10 +11,14 @@
 #include "dijkstra.h"
 #include "occupancy_grid.h"
 #include "a_star.h"
+#include "gnu_visualizer.h"
 
 using namespace path_planning;
 
-void RunAStar(const Graph& graph, const Node& start, const Node& end) {
+void RunAStar(const Graph& graph, 
+                 const OccupancyGrid& occupancy_grid,
+                 const Node& start, 
+                 const Node& end) {
 
     const std::vector<Node> path = AStar().Run(graph, start, end);
 
@@ -25,9 +29,14 @@ void RunAStar(const Graph& graph, const Node& start, const Node& end) {
         [](const Node& node){
           std::cout << node << std::endl;
         });
+
+    GNUVisualizer().Run(occupancy_grid, path);
 }
 
-void RunDijkstra(const Graph& graph, const Node& start, const Node& end) {
+void RunDijkstra(const Graph& graph, 
+                 const OccupancyGrid& occupancy_grid,
+                 const Node& start, 
+                 const Node& end) {
 
     const std::vector<Node> path = Dijkstra().Run(graph, start, end);
 
@@ -38,6 +47,8 @@ void RunDijkstra(const Graph& graph, const Node& start, const Node& end) {
         [](const Node& node){
           std::cout << node << std::endl;
         });
+
+    GNUVisualizer().Run(occupancy_grid, path);
 }
 
 int main(int argc, char** argv) {
@@ -49,8 +60,8 @@ int main(int argc, char** argv) {
     OccupancyGrid occupancy_grid(file_path);
     Graph graph(occupancy_grid);
 
-    RunDijkstra(graph, start, end);
-    RunAStar(graph, start, end);
+    RunDijkstra(graph, occupancy_grid, start, end);
+    RunAStar(graph, occupancy_grid, start, end);
   }
 
   return 0;
