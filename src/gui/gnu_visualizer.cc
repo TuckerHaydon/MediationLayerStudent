@@ -26,9 +26,9 @@ namespace path_planning {
 
         for(size_t idx = 0; idx < path_.size(); ++idx) {
           reinterpret_cast<double*>(data->Data())[2*idx + 0] 
-            = 0.5 + static_cast<double>(path_[idx].id_[1]);
+            = 0.5 + reinterpret_cast<const int*>(path_[idx].Data())[1];
           reinterpret_cast<double*>(data->Data())[2*idx + 1] 
-            = 0.5 + static_cast<double>(path_[idx].id_[0]);  
+            = 0.5 + reinterpret_cast<const int*>(path_[idx].Data())[0];  
         }
 
         return data;

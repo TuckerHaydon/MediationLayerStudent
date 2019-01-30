@@ -17,8 +17,8 @@ namespace path_planning {
     const Node sink_;
     double cost_;
   
-    DirectedEdge(const Node& source = Node::NULL_NODE, 
-                 const Node& sink = Node::NULL_NODE, 
+    DirectedEdge(const Node& source = Node(), 
+                 const Node& sink = Node(), 
                  double cost = std::numeric_limits<double>::max()) 
       : source_(source), sink_(sink), cost_(cost) {}; 
   };

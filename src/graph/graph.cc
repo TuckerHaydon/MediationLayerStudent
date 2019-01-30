@@ -13,7 +13,9 @@ namespace path_planning {
     Node node_grid[occupancy_grid.SizeY()][occupancy_grid.SizeX()];
     for(size_t row = 0; row < occupancy_grid.SizeY(); ++row) {
       for(size_t col = 0; col < occupancy_grid.SizeX(); ++col) {
-        node_grid[row][col] = Node({static_cast<int64_t>(row), static_cast<int64_t>(col)});
+        int data[2] = {static_cast<int>(row), static_cast<int>(col)};
+        size_t data_size = 2 * sizeof(int);
+        node_grid[row][col].SetData(reinterpret_cast<uint8_t*>(&data), data_size);
       }
     }
 
@@ -22,7 +24,7 @@ namespace path_planning {
     for(int row = 0; row < occupancy_grid.SizeY(); ++row) {
       for(int col = 0; col < occupancy_grid.SizeX(); ++col) {
 				// If current node is unreachable, pass	
-				if(true == occupancy_grid.Data()[row][col]) { continue; }
+				if(true == occupancy_grid.IsOccupied(row, col)) { continue; }
 
 				// Else, create paths from nearby nodes into this one
         if(row - 1 >= 0) { edges.emplace_back(node_grid[row - 1][col], node_grid[row][col], 1.0); }
@@ -40,7 +42,7 @@ namespace path_planning {
     try {
       return this->edge_graph_.at(node);
     } catch(const std::out_of_range& e) {
-      return Graph::EMPTY_EDGE_LIST;
+      return EMPTY_EDGE_LIST;
     }
   }
   

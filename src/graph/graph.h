@@ -28,6 +28,7 @@ namespace path_planning{
   
       bool AddEdge(const DirectedEdge& edge);
       bool AddEdges(const std::vector<DirectedEdge>& edges);
+
   };
 }
 

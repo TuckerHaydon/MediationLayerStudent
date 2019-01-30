@@ -11,6 +11,7 @@
 
 #include "dijkstra.h"
 
+
 namespace path_planning {
   namespace {
     struct DijkstraNode {
@@ -21,7 +22,7 @@ namespace path_planning {
       static std::shared_ptr<DijkstraNode> NULL_NODE_PTR;
   
       DijkstraNode(const std::shared_ptr<DijkstraNode>& parent = NULL_NODE_PTR,
-                  const Node& node = Node::NULL_NODE,
+                  const Node& node = Node(),
                   const double cost = std::numeric_limits<double>::max()) 
         : parent_(parent),
           node_(node),
@@ -113,6 +114,7 @@ namespace path_planning {
       // If no solution found, return empty vector
       if(paths_to_explore.empty()) {
         TicToc();
+        std::cout << "No path found!" << std::endl;
         return {};
       }
 
@@ -131,6 +133,7 @@ namespace path_planning {
   
       // Check terminal conditions
       if(explored_node == end) {
+        std::cout << "Found path!" << std::endl;
         std::vector<Node> solution;
         std::shared_ptr<DijkstraNode> dijkstra_node_ptr = path_to_explore;
         while(dijkstra_node_ptr->parent_ != DijkstraNode::NULL_NODE_PTR) {

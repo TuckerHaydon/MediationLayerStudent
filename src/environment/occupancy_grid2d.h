@@ -34,6 +34,8 @@ namespace path_planning {
       size_t SizeX() const;
       size_t SizeY() const;
 
+      bool IsOccupied(const size_t y, const size_t x) const;
+
       const bool** Data() const;
   };
 
@@ -56,6 +58,10 @@ namespace path_planning {
 
   inline size_t OccupancyGrid2D::SizeY() const {
     return this->size_y_;
+  }
+
+  inline bool OccupancyGrid2D::IsOccupied(const size_t y, const size_t x) const {
+    return this->data_[y][x];
   }
 
   inline const bool** OccupancyGrid2D::Data() const {

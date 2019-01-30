@@ -6,7 +6,6 @@ find_package (Eigen3 3.3 NO_MODULE)
 
 set(SOURCES 
   graph/graph.cc
-  graph/node.cc
   algorithm/a_star.cc
   algorithm/dijkstra.cc
   environment/occupancy_grid2d.cc

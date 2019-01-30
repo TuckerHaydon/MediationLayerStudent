@@ -22,7 +22,7 @@ namespace path_planning {
       static std::shared_ptr<AStarNode> NULL_NODE_PTR;
   
       AStarNode(const std::shared_ptr<AStarNode>& parent = NULL_NODE_PTR,
-                const Node& node = Node::NULL_NODE,
+                const Node& node = Node(),
                 const double cost = std::numeric_limits<double>::max(),
                 const double heuristic = std::numeric_limits<double>::max()) 
         : parent_(parent),
@@ -80,7 +80,12 @@ namespace path_planning {
     std::shared_ptr<AStarNode> AStarNode::NULL_NODE_PTR = nullptr;
 
     double Heuristic(const Node& a, const Node& b) {
-      return std::abs(a.id_[0] - b.id_[0]) + std::abs(a.id_[1] - b.id_[1]);
+      return std::abs(
+               reinterpret_cast<const int*>(a.Data())[0] 
+             - reinterpret_cast<const int*>(b.Data())[0]) 
+           + std::abs(
+               reinterpret_cast<const int*>(a.Data())[1] 
+             - reinterpret_cast<const int*>(b.Data())[1]);
     }
   
     void TicToc() {

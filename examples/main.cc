@@ -15,6 +15,12 @@
 
 using namespace path_planning;
 
+
+std::ostream & operator<<(std::ostream& out, const Node& node) {
+  const int* data = reinterpret_cast<const int*>(node.Data());
+  out << data[0] << ", " << data[1];
+}
+
 void RunAStar(const Graph& graph, 
               const OccupancyGrid2D& occupancy_grid,
               const Node& start, 
@@ -53,9 +59,14 @@ void RunDijkstra(const Graph& graph,
 
 int main(int argc, char** argv) {
   if(argc == 6) {
-    Node start({std::stoi(argv[1]), std::stoi(argv[2])});
-    Node end({std::stoi(argv[3]), std::stoi(argv[4])});
-    std::string file_path = argv[5];
+    const int start_coordinate[2] = {std::stoi(argv[1]), std::stoi(argv[2])};
+    const int end_coordinate[2] = {std::stoi(argv[3]), std::stoi(argv[4])};
+    const std::string file_path = argv[5];
+
+    const size_t data_size = 2*sizeof(int);
+    Node start, end;
+    start.SetData(reinterpret_cast<const uint8_t*>(start_coordinate), data_size);
+    end.SetData(reinterpret_cast<const uint8_t*>(end_coordinate), data_size);
 
     OccupancyGrid2D occupancy_grid;
     occupancy_grid.LoadFromFile(file_path);
