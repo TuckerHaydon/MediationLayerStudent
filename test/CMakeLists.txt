@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
 
-set(TARGET run_tests)
+set(TARGET path_planning_tests)
 
 find_package (Eigen3 3.3 NO_MODULE)
 

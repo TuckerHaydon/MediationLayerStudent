@@ -3,6 +3,9 @@ project(PathPlanning)
 set(CMAKE_CXX_STANDARD 14)
 
 add_subdirectory(CppPlot)
+add_subdirectory(Geometry)
+
+
 add_subdirectory(src)
 add_subdirectory(examples)
 add_subdirectory(test) 

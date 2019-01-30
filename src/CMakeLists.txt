@@ -11,8 +11,6 @@ set(SOURCES
   gnu_visualizer.cc
   )
 
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../CppPlot/src)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_library(${TARGET} ${SOURCES})
-target_link_libraries(${TARGET} rt)
+target_link_libraries(${TARGET} cpp_plot rt)
