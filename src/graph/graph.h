@@ -8,7 +8,7 @@
 
 #include "directed_edge.h"
 #include "node.h"
-#include "occupancy_grid.h"
+#include "occupancy_grid2d.h"
 
 namespace path_planning{
   /*
@@ -22,7 +22,7 @@ namespace path_planning{
   
     public:
       Graph(){};
-      Graph(const OccupancyGrid& occupancy_grid);
+      Graph(const OccupancyGrid2D& occupancy_grid);
 
       const std::vector<DirectedEdge>& Edges(const Node& node) const;
   

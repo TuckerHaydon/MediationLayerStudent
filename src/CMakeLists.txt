@@ -2,15 +2,28 @@ cmake_minimum_required(VERSION 3.1)
 
 set(TARGET path_planning)
 
+find_package (Eigen3 3.3 NO_MODULE)
+
 set(SOURCES 
-  node.cc
-  graph.cc
-  occupancy_grid.cc
-  dijkstra.cc
-  a_star.cc
-  gnu_visualizer.cc
+  graph/graph.cc
+  graph/node.cc
+  algorithm/a_star.cc
+  algorithm/dijkstra.cc
+  environment/occupancy_grid2d.cc
+  gui/gnu_visualizer.cc
   )
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  algorithm
+  environment
+  graph
+  gui
+  # Why do I have to include Geometry/src
+  ../Geometry/src
+)
+
 add_library(${TARGET} ${SOURCES})
-target_link_libraries(${TARGET} cpp_plot rt)
+
+# Why do I have to link eigen?
+target_link_libraries(${TARGET} cpp_plot rt Eigen3::Eigen)

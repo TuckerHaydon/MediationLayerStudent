@@ -9,14 +9,14 @@
 #include "directed_edge.h"
 #include "graph.h"
 #include "dijkstra.h"
-#include "occupancy_grid.h"
+#include "occupancy_grid2d.h"
 #include "a_star.h"
 #include "gnu_visualizer.h"
 
 using namespace path_planning;
 
 void RunAStar(const Graph& graph, 
-              const OccupancyGrid& occupancy_grid,
+              const OccupancyGrid2D& occupancy_grid,
               const Node& start, 
               const Node& end) {
 
@@ -34,7 +34,7 @@ void RunAStar(const Graph& graph,
 }
 
 void RunDijkstra(const Graph& graph, 
-                 const OccupancyGrid& occupancy_grid,
+                 const OccupancyGrid2D& occupancy_grid,
                  const Node& start, 
                  const Node& end) {
 
@@ -57,7 +57,8 @@ int main(int argc, char** argv) {
     Node end({std::stoi(argv[3]), std::stoi(argv[4])});
     std::string file_path = argv[5];
 
-    OccupancyGrid occupancy_grid(file_path);
+    OccupancyGrid2D occupancy_grid;
+    occupancy_grid.LoadFromFile(file_path);
     Graph graph(occupancy_grid);
 
     RunDijkstra(graph, occupancy_grid, start, end);

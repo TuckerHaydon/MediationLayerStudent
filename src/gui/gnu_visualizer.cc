@@ -37,7 +37,7 @@ namespace path_planning {
     };
   }
 
-  void GNUVisualizer::Run(const OccupancyGrid& occupancy_grid,
+  void GNUVisualizer::Run(const OccupancyGrid2D& occupancy_grid,
                           const std::vector<Node>& path) {
     CppPlot::Plot plt;
 
@@ -46,8 +46,8 @@ namespace path_planning {
 
     // Set plot bounds
     // y is reversed to match the structure of the data file
-    plt.Forward("set xrange [0:" + std::to_string(occupancy_grid.cols_) + "]");
-    plt.Forward("set yrange [" + std::to_string(occupancy_grid.rows_) + ":0]");
+    plt.Forward("set xrange [0:" + std::to_string(occupancy_grid.SizeX()) + "]");
+    plt.Forward("set yrange [" + std::to_string(occupancy_grid.SizeY()) + ":0]");
 
     // Turn grid on
     plt.Forward("set grid");
@@ -56,9 +56,9 @@ namespace path_planning {
     // Draw the occupancy grid
     // # set object 1 rect from 0,1 to 1,2 fc lt 2 front
     size_t counter = 1;
-    for(size_t row = 0; row < occupancy_grid.rows_; ++row) {
-      for(size_t col = 0; col < occupancy_grid.cols_; ++col) {
-        if(occupancy_grid.occupancy_grid_[row][col]) {
+    for(size_t row = 0; row < occupancy_grid.SizeY(); ++row) {
+      for(size_t col = 0; col < occupancy_grid.SizeX(); ++col) {
+        if(true == occupancy_grid.Data()[row][col]) {
           std::stringstream ss; 
           ss << "set object " << counter++ << " rectangle from " 
             << col << "," << row << " to " << col+1 << "," << row+1

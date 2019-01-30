@@ -7,29 +7,29 @@
 namespace path_planning {
   std::vector<DirectedEdge> Graph::EMPTY_EDGE_LIST = {};
 
-  Graph::Graph(const OccupancyGrid& occupancy_grid) {
+  Graph::Graph(const OccupancyGrid2D& occupancy_grid) {
 
     // Build node grid
-    Node node_grid[occupancy_grid.rows_][occupancy_grid.cols_];
-    for(size_t row = 0; row < occupancy_grid.rows_; ++row) {
-      for(size_t col = 0; col < occupancy_grid.cols_; ++col) {
+    Node node_grid[occupancy_grid.SizeY()][occupancy_grid.SizeX()];
+    for(size_t row = 0; row < occupancy_grid.SizeY(); ++row) {
+      for(size_t col = 0; col < occupancy_grid.SizeX(); ++col) {
         node_grid[row][col] = Node({static_cast<int64_t>(row), static_cast<int64_t>(col)});
       }
     }
 
     // Convert node grid to directed edges and add to graph
     std::vector<DirectedEdge> edges;
-    for(int row = 0; row < occupancy_grid.rows_; ++row) {
-      for(int col = 0; col < occupancy_grid.cols_; ++col) {
+    for(int row = 0; row < occupancy_grid.SizeY(); ++row) {
+      for(int col = 0; col < occupancy_grid.SizeX(); ++col) {
 				// If current node is unreachable, pass	
-				if(occupancy_grid.occupancy_grid_[row][col]) { continue; }
+				if(true == occupancy_grid.Data()[row][col]) { continue; }
 
 				// Else, create paths from nearby nodes into this one
         if(row - 1 >= 0) { edges.emplace_back(node_grid[row - 1][col], node_grid[row][col], 1.0); }
         if(col - 1 >= 0) { edges.emplace_back(node_grid[row][col - 1], node_grid[row][col], 1.0); }
 
-        if(row + 1 < occupancy_grid.rows_) { edges.emplace_back(node_grid[row + 1][col], node_grid[row][col], 1.0); }
-        if(col + 1 < occupancy_grid.cols_) { edges.emplace_back(node_grid[row][col + 1], node_grid[row][col], 1.0); }
+        if(row + 1 < occupancy_grid.SizeY()) { edges.emplace_back(node_grid[row + 1][col], node_grid[row][col], 1.0); }
+        if(col + 1 < occupancy_grid.SizeX()) { edges.emplace_back(node_grid[row][col + 1], node_grid[row][col], 1.0); }
       }
     }
 
