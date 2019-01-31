@@ -79,9 +79,13 @@ namespace path_planning {
 
     // # Draw path
     // plot 'data' with linespoints ls 1
-    plt.LoadData(PathDataAdapter(path)());
-    const std::string filename = plt.GetFileName();
-    plt.Forward("plot '" + filename + "' binary format='%double%double' using 1:2 with linespoints ls 1");
+    if(0 < path.size()) {
+      plt.LoadData(PathDataAdapter(path)());
+      const std::string filename = plt.GetFileName();
+      plt.Forward("plot '" + filename + "' binary format='%double%double' using 1:2 with linespoints ls 1");
+    } else {
+      plt.Forward("plot 0");
+    }
     std::this_thread::sleep_for (std::chrono::seconds(1));
   }
 

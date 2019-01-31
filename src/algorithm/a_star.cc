@@ -125,6 +125,7 @@ namespace path_planning {
       // If no solution found, return empty vector
       if(paths_to_explore.empty()) {
         TicToc();
+        std::cout << "Num nodes explored: " << explored_paths.size() << std::endl;
         return {};
       }
 
@@ -151,9 +152,8 @@ namespace path_planning {
         }
         solution.push_back(start);
   
-        std::cout << "Num nodes explored: " << explored_paths.size() << std::endl;
-
         TicToc();
+        std::cout << "Num nodes explored: " << explored_paths.size() << std::endl;
         return solution;
       }
   

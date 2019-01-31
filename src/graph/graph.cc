@@ -1,6 +1,7 @@
 // Author: Tucker Haydon
-//
+
 #include <algorithm>
+#include <iostream>
 
 #include "graph.h"
 
@@ -8,6 +9,7 @@ namespace path_planning {
   std::vector<DirectedEdge> Graph::EMPTY_EDGE_LIST = {};
 
   Graph::Graph(const OccupancyGrid2D& occupancy_grid) {
+    std::cout << occupancy_grid.SizeY() << " " << occupancy_grid.SizeX() << std::endl;
 
     // Build node grid
     Node node_grid[occupancy_grid.SizeY()][occupancy_grid.SizeX()];

@@ -13,5 +13,5 @@ target_include_directories(${TARGET} PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/../src/environment
   )
 
-target_link_libraries(${TARGET} PUBLIC path_planning Eigen3::Eigen)
+target_link_libraries(${TARGET} PUBLIC path_planning geometry Eigen3::Eigen)
 

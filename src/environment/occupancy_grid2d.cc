@@ -40,9 +40,39 @@ namespace path_planning {
   }
 
   bool OccupancyGrid2D::LoadFromMap(const Map2D& map, const double delta) {
-    std::cerr << "OccupancyGrid2D::LoadFromMap() is not yet implemented!" << std::endl; 
-    std::exit(EXIT_FAILURE);
+    double min_x{std::numeric_limits<double>::max()},
+           min_y{std::numeric_limits<double>::max()},
+           max_x{std::numeric_limits<double>::min()},
+           max_y{std::numeric_limits<double>::min()};
 
+    for(geometry::Point2D vertex: map.Boundary().Vertices()) {
+      if(vertex.X() < min_x) { min_x = vertex.X(); }
+      if(vertex.Y() < min_y) { min_y = vertex.Y(); }
+      if(vertex.X() > max_x) { max_x = vertex.X(); }
+      if(vertex.Y() > max_y) { max_y = vertex.Y(); }
+    }
+
+    this->size_y_ = std::ceil((max_y - min_y) / delta);
+    this->size_x_= std::ceil((max_x - min_x) / delta);
+
+    // Allocate memory on the heap for the file
+    this->data_ = 
+      reinterpret_cast<bool**>(std::malloc(this->size_y_ * sizeof(bool*)));
+    for(size_t idx = 0; idx < this->size_y_; ++idx) {
+      this->data_[idx] = 
+        reinterpret_cast<bool*>(std::malloc(this->size_x_ * sizeof(bool)));
+    }
+    this->heap_allocated_ = true;
+
+    // Read in file
+    for(size_t row = 0; row < this->size_y_; ++row) {
+      for(size_t col = 0; col < this->size_x_; ++col) {
+        const geometry::Point2D p(min_x + col*delta, min_y+row*delta);
+        // True indicates occupied, false indicates free
+        this->data_[row][col] = !(map.Contains(p) && map.IsFreeSpace(p));
+      }
+    }
+                 
     return false;
   }
 

@@ -17,7 +17,10 @@ namespace path_planning {
       std::vector<geometry::Polygon> obstacles_;
 
     public:
-      Map2D() {}
+      Map2D(const geometry::Polygon& boundary = geometry::Polygon(),
+            const std::vector<geometry::Polygon>& obstacles = {})
+        : boundary_(boundary),
+          obstacles_(obstacles) {}
 
       const geometry::Polygon& Boundary() const;
       bool SetBoundary(const geometry::Polygon& boundary);
@@ -28,6 +31,12 @@ namespace path_planning {
       bool Contains(const geometry::Point2D& point) const;
       bool IsFreeSpace(const geometry::Point2D& point) const;
 
+      geometry::Polygon Extents() const;
+
+      // Inflates a map by a set distance. Map boundaries are shrunk and
+      // obstacles are expanded. Shrinking and expanding affects both x and y
+      // directions equally, therefore object aspect ratios are not guaranteed
+      // to stay the same.
       Map2D Inflate(const double distance) const;
   };
 
@@ -66,11 +75,20 @@ namespace path_planning {
   }
 
   inline Map2D Map2D::Inflate(const double distance) const {
-    std::cerr << "Map2D::Inflate(double) is not yet implemented!" << std::endl; 
-    std::exit(EXIT_FAILURE);
+    const geometry::Polygon new_boundary = this->boundary_.Shrink(distance);
+    std::vector<geometry::Polygon> new_obstacles;
+    new_obstacles.reserve(this->obstacles_.size());
 
-    return Map2D();
+    for(const geometry::Polygon& obstacle: this->obstacles_) {
+      new_obstacles.push_back(obstacle.Expand(distance));
+    }
+
+    return Map2D(new_boundary, new_obstacles);
   }
 
+  inline geometry::Polygon Map2D::Extents() const {
+    return this->boundary_.BoundingBox();
+  }
 }
+
 #endif

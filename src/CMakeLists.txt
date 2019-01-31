@@ -18,11 +18,9 @@ include_directories(
   environment
   graph
   gui
-  # Why do I have to include Geometry/src
-  ../Geometry/src
 )
 
 add_library(${TARGET} ${SOURCES})
 
 # Why do I have to link eigen?
-target_link_libraries(${TARGET} cpp_plot rt Eigen3::Eigen)
+target_link_libraries(${TARGET} cpp_plot geometry rt Eigen3::Eigen)
