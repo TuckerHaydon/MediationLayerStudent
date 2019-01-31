@@ -47,15 +47,13 @@ int main(int argc, char** argv) {
     Polygon boundary;
     {
       const Point2D a(0,0), b(10,0), c(10,10), d(0,10);
-      const Line2D l1(a,b), l2(b,c), l3(c,d), l4(d,a);
-      boundary.SetEdges({l1,l2,l3,l4});
+      boundary.ConstructFromPoints({a,b,c,d});
     }
 
     Polygon obstacle;
     {
       const Point2D a(4,4), b(6,4), c(6,6), d(4,6);
-      const Line2D l1(a,b), l2(b,c), l3(c,d), l4(d,a);
-      obstacle.SetEdges({l1,l2,l3,l4});
+      obstacle.ConstructFromPoints({a,b,c,d});
     }
 
     map.SetBoundary(boundary);
