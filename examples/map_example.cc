@@ -60,8 +60,8 @@ int main(int argc, char** argv) {
     map.SetObstacles({obstacle});
   }
 
-  const double SAFETY_BOUND = 0.2;
-  const double SAMPLE_DELTA = 0.1;
+  const double SAFETY_BOUND = 0.3;
+  const double SAMPLE_DELTA = 0.5;
 
   OccupancyGrid2D occupancy_grid;
   occupancy_grid.LoadFromMap(map, SAMPLE_DELTA, SAFETY_BOUND);

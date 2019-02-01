@@ -29,11 +29,21 @@ namespace path_planning {
 				if(true == occupancy_grid.IsOccupied(row, col)) { continue; }
 
 				// Else, create paths from nearby nodes into this one
+        // 8 node surrounding the current node
         if(row - 1 >= 0) { edges.emplace_back(node_grid[row - 1][col], node_grid[row][col], 1.0); }
         if(col - 1 >= 0) { edges.emplace_back(node_grid[row][col - 1], node_grid[row][col], 1.0); }
 
         if(row + 1 < occupancy_grid.SizeY()) { edges.emplace_back(node_grid[row + 1][col], node_grid[row][col], 1.0); }
         if(col + 1 < occupancy_grid.SizeX()) { edges.emplace_back(node_grid[row][col + 1], node_grid[row][col], 1.0); }
+
+        if(row - 1 >= 0 && col - 1 >= 0) { 
+          edges.emplace_back(node_grid[row - 1][col - 1], node_grid[row][col], 1.0); }
+        if(row - 1 >= 0 && col + 1 < occupancy_grid.SizeX()) { 
+          edges.emplace_back(node_grid[row - 1][col + 1], node_grid[row][col], 1.0); }
+        if(row + 1 < occupancy_grid.SizeY() && col - 1 >= 0) { 
+          edges.emplace_back(node_grid[row + 1][col - 1], node_grid[row][col], 1.0); }
+        if(row + 1 < occupancy_grid.SizeY() && col +1 < occupancy_grid.SizeX()) { 
+          edges.emplace_back(node_grid[row + 1][col + 1], node_grid[row][col], 1.0); }
       }
     }
 
