@@ -54,8 +54,8 @@ namespace path_planning {
       if(vertex.Y() > max_y) { max_y = vertex.Y(); }
     }
 
-    this->size_y_ = std::ceil((max_y - min_y) / sample_delta);
-    this->size_x_= std::ceil((max_x - min_x) / sample_delta);
+    this->size_y_ = std::ceil((max_y - min_y) / sample_delta) + 1;
+    this->size_x_= std::ceil((max_x - min_x) / sample_delta) + 1;
 
     // Allocate memory on the heap for the file
     this->data_ = 
