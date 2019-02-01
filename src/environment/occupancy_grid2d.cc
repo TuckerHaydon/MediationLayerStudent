@@ -48,10 +48,10 @@ namespace path_planning {
            max_y{std::numeric_limits<double>::min()};
 
     for(geometry::Point2D vertex: map.Boundary().Vertices()) {
-      if(vertex.X() < min_x) { min_x = vertex.X(); }
-      if(vertex.Y() < min_y) { min_y = vertex.Y(); }
-      if(vertex.X() > max_x) { max_x = vertex.X(); }
-      if(vertex.Y() > max_y) { max_y = vertex.Y(); }
+      if(vertex.x() < min_x) { min_x = vertex.x(); }
+      if(vertex.y() < min_y) { min_y = vertex.y(); }
+      if(vertex.x() > max_x) { max_x = vertex.x(); }
+      if(vertex.y() > max_y) { max_y = vertex.y(); }
     }
 
     this->size_y_ = std::ceil((max_y - min_y) / sample_delta) + 1;
