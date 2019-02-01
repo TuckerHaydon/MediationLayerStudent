@@ -28,7 +28,7 @@ namespace path_planning {
       OccupancyGrid2D(OccupancyGrid2D&& other) noexcept  = delete;
 
       bool LoadFromFile(const std::string& file_path);
-      bool LoadFromMap(const Map2D& map, const double delta);
+      bool LoadFromMap(const Map2D& map, const double sample_delta, const double safety_bound=0);
       bool LoadFromBuffer(const bool** buffer, const size_t size_x, const size_t size_y);
 
       size_t SizeX() const;

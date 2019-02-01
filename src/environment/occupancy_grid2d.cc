@@ -39,7 +39,9 @@ namespace path_planning {
     return true;
   }
 
-  bool OccupancyGrid2D::LoadFromMap(const Map2D& map, const double delta) {
+  bool OccupancyGrid2D::LoadFromMap(const Map2D& map, 
+                                    const double sample_delta, 
+                                    const double safety_bound) {
     double min_x{std::numeric_limits<double>::max()},
            min_y{std::numeric_limits<double>::max()},
            max_x{std::numeric_limits<double>::min()},
@@ -52,8 +54,8 @@ namespace path_planning {
       if(vertex.Y() > max_y) { max_y = vertex.Y(); }
     }
 
-    this->size_y_ = std::ceil((max_y - min_y) / delta);
-    this->size_x_= std::ceil((max_x - min_x) / delta);
+    this->size_y_ = std::ceil((max_y - min_y) / sample_delta);
+    this->size_x_= std::ceil((max_x - min_x) / sample_delta);
 
     // Allocate memory on the heap for the file
     this->data_ = 
@@ -63,13 +65,15 @@ namespace path_planning {
         reinterpret_cast<bool*>(std::malloc(this->size_x_ * sizeof(bool)));
     }
     this->heap_allocated_ = true;
+    
+    const Map2D inflated_map = map.Inflate(safety_bound);
 
     // Read in file
     for(size_t row = 0; row < this->size_y_; ++row) {
       for(size_t col = 0; col < this->size_x_; ++col) {
-        const geometry::Point2D p(min_x + col*delta, min_y+row*delta);
+        const geometry::Point2D p(min_x + col*sample_delta, min_y+row*sample_delta);
         // True indicates occupied, false indicates free
-        this->data_[row][col] = !(map.Contains(p) && map.IsFreeSpace(p));
+        this->data_[row][col] = !inflated_map.Contains(p) || !inflated_map.IsFreeSpace(p);
       }
     }
                  

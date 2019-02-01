@@ -60,15 +60,15 @@ int main(int argc, char** argv) {
     map.SetObstacles({obstacle});
   }
 
-  const double SAFETY_BOUND = 0.1;
-  const double SAMPLE_DELTA = 0.5;
+  const double SAFETY_BOUND = 0.2;
+  const double SAMPLE_DELTA = 0.1;
 
   OccupancyGrid2D occupancy_grid;
-  occupancy_grid.LoadFromMap(map.Inflate(SAFETY_BOUND), SAMPLE_DELTA);
+  occupancy_grid.LoadFromMap(map, SAMPLE_DELTA, SAFETY_BOUND);
   Graph graph(occupancy_grid);
 
   const size_t data_size = 2*sizeof(int);
-  const double start[2] = {0.2,0.2}, end[2] = {9.8,9.8};
+  const double start[2] = {1,1}, end[2] = {9,9};
   const int start_int[2] = {(int)(start[0]/SAMPLE_DELTA),(int)(start[1]/SAMPLE_DELTA)};
   const int end_int[2] = {(int)(end[0]/SAMPLE_DELTA),(int)(end[1]/SAMPLE_DELTA)};
 
