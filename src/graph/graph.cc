@@ -28,22 +28,24 @@ namespace path_planning {
 				// If current node is unreachable, pass	
 				if(true == occupancy_grid.IsOccupied(row, col)) { continue; }
 
+        constexpr double ADJACENT_COST = 1.0;
+        constexpr double DIAGONAL_COST = std::sqrt(2);
 				// Else, create paths from nearby nodes into this one
         // 8 node surrounding the current node
-        if(row - 1 >= 0) { edges.emplace_back(node_grid[row - 1][col], node_grid[row][col], 1.0); }
-        if(col - 1 >= 0) { edges.emplace_back(node_grid[row][col - 1], node_grid[row][col], 1.0); }
+        if(row - 1 >= 0) { edges.emplace_back(node_grid[row - 1][col], node_grid[row][col], ADJACENT_COST); }
+        if(col - 1 >= 0) { edges.emplace_back(node_grid[row][col - 1], node_grid[row][col], ADJACENT_COST); }
 
-        if(row + 1 < occupancy_grid.SizeY()) { edges.emplace_back(node_grid[row + 1][col], node_grid[row][col], 1.0); }
-        if(col + 1 < occupancy_grid.SizeX()) { edges.emplace_back(node_grid[row][col + 1], node_grid[row][col], 1.0); }
+        if(row + 1 < occupancy_grid.SizeY()) { edges.emplace_back(node_grid[row + 1][col], node_grid[row][col], ADJACENT_COST); }
+        if(col + 1 < occupancy_grid.SizeX()) { edges.emplace_back(node_grid[row][col + 1], node_grid[row][col], ADJACENT_COST); }
 
         if(row - 1 >= 0 && col - 1 >= 0) { 
-          edges.emplace_back(node_grid[row - 1][col - 1], node_grid[row][col], 1.0); }
+          edges.emplace_back(node_grid[row - 1][col - 1], node_grid[row][col], DIAGONAL_COST); }
         if(row - 1 >= 0 && col + 1 < occupancy_grid.SizeX()) { 
-          edges.emplace_back(node_grid[row - 1][col + 1], node_grid[row][col], 1.0); }
+          edges.emplace_back(node_grid[row - 1][col + 1], node_grid[row][col], DIAGONAL_COST); }
         if(row + 1 < occupancy_grid.SizeY() && col - 1 >= 0) { 
-          edges.emplace_back(node_grid[row + 1][col - 1], node_grid[row][col], 1.0); }
+          edges.emplace_back(node_grid[row + 1][col - 1], node_grid[row][col], DIAGONAL_COST); }
         if(row + 1 < occupancy_grid.SizeY() && col +1 < occupancy_grid.SizeX()) { 
-          edges.emplace_back(node_grid[row + 1][col + 1], node_grid[row][col], 1.0); }
+          edges.emplace_back(node_grid[row + 1][col + 1], node_grid[row][col], DIAGONAL_COST); }
       }
     }
 
