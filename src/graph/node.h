@@ -48,6 +48,7 @@ namespace path_planning {
 
   inline Node& Node::operator=(const Node& other) {
     this->SetData(other.data_, other.data_size_);
+    return *(this);
   }
 
   inline Node::~Node() {

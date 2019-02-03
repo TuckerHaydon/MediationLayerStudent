@@ -20,6 +20,7 @@ using namespace geometry;
 std::ostream & operator<<(std::ostream& out, const Node& node) {
   const int* data = reinterpret_cast<const int*>(node.Data());
   out << data[0] << ", " << data[1];
+  return out;
 }
 
 void RunAStar(const Graph& graph, 

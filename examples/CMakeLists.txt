@@ -19,3 +19,12 @@ target_include_directories(path_planning_map_example PUBLIC
   ../src/environment
   )
 target_link_libraries(path_planning_map_example PUBLIC path_planning geometry Eigen3::Eigen)
+
+add_executable(path_planning_sfc2d_example sfc2d_example.cc)
+target_include_directories(path_planning_sfc2d_example PUBLIC 
+  ../src/graph
+  ../src/algorithm
+  ../src/gui
+  ../src/environment
+  )
+target_link_libraries(path_planning_sfc2d_example PUBLIC path_planning geometry Eigen3::Eigen)
