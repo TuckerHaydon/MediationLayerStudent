@@ -7,10 +7,11 @@ find_package (Eigen3 3.3 NO_MODULE)
 add_executable(${TARGET} main.cc)
 
 target_include_directories(${TARGET} PUBLIC 
-  ${CMAKE_CURRENT_SOURCE_DIR}/../src/graph
-  ${CMAKE_CURRENT_SOURCE_DIR}/../src/algorithm
-  ${CMAKE_CURRENT_SOURCE_DIR}/../src/gui
-  ${CMAKE_CURRENT_SOURCE_DIR}/../src/environment
+  ../src/graph
+  ../src/algorithm
+  ../src/gui
+  ../src/environment
+  ../src/constraint
   )
 
 target_link_libraries(${TARGET} PUBLIC path_planning geometry Eigen3::Eigen)

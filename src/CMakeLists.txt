@@ -19,6 +19,7 @@ include_directories(
   environment
   graph
   gui
+  constraint
 )
 
 add_library(${TARGET} ${SOURCES})

@@ -1,59 +1,16 @@
 // Author: Tucker Haydon
 
-#include <queue>
+// #include <queue>
 #include <vector>
+#include <algorithm>
 
 #include "safe_flight_corridor2d.h"
+#include "linear_constraint2d.h"
 
 using namespace geometry;
 
 namespace path_planning {
   namespace {
-    struct LinearConstraint {
-      Point2D A_;
-      double B_;
-
-      LinearConstraint(const Point2D& A, const double B, const bool contains_origin=true) {
-        if(true == contains_origin) {
-          if(0 <= B) {
-            this->A_ = A;
-            this->B_ = B;
-          } else {
-            this->A_ = -A;
-            this->B_ = -B;
-          }
-        } else {
-          if(0 <= B) {
-            this->A_ = -A;
-            this->B_ = -B;
-          } else {
-            this->A_ = A;
-            this->B_ = B;
-          }
-
-        }
-      }
-
-      Point2D IntersectionPoint(const LinearConstraint& other) const {
-        return (
-            Eigen::Matrix<double,2,2>() << 
-              this->A_.transpose(), 
-              other.A_.transpose()
-            ).finished().inverse() 
-          * Eigen::Vector2d(this->B_, other.B_);
-      }
-
-      bool Constrains(const Point2D& point) const {
-        bool tmp = this->A_.dot(point) - this->B_ < 1e-3;
-        return this->A_.dot(point) - this->B_ < 1e-3;
-      }
-
-      bool ConstrainsEqual(const Point2D& point) const {
-        return std::abs(this->A_.dot(point) - this->B_) < 1e-3;
-      }
-
-    };
-
     double Distance(const Point2D& a, const Point2D& b) {
       return (a - b).norm();
     }
@@ -62,7 +19,7 @@ namespace path_planning {
                              const Eigen::Matrix<double, 2, 2>& R, 
                              const double a_prime,
                              const Map2D& map,
-                             const std::vector<LinearConstraint>& linear_constraints) {
+                             const std::vector<LinearConstraint2D>& linear_constraints) {
       struct CandidatePoint {
         Point2D point_;
         double distance_;
@@ -76,17 +33,18 @@ namespace path_planning {
         }
       };
 
-      std::priority_queue<
-        CandidatePoint, 
-        std::vector<CandidatePoint>, 
-        std::greater<CandidatePoint>> pq;
+      // std::priority_queue<
+      //   CandidatePoint, 
+      //   std::vector<CandidatePoint>, 
+      //   std::greater<CandidatePoint>> pq;
+      std::vector<CandidatePoint> pq;
       std::vector<Polygon> obstacles = map.Obstacles();
       obstacles.push_back(map.Boundary());
       for(const Polygon& obstacle: obstacles) {
         for(const Line2D& edge: obstacle.Edges()) {
           // If the edge lies along a constraint, ignore it
           bool consider_edge = true;
-          for(const LinearConstraint& lc: linear_constraints) {
+          for(const LinearConstraint2D& lc: linear_constraints) {
             if(lc.ConstrainsEqual(edge.Start()) && lc.ConstrainsEqual(edge.End())) {
               consider_edge = false;
             }
@@ -147,11 +105,11 @@ namespace path_planning {
           const double distance_to_start = 
             std::sqrt((a*a * std::pow(start_ellipse.y(), 2)) 
                 / (a*a - std::pow(start_ellipse.x(), 2)));
-          pq.emplace(edge.Start(), distance_to_start);
+          pq.emplace_back(edge.Start(), distance_to_start);
           const double distance_to_end = 
             std::sqrt((a*a * std::pow(end_ellipse.y(), 2)) 
                 / (a*a - std::pow(end_ellipse.x(), 2)));
-          pq.emplace(edge.End(), distance_to_end);
+          pq.emplace_back(edge.End(), distance_to_end);
           // const double distance_to_start = 
           //   std::sqrt((a*a * std::pow(edge.Start().y(), 2)) 
           //       / (a*a - std::pow(edge.Start().x(), 2)));
@@ -168,14 +126,17 @@ namespace path_planning {
             continue;
           }
 
-          // pq.emplace(intersection_point, Distance(center, intersection_point));
-          pq.emplace(intersection_point, b);
+          pq.emplace_back(intersection_point, b);
         }
       }
-      return pq.top().point_;
+      return std::min_element(pq.begin(), pq.end(), 
+          [](const CandidatePoint& lhs, const CandidatePoint& rhs){
+            return lhs.distance_ < rhs.distance_;
+          })->point_;
+      // return pq.top().point_;
     }
 
-    Map2D UpdateMap(const LinearConstraint& lc,
+    Map2D UpdateMap(const LinearConstraint2D& lc,
                     const Map2D& map) {
 
       // Update the obstacles
@@ -310,20 +271,20 @@ namespace path_planning {
       //   current_map = Map2D(new_boundary, new_obstacles);
       // }
 
-      std::vector<LinearConstraint> linear_constraints;
+      std::vector<LinearConstraint2D> linear_constraints;
       { // Implicit linear constraints at extents of ellipse
         const Line2D l(start, end);
         const std::pair<Point2D, double> sf = l.StandardForm();
 
         const Point2D A_start(-sf.first(1), sf.first(0));
         const double B_start = A_start.dot(start);
-        const LinearConstraint l_start(A_start, B_start);
+        const LinearConstraint2D l_start(A_start, B_start);
         linear_constraints.push_back(l_start);
         current_map = UpdateMap(l_start, current_map);
 
         const Point2D A_end(-sf.first(1), sf.first(0));
         const double B_end = A_end.dot(end);
-        const LinearConstraint l_end(A_end, B_end);
+        const LinearConstraint2D l_end(A_end, B_end);
         linear_constraints.push_back(l_end);
         current_map = UpdateMap(l_end, current_map);
       }
@@ -345,7 +306,7 @@ namespace path_planning {
         const Eigen::Matrix<double, 2, 2> E_inv = E.inverse();
         const Eigen::Vector2d A_prime = 2 * E_inv * E_inv.transpose() * (closest_point - center);
         const double B_prime = A_prime.dot(closest_point);
-        const LinearConstraint lc(A_prime, B_prime);
+        const LinearConstraint2D lc(A_prime, B_prime);
         linear_constraints.push_back(lc);
   
         // Update map. Only keep points that satisfy A_prime * p < B_prime
@@ -358,7 +319,7 @@ namespace path_planning {
           bool is_obstacle_constrained = true;
           for(const Point2D& vertex: obstacle.Vertices()) {
             bool is_vertex_constrained = false;
-            for(const LinearConstraint& lc_: linear_constraints) {
+            for(const LinearConstraint2D& lc_: linear_constraints) {
               if(true == lc_.ConstrainsEqual(vertex)) { is_vertex_constrained = true; break; }
             }
             if(false == is_vertex_constrained) { is_obstacle_constrained = false; break; }
@@ -371,7 +332,7 @@ namespace path_planning {
         bool is_boundary_constrained = true;
         for(const Point2D& vertex: current_map.Boundary().Vertices()) {
           bool is_vertex_constrained = false;
-          for(const LinearConstraint& lc_: linear_constraints) {
+          for(const LinearConstraint2D& lc_: linear_constraints) {
             if(true == lc_.ConstrainsEqual(vertex)) { is_vertex_constrained = true; break; }
           }
           if(false == is_vertex_constrained) { is_boundary_constrained = false; break; }
