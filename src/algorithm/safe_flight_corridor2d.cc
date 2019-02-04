@@ -1,6 +1,5 @@
 // Author: Tucker Haydon
 
-// #include <queue>
 #include <vector>
 #include <algorithm>
 
@@ -33,10 +32,6 @@ namespace path_planning {
         }
       };
 
-      // std::priority_queue<
-      //   CandidatePoint, 
-      //   std::vector<CandidatePoint>, 
-      //   std::greater<CandidatePoint>> pq;
       std::vector<CandidatePoint> pq;
       std::vector<Polygon> obstacles = map.Obstacles();
       obstacles.push_back(map.Boundary());
@@ -129,11 +124,12 @@ namespace path_planning {
           pq.emplace_back(intersection_point, b);
         }
       }
+
+      // O(1) complexity
       return std::min_element(pq.begin(), pq.end(), 
           [](const CandidatePoint& lhs, const CandidatePoint& rhs){
             return lhs.distance_ < rhs.distance_;
           })->point_;
-      // return pq.top().point_;
     }
 
     Map2D UpdateMap(const LinearConstraint2D& lc,
@@ -235,10 +231,14 @@ namespace path_planning {
       const double a_prime = (end - center).norm();
   
       // y-axis
-      const Eigen::Vector3d y_axis3D = Eigen::Vector3d(0,0,1).cross(Eigen::Vector3d(x_axis.x(), x_axis.y(), 0));
+      const Eigen::Vector3d y_axis3D = 
+        Eigen::Vector3d(0,0,1).cross(
+            Eigen::Vector3d(x_axis.x(), x_axis.y(), 0));
       const Point2D y_axis(y_axis3D.x(), y_axis3D.y());
 
       // Ellipse Rotation matrix
+      // R:  ellipse -> global
+      // R': global -> ellipse
       const Eigen::Matrix<double, 2, 2> R = 
         (Eigen::Matrix<double, 2, 2>() << x_axis, y_axis).finished();
 
