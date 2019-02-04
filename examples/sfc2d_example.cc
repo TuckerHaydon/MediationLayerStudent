@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
 
     Polygon obstacle2;
     {
-      const Point2D a(-3,2), b(-2,2), c(-2,3), d(-3,3);
+      const Point2D a(-3,-1), b(-2,-1), c(-2,5), d(-3,5);
       obstacle2.ConstructFromPoints({a,b,c,d});
     }
 
