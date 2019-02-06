@@ -28,7 +28,7 @@ namespace path_planning {
       };
 
       bool LoadMap(const Map2D& map);
-      bool LoadOccupancyGrid(const OccupancyGrid2D& occupancy_grid);
+      bool LoadOccupancyGrid(const OccupancyGrid2D* occupancy_grid);
       bool LoadPath(const std::vector<geometry::Point2D>& path);
       bool LoadSafeFlightCorridor(const std::vector<geometry::Polygon>& safe_flight_corridor);
       bool Display();

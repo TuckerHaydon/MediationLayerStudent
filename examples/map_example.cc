@@ -11,7 +11,7 @@
 #include "dijkstra.h"
 #include "occupancy_grid2d.h"
 #include "a_star.h"
-#include "gnu_visualizer.h"
+#include "gui2d.h"
 
 using namespace path_planning;
 using namespace geometry;
@@ -21,24 +21,6 @@ std::ostream & operator<<(std::ostream& out, const Node& node) {
   const int* data = reinterpret_cast<const int*>(node.Data());
   out << data[0] << ", " << data[1];
   return out;
-}
-
-void RunAStar(const Graph& graph, 
-              const OccupancyGrid2D& occupancy_grid,
-              const Node& start, 
-              const Node& end) {
-
-    const std::vector<Node> path = AStar().Run(graph, start, end);
-
-    std::cout << "Path (" << path.size() << " nodes):" << std::endl;
-    std::for_each(
-        path.begin(),
-        path.end(),
-        [](const Node& node){
-          std::cout << node << std::endl;
-        });
-
-    GNUVisualizer().Run(occupancy_grid, path);
 }
 
 int main(int argc, char** argv) {
@@ -77,7 +59,28 @@ int main(int argc, char** argv) {
   start_node.SetData(reinterpret_cast<const uint8_t*>(start_int), data_size);
   end_node.SetData(reinterpret_cast<const uint8_t*>(end_int), data_size);
 
-  RunAStar(graph, occupancy_grid, start_node, end_node);
+  const std::vector<Node> path = AStar().Run(graph, start_node, end_node);
+  std::cout << "Path (" << path.size() << " nodes):" << std::endl;
+  std::for_each(
+      path.begin(),
+      path.end(),
+      [](const Node& node){
+        std::cout << node << std::endl;
+      });
+
+  std::vector<Point2D> path_view;
+  path_view.reserve(path.size());
+  std::for_each(
+      path.begin(),
+      path.end(),
+      [&](const Node& node){
+        path_view.emplace_back(((int*)node.Data())[0], ((int*)node.Data())[1]);
+      });
+
+  Gui2D gui;
+  gui.LoadOccupancyGrid(&occupancy_grid);
+  gui.LoadPath(path_view);
+  gui.Display();
 
   return 0;
 }

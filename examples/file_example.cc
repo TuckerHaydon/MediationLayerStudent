@@ -11,7 +11,6 @@
 #include "dijkstra.h"
 #include "occupancy_grid2d.h"
 #include "a_star.h"
-#include "gnu_visualizer.h"
 
 using namespace path_planning;
 
@@ -37,7 +36,7 @@ void RunAStar(const Graph& graph,
           std::cout << node << std::endl;
         });
 
-    GNUVisualizer().Run(occupancy_grid, path);
+    // GNUVisualizer().Run(occupancy_grid, path);
 }
 
 void RunDijkstra(const Graph& graph, 
@@ -55,7 +54,7 @@ void RunDijkstra(const Graph& graph,
           std::cout << node << std::endl;
         });
 
-    GNUVisualizer().Run(occupancy_grid, path);
+    // GNUVisualizer().Run(occupancy_grid, path);
 }
 
 int main(int argc, char** argv) {

@@ -11,7 +11,6 @@ set(SOURCES
   algorithm/dijkstra.cc
   algorithm/safe_flight_corridor2d.cc
   environment/occupancy_grid2d.cc
-  gui/gnu_visualizer.cc
   gui/gui2d.cc
   )
 
@@ -26,10 +25,8 @@ include_directories(
 
 add_library(${TARGET} ${SOURCES})
 
-# Why do I have to link rt,eigen?
+# Why do I have to link eigen?
 target_link_libraries(${TARGET} 
-  cpp_plot 
   geometry 
-  rt 
   Eigen3::Eigen
   ${Boost_LIBRARIES})
