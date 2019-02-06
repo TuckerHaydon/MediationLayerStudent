@@ -5,6 +5,7 @@
 
 #include "safe_flight_corridor2d.h"
 #include "map2d.h"
+#include "gui2d.h"
 
 using namespace path_planning;
 using namespace geometry;
@@ -52,6 +53,12 @@ int main(int argc, char** argv) {
   SafeFlightCorridor2D sfc2d;
   sfc2d.SetMap(map);
   std::vector<Polygon> sfc = sfc2d.Run(path);
+
+  Gui2D gui;
+  gui.LoadMap(map);
+  gui.LoadSafeFlightCorridor(sfc);
+  gui.LoadPath(path);
+  gui.Display();
 
   return EXIT_SUCCESS;
 }
