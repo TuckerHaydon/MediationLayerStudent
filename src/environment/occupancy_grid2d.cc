@@ -47,7 +47,7 @@ namespace path_planning {
            max_x{std::numeric_limits<double>::min()},
            max_y{std::numeric_limits<double>::min()};
 
-    for(geometry::Point2D vertex: map.Boundary().Vertices()) {
+    for(const Point2D& vertex: map.Boundary().Vertices()) {
       if(vertex.x() < min_x) { min_x = vertex.x(); }
       if(vertex.y() < min_y) { min_y = vertex.y(); }
       if(vertex.x() > max_x) { max_x = vertex.x(); }
@@ -71,7 +71,7 @@ namespace path_planning {
     // Read in file
     for(size_t row = 0; row < this->size_y_; ++row) {
       for(size_t col = 0; col < this->size_x_; ++col) {
-        const geometry::Point2D p(min_x + col*sample_delta, min_y+row*sample_delta);
+        const Point2D p(min_x + col*sample_delta, min_y+row*sample_delta);
         // True indicates occupied, false indicates free
         this->data_[row][col] = !inflated_map.Contains(p) || !inflated_map.IsFreeSpace(p);
       }

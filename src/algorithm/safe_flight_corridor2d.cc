@@ -6,8 +6,6 @@
 #include "safe_flight_corridor2d.h"
 #include "linear_constraint2d.h"
 
-using namespace geometry;
-
 namespace path_planning {
   namespace {
     double Distance(const Point2D& a, const Point2D& b) {

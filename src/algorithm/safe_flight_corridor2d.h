@@ -19,7 +19,7 @@ namespace path_planning {
 
       bool SetMap(const Map2D& map);
 
-      std::vector<geometry::Polygon> Run(const std::vector<geometry::Point2D>& path) const;
+      std::vector<Polygon> Run(const std::vector<Point2D>& path) const;
   };
 
   //  ******************

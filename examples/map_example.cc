@@ -14,7 +14,7 @@
 #include "gui2d.h"
 
 using namespace path_planning;
-using namespace geometry;
+using namespace path_planning;
 
 
 std::ostream & operator<<(std::ostream& out, const Node& node) {

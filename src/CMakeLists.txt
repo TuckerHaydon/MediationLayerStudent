@@ -6,6 +6,7 @@ find_package (Eigen3 3.3 NO_MODULE)
 find_package(Boost 1.40.0 COMPONENTS filesystem system iostreams REQUIRED)
 
 set(SOURCES 
+  geometry/polygon.cc
   graph/graph.cc
   algorithm/a_star.cc
   algorithm/dijkstra.cc
@@ -16,6 +17,7 @@ set(SOURCES
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
+  geometry
   algorithm
   environment
   graph
@@ -25,8 +27,6 @@ include_directories(
 
 add_library(${TARGET} ${SOURCES})
 
-# Why do I have to link eigen?
 target_link_libraries(${TARGET} 
-  geometry 
   Eigen3::Eigen
   ${Boost_LIBRARIES})

@@ -2,8 +2,6 @@
 
 #include "gui2d.h"
 
-using namespace geometry;
-
 namespace path_planning {
   namespace {
     struct PolygonView {

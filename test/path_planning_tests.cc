@@ -8,7 +8,6 @@
 #include "polygon.h"
 #include "map2d.h"
 
-using namespace geometry;
 using namespace path_planning;
 
 void test_Map2D() {

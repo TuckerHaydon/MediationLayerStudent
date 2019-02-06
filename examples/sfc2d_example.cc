@@ -8,7 +8,7 @@
 #include "gui2d.h"
 
 using namespace path_planning;
-using namespace geometry;
+using namespace path_planning;
 
 
 int main(int argc, char** argv) {
