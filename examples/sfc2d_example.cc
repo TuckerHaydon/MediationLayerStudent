@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
     map.SetBoundary(boundary);
   }
 
-  std::vector<Point2D> path = {Point2D(-1, -1), Point2D(1,1), Point2D(1,2)};
+  std::vector<Point2D> path = {Point2D(-2,-3), Point2D(-1, -1), Point2D(1,1), Point2D(1,3)};
 
   SafeFlightCorridor2D sfc2d;
   sfc2d.SetMap(map);

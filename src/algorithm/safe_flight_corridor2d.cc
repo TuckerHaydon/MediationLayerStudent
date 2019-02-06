@@ -131,7 +131,6 @@ namespace path_planning {
 
       // Update the obstacles
       std::vector<Polygon> obstacles = map.Obstacles();
-      obstacles.push_back(map.Boundary());
       std::vector<Polygon> new_obstacles; 
       for(const Polygon& obstacle: obstacles)  {
         std::vector<Point2D> new_vertices;
@@ -175,8 +174,50 @@ namespace path_planning {
         }
       }
 
-      const Polygon new_boundary = new_obstacles.back();
-      new_obstacles.pop_back();
+      Polygon new_boundary;
+      { // Update the boundary
+        std::vector<Point2D> new_vertices;
+        // Edges are counter-clockwise order
+        for(const Line2D& edge: map.Boundary().Edges()) {
+
+          const bool constrains_start = lc.Constrains(edge.Start());
+          const bool constrains_end = lc.Constrains(edge.End());
+
+          // If neither vertex meets constraint, neither need to be considered
+          // in the future
+          if(false == constrains_start &&
+             false == constrains_end) { continue; }
+
+          // If start vertex meets the constraint, add it
+          if(true == constrains_start) { new_vertices.push_back(edge.Start()); }
+
+          // If the constraint intersects the edge, the intersection point needs
+          // to be considered in the future
+          if(true == (constrains_start ^ constrains_end)) {
+           new_vertices.push_back(
+               edge.IntersectionPoint(std::pair<Point2D, double>(lc.A_, lc.B_)));
+          }
+        }
+
+        // Degenerate case where all vertices are the same point
+        // bool degenerate_obstacle = true;
+        // if(0 != new_vertices.size()) {
+        //   for(const Point2D& vertex: new_vertices) {
+        //     if(false == new_vertices[0].isApprox(vertex, 1e-3)) {
+        //       degenerate_obstacle = false;
+        //       break;
+        //     }
+        //   }
+        // }
+
+        // if(false == degenerate_obstacle) {
+        //   Polygon new_obstacle; 
+        //   new_obstacle.ConstructFromPoints(new_vertices);
+        //   new_obstacles.push_back(new_obstacle);
+        // }
+        new_boundary.ConstructFromPoints(new_vertices);
+      }
+
 
       return Map2D(new_boundary, new_obstacles);
     }
@@ -216,8 +257,8 @@ namespace path_planning {
     // TODO: Parallelize this
     for(size_t idx = 0; idx < path.size()-1; ++idx) {
       // Line segment
-      const Point2D& start = path[idx];
-      const Point2D& end = path[idx + 1];
+      Point2D start = path[idx];
+      Point2D end = path[idx + 1];
       const Point2D center = (end + start) / 2;
 
       // x-axis
@@ -240,12 +281,15 @@ namespace path_planning {
       Map2D current_map = this->map_;
 
       { // Move center of map to ellipse center
+        start = start - center;
+        end = end - center;
+
         std::vector<Line2D> new_boundary_edges;
         new_boundary_edges.reserve(current_map.Boundary().Edges().size());
         for(const Line2D& edge: current_map.Boundary().Edges()) {
           new_boundary_edges.emplace_back(
-              edge.Start(),
-              edge.End());  
+              edge.Start() - center,
+              edge.End() - center);  
         }
         const Polygon new_boundary(new_boundary_edges);
 
@@ -255,8 +299,8 @@ namespace path_planning {
           new_obstacle_edges.reserve(obstacle.Edges().size());
           for(const Line2D& edge: obstacle.Edges()) {
             new_obstacle_edges.emplace_back(
-                edge.Start(),
-                edge.End());  
+                edge.Start() - center,
+                edge.End() - center);  
           }
           new_obstacles.emplace_back(new_obstacle_edges);
         }
