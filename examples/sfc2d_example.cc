@@ -20,23 +20,34 @@ int main(int argc, char** argv) {
       boundary.ConstructFromPoints({a,b,c,d});
     }
 
-    Polygon obstacle1;
+    std::vector<Polygon> obstacles;
+
     {
-      const Point2D a(3,-4), b(4,-4), c(4,-3), d(3,-3);
-      obstacle1.ConstructFromPoints({a,b,c,d});
+      const Point2D a(0,-3), b(1,-3), c(1,-2), d(0,-2);
+      Polygon obstacle;
+      obstacle.ConstructFromPoints({a,b,c,d});
+      obstacles.push_back(obstacle);
     }
 
-    Polygon obstacle2;
     {
       const Point2D a(-3,-1), b(-2,-1), c(-2,5), d(-3,5);
-      obstacle2.ConstructFromPoints({a,b,c,d});
+      Polygon obstacle;
+      obstacle.ConstructFromPoints({a,b,c,d});
+      obstacles.push_back(obstacle);
     }
 
-    map.SetObstacles({obstacle1, obstacle2});
+    {
+      const Point2D a(2,-1), b(3,-1), c(3,0), d(2,0);
+      Polygon obstacle;
+      obstacle.ConstructFromPoints({a,b,c,d});
+      obstacles.push_back(obstacle);
+    }
+
+    map.SetObstacles(obstacles);
     map.SetBoundary(boundary);
   }
 
-  std::vector<Point2D> path = {Point2D(-1, -1), Point2D(1,1)};
+  std::vector<Point2D> path = {Point2D(-1, -1), Point2D(1,1), Point2D(1,2)};
 
   SafeFlightCorridor2D sfc2d;
   sfc2d.SetMap(map);

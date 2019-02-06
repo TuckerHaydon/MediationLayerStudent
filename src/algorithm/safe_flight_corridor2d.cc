@@ -14,8 +14,7 @@ namespace path_planning {
       return (a - b).norm();
     }
 
-    Point2D FindClosestPoint(const Point2D& center, 
-                             const Eigen::Matrix<double, 2, 2>& R, 
+    Point2D FindClosestPoint(const Eigen::Matrix<double, 2, 2>& R, 
                              const double a_prime,
                              const Map2D& map,
                              const std::vector<LinearConstraint2D>& linear_constraints) {
@@ -64,29 +63,32 @@ namespace path_planning {
           // R:  ellipse -> global
           // R': global -> ellipse
 
+          // Intersection of ellipse with line with the requirement that there
+          // is only one solution
           const std::pair<Eigen::Vector2d, double> AB = edge.StandardForm();
           const std::pair<Eigen::Vector2d, double> AB_tilde = 
             std::pair<Eigen::Vector2d, double>(
               R.transpose() * AB.first,
-              AB.second - AB.first.transpose() * center);
+              AB.second);
 
           const double a = a_prime;
           const double m = -AB_tilde.first(0) / AB_tilde.first(1);
           const double c = AB_tilde.second / AB_tilde.first(1);
           const double b = std::sqrt(c*c - a*a * m*m);
-          // const double a = a_prime;
-          // const double m = -AB.first(0) / AB.first(1);
-          // const double c = AB.second / AB.first(1);
-          // const double b = std::sqrt(c*c - a*a * m*m);
 
-          // x_tilde,y_tilde are in ellipse space
-          const double x_tilde = (-a*a*m*c) / (b*b + a*a * m*m);
-          const double y_tilde = m * x_tilde + c;
+          // Ellipse-rotated coordinates
+          const double x = (-a*a*m*c) / (b*b + a*a * m*m);
+          const double y = m * x + c;
 
-          // Transform back to global space
-          const Point2D intersection_point = 
-            R * Eigen::Vector2d(x_tilde, y_tilde) + center;
-          // const Point2D intersection_point(x_tilde, y_tilde);
+          // Map-rotated coordinates
+          const Point2D intersection_point = R * Point2D(x, y);
+
+          // If the intersection point does not lie between the two vertices,
+          // ignore it
+          if(Distance(intersection_point, edge.Start()) <= Distance(edge.Start(), edge.End()) &&
+             Distance(intersection_point, edge.End())   <= Distance(edge.Start(), edge.End())) {
+            pq.emplace_back(intersection_point, b);
+          }
 
           // The start and end vertices are automatically in the expansion path
           // since the implicit constrains reduce the space to only
@@ -94,34 +96,26 @@ namespace path_planning {
           // vertices to account for the case where the ellipse will intersect a
           // linear constraint outside the line. When that occurs, the
           // intersection point is tossed, but it still might intersect the
-          // vertex. 
-          const Point2D start_ellipse = R.transpose() * (edge.Start() - center);
-          const Point2D end_ellipse = R.transpose() * (edge.End() - center);
-          const double distance_to_start = 
-            std::sqrt((a*a * std::pow(start_ellipse.y(), 2)) 
-                / (a*a - std::pow(start_ellipse.x(), 2)));
-          pq.emplace_back(edge.Start(), distance_to_start);
-          const double distance_to_end = 
-            std::sqrt((a*a * std::pow(end_ellipse.y(), 2)) 
-                / (a*a - std::pow(end_ellipse.x(), 2)));
-          pq.emplace_back(edge.End(), distance_to_end);
-          // const double distance_to_start = 
-          //   std::sqrt((a*a * std::pow(edge.Start().y(), 2)) 
-          //       / (a*a - std::pow(edge.Start().x(), 2)));
-          // pq.emplace(edge.Start(), distance_to_start);
-          // const double distance_to_end = 
-          //   std::sqrt((a*a * std::pow(edge.End().y(), 2)) 
-          //       / (a*a - std::pow(edge.End().x(), 2)));
-          // pq.emplace(edge.End(), distance_to_end);
-
-          // If the intersection point does not lie between the two vertices,
-          // ignore it
-          if(Distance(intersection_point, edge.Start()) > Distance(edge.Start(), edge.End()) ||
-             Distance(intersection_point, edge.End())   > Distance(edge.Start(), edge.End())) {
-            continue;
+          // vertex later on. 
+          const Point2D start_ellipse = R.transpose() * edge.Start();
+          if(std::abs(std::abs(start_ellipse.x()) - std::abs(a)) < 1e-3) {
+            // Do nothing. This point lies along an implicit constraint
+          } else {
+            const double distance_to_start = 
+              std::sqrt((a*a * std::pow(start_ellipse.y(), 2)) 
+                  / (a*a - std::pow(start_ellipse.x(), 2)));
+            pq.emplace_back(edge.Start(), distance_to_start);
           }
 
-          pq.emplace_back(intersection_point, b);
+          const Point2D end_ellipse = R.transpose() * edge.End();
+          if(std::abs(std::abs(end_ellipse.x()) - std::abs(a)) < 1e-3) {
+            // Do nothing. This point lies along an implicit constraint
+          } else {
+            const double distance_to_end = 
+              std::sqrt((a*a * std::pow(end_ellipse.y(), 2)) 
+                  / (a*a - std::pow(end_ellipse.x(), 2)));
+            pq.emplace_back(edge.End(), distance_to_end);
+          }
         }
       }
 
@@ -245,31 +239,30 @@ namespace path_planning {
       // Make a mutable copy of the map
       Map2D current_map = this->map_;
 
-      // Shift everything in the map into ellipse coordinates
-      // {
-      //   std::vector<Line2D> new_boundary_edges;
-      //   new_boundary_edges.reserve(current_map.Boundary().Edges().size());
-      //   for(const Line2D& edge: current_map.Boundary().Edges()) {
-      //     new_boundary_edges.emplace_back(
-      //         R.transpose() * (edge.Start() - center),
-      //         R.transpose() * (edge.End() - center));  
-      //   }
-      //   const Polygon new_boundary(new_boundary_edges);
+      { // Move center of map to ellipse center
+        std::vector<Line2D> new_boundary_edges;
+        new_boundary_edges.reserve(current_map.Boundary().Edges().size());
+        for(const Line2D& edge: current_map.Boundary().Edges()) {
+          new_boundary_edges.emplace_back(
+              edge.Start(),
+              edge.End());  
+        }
+        const Polygon new_boundary(new_boundary_edges);
 
-      //   std::vector<Polygon> new_obstacles;
-      //   for(const Polygon& obstacle: current_map.Obstacles()) {
-      //     std::vector<Line2D> new_obstacle_edges;
-      //     new_obstacle_edges.reserve(obstacle.Edges().size());
-      //     for(const Line2D& edge: obstacle.Edges()) {
-      //       new_obstacle_edges.emplace_back(
-      //           R.transpose() * (edge.Start() - center),
-      //           R.transpose() * (edge.End() - center));  
-      //     }
-      //     new_obstacles.emplace_back(new_obstacle_edges);
-      //   }
+        std::vector<Polygon> new_obstacles;
+        for(const Polygon& obstacle: current_map.Obstacles()) {
+          std::vector<Line2D> new_obstacle_edges;
+          new_obstacle_edges.reserve(obstacle.Edges().size());
+          for(const Line2D& edge: obstacle.Edges()) {
+            new_obstacle_edges.emplace_back(
+                edge.Start(),
+                edge.End());  
+          }
+          new_obstacles.emplace_back(new_obstacle_edges);
+        }
 
-      //   current_map = Map2D(new_boundary, new_obstacles);
-      // }
+        current_map = Map2D(new_boundary, new_obstacles);
+      }
 
       std::vector<LinearConstraint2D> linear_constraints;
       { // Implicit linear constraints at extents of ellipse
@@ -293,9 +286,9 @@ namespace path_planning {
       while(true) { 
 
         // Find the closest point to the center of the ellipse
-        const Point2D closest_point = FindClosestPoint(center, R, a_prime, current_map, linear_constraints);
-        const double x_prime = (closest_point - center).dot(x_axis);
-        const double y_prime = (closest_point - center).dot(y_axis);
+        const Point2D closest_point = FindClosestPoint(R, a_prime, current_map, linear_constraints);
+        const double x_prime = closest_point.dot(x_axis);
+        const double y_prime = closest_point.dot(y_axis);
         const double b_prime = std::sqrt((std::pow(y_prime,2)) / (1 - std::pow(x_prime/a_prime,2)));
   
         // Ellipse matrices
@@ -304,7 +297,7 @@ namespace path_planning {
   
         // Tangent line segment
         const Eigen::Matrix<double, 2, 2> E_inv = E.inverse();
-        const Eigen::Vector2d A_prime = 2 * E_inv * E_inv.transpose() * (closest_point - center);
+        const Eigen::Vector2d A_prime = 2 * E_inv * E_inv.transpose() * closest_point;
         const double B_prime = A_prime.dot(closest_point);
         const LinearConstraint2D lc(A_prime, B_prime);
         linear_constraints.push_back(lc);
@@ -313,7 +306,6 @@ namespace path_planning {
         current_map = UpdateMap(lc, current_map);
 
         // If there are still obstacles in the vicinity, continue
-        // if(0 != current_map.Obstacles().size()) { continue; }
         bool all_obstacles_constrained = true;
         for(const Polygon& obstacle: current_map.Obstacles()) {
           bool is_obstacle_constrained = true;
@@ -343,31 +335,31 @@ namespace path_planning {
         break;
       }
       
-      // Shift everything in the map back to the map coordinates
-      // {
-      //   std::vector<Line2D> new_boundary_edges;
-      //   new_boundary_edges.reserve(current_map.Boundary().Edges().size());
-      //   for(const Line2D& edge: current_map.Boundary().Edges()) {
-      //     new_boundary_edges.emplace_back(
-      //         R * (edge.Start()) + center,
-      //         R * (edge.End()) + center);  
-      //   }
-      //   const Polygon new_boundary(new_boundary_edges);
+      // Recenter map on original center
+      {
+        std::vector<Line2D> new_boundary_edges;
+        new_boundary_edges.reserve(current_map.Boundary().Edges().size());
+        for(const Line2D& edge: current_map.Boundary().Edges()) {
+          new_boundary_edges.emplace_back(
+              edge.Start() + center,
+              edge.End() + center);  
+        }
+        const Polygon new_boundary(new_boundary_edges);
 
-      //   std::vector<Polygon> new_obstacles;
-      //   for(const Polygon& obstacle: current_map.Obstacles()) {
-      //     std::vector<Line2D> new_obstacle_edges;
-      //     new_obstacle_edges.reserve(obstacle.Edges().size());
-      //     for(const Line2D& edge: obstacle.Edges()) {
-      //       new_obstacle_edges.emplace_back(
-      //           R * edge.Start() + center,
-      //           R * edge.End() + center);  
-      //     }
-      //     new_obstacles.emplace_back(new_obstacle_edges);
-      //   }
+        std::vector<Polygon> new_obstacles;
+        for(const Polygon& obstacle: current_map.Obstacles()) {
+          std::vector<Line2D> new_obstacle_edges;
+          new_obstacle_edges.reserve(obstacle.Edges().size());
+          for(const Line2D& edge: obstacle.Edges()) {
+            new_obstacle_edges.emplace_back(
+                edge.Start() + center,
+                edge.End() + center);  
+          }
+          new_obstacles.emplace_back(new_obstacle_edges);
+        }
 
-      //   current_map = Map2D(new_boundary, new_obstacles);
-      // }
+        current_map = Map2D(new_boundary, new_obstacles);
+      }
 
       std::cout << "Map vertices: " << std::endl;
       for(const Point2D& vertex: current_map.Boundary().Vertices()) {
