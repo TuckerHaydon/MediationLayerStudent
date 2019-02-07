@@ -24,6 +24,10 @@ namespace path_planning {
       std::vector<Gui2D::CommandUnit> Load() const {
         std::vector<Gui2D::CommandUnit> command_units;
 
+        if(this->polygon_.Vertices().empty()) {
+          return command_units;
+        }
+
         std::vector<std::pair<double, double>> data;
         data.reserve(this->polygon_.Vertices().size() + 1);
         for(const Point2D& vertex: this->polygon_.Vertices()) {
