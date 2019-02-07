@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "a_star.h"
+#include "timer.h"
 
 namespace path_planning {
   namespace {
@@ -86,32 +87,12 @@ namespace path_planning {
            + std::abs(
                reinterpret_cast<const int*>(a.Data())[1] 
              - reinterpret_cast<const int*>(b.Data())[1]);
-    }
-  
-    void TicToc() {
-      static bool tic{false};
-  
-      typedef std::chrono::high_resolution_clock Time;
-      typedef std::chrono::milliseconds ms;
-      typedef std::chrono::duration<double> duration_t;
-  
-      static std::chrono::time_point<Time> start, end; 
-  
-      if(!tic) {
-        start = Time::now();
-        tic = true;
-      } else {
-        end = Time::now();
-        duration_t elapsed_time = end - start;
-        ms elapsed_ms = std::chrono::duration_cast<ms>(elapsed_time);
-        std::cout << "A* finished in " << elapsed_ms.count() << " ms" << std::endl;
-        tic = false;
-      }
-    }
+    } 
   }
 
   std::vector<Node> AStar::Run(const Graph& graph, const Node& start, const Node& end) {
-    TicToc();
+    Timer timer("A* timer finished");
+    timer.Start();
   
     // Paths from the start with a score equal 
     // to the total distance travelled
@@ -124,7 +105,7 @@ namespace path_planning {
     while(true) {
       // If no solution found, return empty vector
       if(paths_to_explore.empty()) {
-        TicToc();
+        timer.Stop();
         std::cout << "Num nodes explored: " << explored_paths.size() << std::endl;
         return {};
       }
@@ -152,7 +133,7 @@ namespace path_planning {
         }
         solution.push_back(start);
   
-        TicToc();
+        timer.Stop();
         std::cout << "Num nodes explored: " << explored_paths.size() << std::endl;
         return solution;
       }

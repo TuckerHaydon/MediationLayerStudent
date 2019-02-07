@@ -8,10 +8,62 @@
 
 namespace path_planning {
   namespace {
+    // Shift all the coordinates in the map by a certain amount
+    Map2D ShiftMap(const Map2D& map, const Point2D& shift) {
+      std::vector<Line2D> new_boundary_edges;
+      new_boundary_edges.reserve(map.Boundary().Edges().size());
+      for(const Line2D& edge: map.Boundary().Edges()) {
+        new_boundary_edges.emplace_back(
+            edge.Start() + shift,
+            edge.End() + shift);  
+      }
+      const Polygon new_boundary(new_boundary_edges);
+
+      std::vector<Polygon> new_obstacles;
+      for(const Polygon& obstacle: map.Obstacles()) {
+        std::vector<Line2D> new_obstacle_edges;
+        new_obstacle_edges.reserve(obstacle.Edges().size());
+        for(const Line2D& edge: obstacle.Edges()) {
+          new_obstacle_edges.emplace_back(
+              edge.Start() + shift,
+              edge.End() + shift);  
+        }
+        new_obstacles.emplace_back(new_obstacle_edges);
+      }
+
+      return Map2D(new_boundary, new_obstacles);
+    }
+
+    // Determines if a set of polygons are constrained equal by a set of linear
+    // constraints. Returns false is any edge is not constrained by the linear
+    // constraints
+    bool PolygonsConstrainedEqual(
+        const std::vector<Polygon>& polygons,
+        const std::vector<LinearConstraint2D>& linear_constraints) {
+      for(const Polygon& polygon: polygons) {
+        for(const Line2D& edge: polygon.Edges()) {
+          bool edge_constrained = false;
+          for(const LinearConstraint2D& lc_: linear_constraints) {
+            if(true == lc_.ConstrainsEqual(edge.Start()) &&
+               true == lc_.ConstrainsEqual(edge.End())) { 
+              edge_constrained = true; break;
+            }
+          }
+          if(false == edge_constrained) { 
+            return false; 
+          }
+        }
+      }
+      return true;
+    }
+
+    // Two-norm point distance
     double Distance(const Point2D& a, const Point2D& b) {
       return (a - b).norm();
     }
 
+    // Finds the point on the map that the ellipse will first encounter when
+    // expanding
     Point2D FindClosestPoint(const Eigen::Matrix<double, 2, 2>& R, 
                              const double a_prime,
                              const Map2D& map,
@@ -117,18 +169,21 @@ namespace path_planning {
         }
       }
 
-      // O(1) complexity
+      // O(n) complexity
       return std::min_element(pq.begin(), pq.end(), 
           [](const CandidatePoint& lhs, const CandidatePoint& rhs){
             return lhs.distance_ < rhs.distance_;
           })->point_;
     }
 
+    // Modifies edges, vertices, and obstacles to comply with a linear
+    // constraint. Ensures that all of these are within the half-space defined
+    // by the linear constraint AX < B.
     Map2D UpdateMap(const LinearConstraint2D& lc,
                     const Map2D& map) {
-
       // Update the obstacles
       std::vector<Polygon> obstacles = map.Obstacles();
+      obstacles.push_back(map.Boundary());
       std::vector<Polygon> new_obstacles; 
       for(const Polygon& obstacle: obstacles)  {
         std::vector<Point2D> new_vertices;
@@ -153,69 +208,12 @@ namespace path_planning {
                edge.IntersectionPoint(std::pair<Point2D, double>(lc.A_, lc.B_)));
           }
         }
-
-        // Degenerate case where all vertices are the same point
-        bool degenerate_obstacle = true;
-        if(0 != new_vertices.size()) {
-          for(const Point2D& vertex: new_vertices) {
-            if(false == new_vertices[0].isApprox(vertex, 1e-3)) {
-              degenerate_obstacle = false;
-              break;
-            }
-          }
-        }
-
-        if(false == degenerate_obstacle) {
-          Polygon new_obstacle; 
-          new_obstacle.ConstructFromPoints(new_vertices);
-          new_obstacles.push_back(new_obstacle);
-        }
+        Polygon new_obstacle; 
+        new_obstacle.ConstructFromPoints(new_vertices);
+        new_obstacles.push_back(new_obstacle);
       }
-
-      Polygon new_boundary;
-      { // Update the boundary
-        std::vector<Point2D> new_vertices;
-        // Edges are counter-clockwise order
-        for(const Line2D& edge: map.Boundary().Edges()) {
-
-          const bool constrains_start = lc.Constrains(edge.Start());
-          const bool constrains_end = lc.Constrains(edge.End());
-
-          // If neither vertex meets constraint, neither need to be considered
-          // in the future
-          if(false == constrains_start &&
-             false == constrains_end) { continue; }
-
-          // If start vertex meets the constraint, add it
-          if(true == constrains_start) { new_vertices.push_back(edge.Start()); }
-
-          // If the constraint intersects the edge, the intersection point needs
-          // to be considered in the future
-          if(true == (constrains_start ^ constrains_end)) {
-           new_vertices.push_back(
-               edge.IntersectionPoint(std::pair<Point2D, double>(lc.A_, lc.B_)));
-          }
-        }
-
-        // Degenerate case where all vertices are the same point
-        // bool degenerate_obstacle = true;
-        // if(0 != new_vertices.size()) {
-        //   for(const Point2D& vertex: new_vertices) {
-        //     if(false == new_vertices[0].isApprox(vertex, 1e-3)) {
-        //       degenerate_obstacle = false;
-        //       break;
-        //     }
-        //   }
-        // }
-
-        // if(false == degenerate_obstacle) {
-        //   Polygon new_obstacle; 
-        //   new_obstacle.ConstructFromPoints(new_vertices);
-        //   new_obstacles.push_back(new_obstacle);
-        // }
-        new_boundary.ConstructFromPoints(new_vertices);
-      }
-
+      Polygon new_boundary = new_obstacles.back();
+      new_obstacles.pop_back();
 
       return Map2D(new_boundary, new_obstacles);
     }
@@ -278,47 +276,25 @@ namespace path_planning {
       // Make a mutable copy of the map
       Map2D current_map = this->map_;
 
-      { // Move center of map to ellipse center
-        start = start - center;
-        end = end - center;
-
-        std::vector<Line2D> new_boundary_edges;
-        new_boundary_edges.reserve(current_map.Boundary().Edges().size());
-        for(const Line2D& edge: current_map.Boundary().Edges()) {
-          new_boundary_edges.emplace_back(
-              edge.Start() - center,
-              edge.End() - center);  
-        }
-        const Polygon new_boundary(new_boundary_edges);
-
-        std::vector<Polygon> new_obstacles;
-        for(const Polygon& obstacle: current_map.Obstacles()) {
-          std::vector<Line2D> new_obstacle_edges;
-          new_obstacle_edges.reserve(obstacle.Edges().size());
-          for(const Line2D& edge: obstacle.Edges()) {
-            new_obstacle_edges.emplace_back(
-                edge.Start() - center,
-                edge.End() - center);  
-          }
-          new_obstacles.emplace_back(new_obstacle_edges);
-        }
-
-        current_map = Map2D(new_boundary, new_obstacles);
-      }
+      // Center map on the center of the ellipse
+      current_map = ShiftMap(current_map, -center);
 
       std::vector<LinearConstraint2D> linear_constraints;
       { // Implicit linear constraints at extents of ellipse
-        const Line2D l(start, end);
+        const Point2D& new_start = start - center;
+        const Point2D& new_end = end - center;
+
+        const Line2D l(new_start, new_end);
         const std::pair<Point2D, double> sf = l.StandardForm();
 
         const Point2D A_start(-sf.first(1), sf.first(0));
-        const double B_start = A_start.dot(start);
+        const double B_start = A_start.dot(new_start);
         const LinearConstraint2D l_start(A_start, B_start);
         linear_constraints.push_back(l_start);
         current_map = UpdateMap(l_start, current_map);
 
         const Point2D A_end(-sf.first(1), sf.first(0));
-        const double B_end = A_end.dot(end);
+        const double B_end = A_end.dot(new_end);
         const LinearConstraint2D l_end(A_end, B_end);
         linear_constraints.push_back(l_end);
         current_map = UpdateMap(l_end, current_map);
@@ -326,8 +302,7 @@ namespace path_planning {
 
       // Iterate until no obstacles exist within space
       while(true) { 
-
-        // Find the closest point to the center of the ellipse
+        // Expand the ellipse until it touches the nearest obstacle
         const Point2D closest_point = FindClosestPoint(R, a_prime, current_map, linear_constraints);
         const double x_prime = closest_point.dot(x_axis);
         const double y_prime = closest_point.dot(y_axis);
@@ -348,65 +323,25 @@ namespace path_planning {
         current_map = UpdateMap(lc, current_map);
 
         // If there are still obstacles in the vicinity, continue
-        bool all_obstacles_constrained = true;
-        for(const Polygon& obstacle: current_map.Obstacles()) {
-          bool is_obstacle_constrained = true;
-          for(const Point2D& vertex: obstacle.Vertices()) {
-            bool is_vertex_constrained = false;
-            for(const LinearConstraint2D& lc_: linear_constraints) {
-              if(true == lc_.ConstrainsEqual(vertex)) { is_vertex_constrained = true; break; }
-            }
-            if(false == is_vertex_constrained) { is_obstacle_constrained = false; break; }
-          }
-          if(false == is_obstacle_constrained) { all_obstacles_constrained = false; break; }
+        if(false == 
+            PolygonsConstrainedEqual(current_map.Obstacles(), linear_constraints)) {
+          continue;
         }
-        if(false == all_obstacles_constrained) { continue; }
 
-        // If there are still boundaries in the vicinity, continue
-        bool is_boundary_constrained = true;
-        for(const Point2D& vertex: current_map.Boundary().Vertices()) {
-          bool is_vertex_constrained = false;
-          for(const LinearConstraint2D& lc_: linear_constraints) {
-            if(true == lc_.ConstrainsEqual(vertex)) { is_vertex_constrained = true; break; }
-          }
-          if(false == is_vertex_constrained) { is_boundary_constrained = false; break; }
+        // If the map is not sufficiently constrained, continue
+        if(false == 
+            PolygonsConstrainedEqual({current_map.Boundary()}, linear_constraints)) {
+          continue;
         }
-        if(false == is_boundary_constrained) { continue; }
 
         // Exit conditions have been met
         break;
       }
       
       // Recenter map on original center
-      {
-        std::vector<Line2D> new_boundary_edges;
-        new_boundary_edges.reserve(current_map.Boundary().Edges().size());
-        for(const Line2D& edge: current_map.Boundary().Edges()) {
-          new_boundary_edges.emplace_back(
-              edge.Start() + center,
-              edge.End() + center);  
-        }
-        const Polygon new_boundary(new_boundary_edges);
+      current_map = ShiftMap(current_map, center);
 
-        std::vector<Polygon> new_obstacles;
-        for(const Polygon& obstacle: current_map.Obstacles()) {
-          std::vector<Line2D> new_obstacle_edges;
-          new_obstacle_edges.reserve(obstacle.Edges().size());
-          for(const Line2D& edge: obstacle.Edges()) {
-            new_obstacle_edges.emplace_back(
-                edge.Start() + center,
-                edge.End() + center);  
-          }
-          new_obstacles.emplace_back(new_obstacle_edges);
-        }
-
-        current_map = Map2D(new_boundary, new_obstacles);
-      }
-
-      std::cout << "Map vertices: " << std::endl;
-      for(const Point2D& vertex: current_map.Boundary().Vertices()) {
-        std::cout << vertex.transpose() << std::endl;
-      }
+      // The bounds of the new map represent the safe flight corridor
       safe_flight_corridor.push_back(current_map.Boundary());
     }
 

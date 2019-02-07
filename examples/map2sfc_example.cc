@@ -9,6 +9,7 @@
 #include "graph.h"
 #include "a_star.h"
 #include "dijkstra.h"
+#include "timer.h"
 
 using namespace path_planning;
 
@@ -49,7 +50,7 @@ int main(int argc, char** argv) {
   }
 
   const double SAFETY_BOUND = 0.3;
-  const double SAMPLE_DELTA = 0.3;
+  const double SAMPLE_DELTA = 0.5;
 
   OccupancyGrid2D occupancy_grid;
   occupancy_grid.LoadFromMap(map, SAMPLE_DELTA, SAFETY_BOUND);
@@ -101,7 +102,10 @@ int main(int argc, char** argv) {
 
     SafeFlightCorridor2D sfc2d;
     sfc2d.SetMap(map);
+    auto timer = Timer("SFC timer finished");
+    timer.Start();
     std::vector<Polygon> sfc = sfc2d.Run(path);
+    timer.Stop();
 
     Gui2D gui;
     gui.LoadMap(map);

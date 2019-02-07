@@ -23,6 +23,7 @@ include_directories(
   graph
   gui
   constraint
+  util
 )
 
 add_library(${TARGET} ${SOURCES})
