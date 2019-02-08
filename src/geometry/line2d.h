@@ -28,9 +28,11 @@ namespace path_planning {
       bool SetStart(const Point2D& start);
       bool SetEnd(const Point2D& end);
       
-      // Express the line as a 2D vector. 2D vectors can be represented by a 2D
-      // point
+      // Express the line as a 2D vector.
       Point2D AsVector() const;
+
+      // Return the unit vector from start to end
+      Point2D AsUnitVector() const;
 
       // Determines if a point is on the left side of the line. The left side is
       // viewed from the starting point looking towards the ending point.
@@ -50,6 +52,18 @@ namespace path_planning {
       // Returns the point of intersection between this line and a line normal
       // to this line passing through a specified point
       Point2D NormalIntersectionPoint(const Point2D point) const;
+
+      // Determines if a point lies on the line between the start and the end
+      bool Contains(const Point2D& point) const;
+
+      // Determines if a point projected onto the line is between the start and
+      // end point
+      bool ProjectedContains(const Point2D& point) const;
+
+      // Returns a unit vector orthogonal to the line on the left side of the
+      // line
+      Point2D OrthogonalUnitVector() const;
+
 
   };
 
@@ -116,6 +130,29 @@ namespace path_planning {
           A_prime.transpose()
         ).finished().inverse() 
       * Eigen::Vector2d(sf.second, B_prime);
+  }
+
+  inline bool Line2D::Contains(const Point2D& point) const {
+    return 
+      std::abs((point - this->start_).normalized().dot(this->AsUnitVector()) - 1) < 1e-3 &&
+      std::abs((point - this->end_).normalized().dot(-this->AsUnitVector()) - 1) < 1e-3;
+  }
+
+  // Determines if a point projected onto the line is between the start and
+  // end point
+  inline bool Line2D::ProjectedContains(const Point2D& point) const {
+    const Point2D projected_point = (point - this->start_).dot(this->AsUnitVector()) *
+      this->AsUnitVector() + this->start_;
+    return this->Contains(projected_point);
+  }
+
+  inline Point2D Line2D::AsUnitVector() const {
+    return this->AsVector().normalized();
+  }
+
+  inline Point2D Line2D::OrthogonalUnitVector() const {
+    const Point2D unit = this->AsUnitVector();
+    return Point2D(-unit.y(), unit.x());
   }
 }
 

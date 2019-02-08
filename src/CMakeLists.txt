@@ -13,6 +13,7 @@ set(SOURCES
   algorithm/safe_flight_corridor2d.cc
   environment/occupancy_grid2d.cc
   gui/gui2d.cc
+  mediation_layer/mediation_layer2d.cc
   )
 
 include_directories(
@@ -23,7 +24,10 @@ include_directories(
   graph
   gui
   constraint
+  mediation_layer
   util
+  integration
+  ros
 )
 
 add_library(${TARGET} ${SOURCES})

@@ -1,5 +1,8 @@
 // Author: Tucker Haydon
 
+// Prevent assert from being optimized out
+#undef NDEBUG
+
 #include <cassert>
 #include <iostream>
 #include <Eigen/Core>
@@ -161,6 +164,48 @@ void test_Line2D() {
     const Point2D i = l.NormalIntersectionPoint(c);
     assert(0.5 == i.x());
     assert(0.5 == i.y());
+  }
+
+  { // Contains
+    const Point2D a(1,1), b(3,5), c(2,3), d(0,0), e(4,7);
+    const Line2D l(a,b);
+
+    assert(true == l.Contains(c));
+    assert(false == l.Contains(d));
+    assert(false == l.Contains(e));
+  }
+
+  { // ProjectedContains
+    const Point2D a(1,1), b(3,5), c(2,2), d(0,0), e(4,7), f(0,-1), g(2,3), h(2,1);
+    const Line2D l(a,b);
+
+    assert(true  == l.ProjectedContains(c));
+    assert(false == l.ProjectedContains(d));
+    assert(false == l.ProjectedContains(e));
+    assert(false == l.ProjectedContains(f));
+    assert(true  == l.ProjectedContains(g));
+    assert(true  == l.ProjectedContains(h));
+  }
+
+  { // Orthogonal Unit Vector
+    const Point2D a(0,0), b(1,1), c(-1, 1), d(-1,-1), e(1,-1);
+
+    {
+      const Line2D l(a,b);
+      assert(l.OrthogonalUnitVector().isApprox(Point2D(-std::sqrt(2)/2,std::sqrt(2)/2)));  
+    }
+    {
+      const Line2D l(a,c);
+      assert(l.OrthogonalUnitVector().isApprox(Point2D(-std::sqrt(2)/2,-std::sqrt(2)/2)));  
+    }
+    {
+      const Line2D l(a,d);
+      assert(l.OrthogonalUnitVector().isApprox(Point2D(std::sqrt(2)/2,-std::sqrt(2)/2)));  
+    }
+    {
+      const Line2D l(a,e);
+      assert(l.OrthogonalUnitVector().isApprox(Point2D(std::sqrt(2)/2,std::sqrt(2)/2)));  
+    }
   }
 }
 

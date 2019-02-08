@@ -19,3 +19,14 @@ target_include_directories(geometry_tests PUBLIC
 )
 target_link_libraries(geometry_tests PUBLIC path_planning Eigen3::Eigen)
 
+add_executable(mediation_layer_tests mediation_layer_tests.cc)
+target_include_directories(mediation_layer_tests PUBLIC 
+  ../src/mediation_layer
+)
+target_link_libraries(mediation_layer_tests PUBLIC path_planning Eigen3::Eigen)
+
+add_executable(integration_tests integration_tests.cc)
+target_include_directories(integration_tests PUBLIC 
+  ../src/integration
+)
+target_link_libraries(integration_tests PUBLIC path_planning Eigen3::Eigen)

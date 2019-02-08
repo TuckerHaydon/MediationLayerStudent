@@ -44,3 +44,15 @@ target_include_directories(path_planning_map2sfc_example PUBLIC
   ../src/util
   )
 target_link_libraries(path_planning_map2sfc_example PUBLIC path_planning Eigen3::Eigen)
+
+add_executable(path_planning_mediation_layer_example mediation_layer_example.cc)
+target_include_directories(path_planning_mediation_layer_example PUBLIC 
+  ../src/graph
+  ../src/algorithm
+  ../src/gui
+  ../src/environment
+  ../src/geometry
+  ../src/util
+  ../src/mediation_layer
+  )
+target_link_libraries(path_planning_mediation_layer_example PUBLIC path_planning Eigen3::Eigen)
