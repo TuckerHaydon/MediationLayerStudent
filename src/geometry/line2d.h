@@ -138,8 +138,6 @@ namespace path_planning {
       std::abs((point - this->end_).normalized().dot(-this->AsUnitVector()) - 1) < 1e-3;
   }
 
-  // Determines if a point projected onto the line is between the start and
-  // end point
   inline bool Line2D::ProjectedContains(const Point2D& point) const {
     const Point2D projected_point = (point - this->start_).dot(this->AsUnitVector()) *
       this->AsUnitVector() + this->start_;
