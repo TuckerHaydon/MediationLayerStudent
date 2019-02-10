@@ -5,7 +5,7 @@
 
 #include "gnuplot-iostream.h"
 #include "trajectory2d.h"
-#include "potential2d.h"
+#include "potential2d_view.h"
 
 #include <thread>
 #include <chrono>
@@ -61,7 +61,9 @@ namespace path_planning {
       gp << "plot " << gp.file1d(hist) << " using 1:7 with lines" << std::endl;
     }
 
-    void DisplayDynamics(const Trajectory2D& trajectory) {
+    void DisplayDynamics(
+        const Trajectory2D& trajectory,
+        const std::vector<std::shared_ptr<Potential2DView>> potential_views) {
 
       std::vector<boost::tuple<double, double, double, double, double, double, double>> hist;
       for(const TimeStampedPVAY2D& tspvay2D: trajectory.data_) {
@@ -94,7 +96,11 @@ namespace path_planning {
         pos.emplace_back(tup.get<1>(), tup.get<2>());
 
         gp << "set style line 3 linecolor rgb 'black' pt 7" << std::endl;
-        gp << "plot " << gp.file1d(pos) << " using 1:2 with points linestyle 3" << std::endl;
+        gp << "plot " << gp.file1d(pos) << " using 1:2 with points linestyle 3, ";
+        for(const auto& view: potential_views) {
+          view->Display(gp);
+        }
+        gp << std::endl;
       }
     }
   }
@@ -102,13 +108,13 @@ namespace path_planning {
   class Trajectory2DView {
     private:
       Trajectory2D trajectory_;
-      std::vector<std::shared_ptr<Potential>> potentials_;
+      std::vector<std::shared_ptr<Potential2DView>> potential_views_;
 
     public:
       Trajectory2DView(const Trajectory2D& trajectory, 
-                       const std::vector<std::shared_ptr<Potential>>& potentials)
+                       const std::vector<std::shared_ptr<Potential2DView>>& potential_views)
         : trajectory_(trajectory),
-          potentials_(potentials) {}
+          potential_views_(potential_views) {}
       bool Display() const;
   };
 
@@ -117,7 +123,7 @@ namespace path_planning {
   //  ******************
   inline bool Trajectory2DView::Display() const {
     DisplayPlots(this->trajectory_);
-    DisplayDynamics(this->trajectory_);
+    DisplayDynamics(this->trajectory_, this->potential_views_);
     return true;
   }
 }

@@ -10,7 +10,7 @@
 
 namespace path_planning {
 
-  class Point2DPotential : public Potential {
+  class Point2DPotential : public Potential2D {
     public:
       struct Options {
         double activation_dist = 1.0;
@@ -28,6 +28,7 @@ namespace path_planning {
     private:
       Point2D point_;
       Options options_;
+      friend class Point2DPotentialView;
   };
 
   //  ******************

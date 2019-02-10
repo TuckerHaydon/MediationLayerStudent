@@ -11,6 +11,7 @@
 #include "trajectory2d_view.h"
 #include "line2d_potential.h"
 #include "point2d_potential.h"
+#include "point2d_potential_view.h"
 
 namespace path_planning {
   using Trajectory_t = Eigen::Matrix<double, 6, 1>;
@@ -106,12 +107,20 @@ namespace path_planning {
     point_options.min_dist = 0.1;
     point_options.scale = 0.1;
 
-    std::vector<std::shared_ptr<Potential>> potentials;
-    potentials.push_back(std::make_shared<Line2DPotential>(l1, line_options));
-    potentials.push_back(std::make_shared<Line2DPotential>(l2, line_options));
-    potentials.push_back(std::make_shared<Point2DPotential>(e, point_options));
-    potentials.push_back(std::make_shared<Point2DPotential>(f, point_options));
-    potentials.push_back(std::make_shared<Point2DPotential>(g, point_options));
+    std::vector<std::shared_ptr<Potential2D>> potentials;
+    auto e_pot = std::make_shared<Point2DPotential>(e, point_options);
+    auto f_pot = std::make_shared<Point2DPotential>(f, point_options);
+    auto g_pot = std::make_shared<Point2DPotential>(g, point_options);
+    // potentials.push_back(std::make_shared<Line2DPotential>(l1, line_options));
+    // potentials.push_back(std::make_shared<Line2DPotential>(l2, line_options));
+    potentials.push_back(e_pot);
+    potentials.push_back(f_pot);
+    potentials.push_back(g_pot);
+
+    std::vector<std::shared_ptr<Potential2DView>> potential_views;
+    potential_views.push_back(std::make_shared<Point2DPotentialView>(e_pot));
+    potential_views.push_back(std::make_shared<Point2DPotentialView>(f_pot));
+    potential_views.push_back(std::make_shared<Point2DPotentialView>(g_pot));
 
     const std::string& key = "test";
      Trajectory2D proposed_trajectory = GenerateSmoothTrajectory(
@@ -167,7 +176,7 @@ namespace path_planning {
             potentials.begin(),
             potentials.end(),
             Vec2D(0,0),
-            [&](const Vec2D& sum, const std::shared_ptr<Potential>& potential) {
+            [&](const Vec2D& sum, const std::shared_ptr<Potential2D>& potential) {
               return sum + potential->Resolve(point);
             });
 
@@ -196,7 +205,7 @@ namespace path_planning {
 
     timer.Stop();
     const Trajectory2D updated_trajectory(updated_trajectory_hist);
-    Trajectory2DView(updated_trajectory, potentials).Display();
+    Trajectory2DView(updated_trajectory, potential_views).Display();
 
     return true;
   }

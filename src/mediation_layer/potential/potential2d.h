@@ -7,9 +7,9 @@
 #include "vec2d.h"
 
 namespace path_planning {
-  class Potential {
+  class Potential2D {
     public:
-      virtual ~Potential() = default;
+      virtual ~Potential2D() = default;
       virtual Vec2D Resolve(const Point2D& point) const = 0;
   }; 
 }

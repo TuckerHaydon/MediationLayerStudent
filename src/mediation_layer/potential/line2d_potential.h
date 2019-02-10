@@ -11,7 +11,7 @@
 #include "potential2d.h"
 
 namespace path_planning {
-  class Line2DPotential : public Potential {
+  class Line2DPotential : public Potential2D {
     public:
       struct Options {
         double activation_dist = 1.0;
