@@ -25,6 +25,7 @@ include_directories(
   gui
   constraint
   mediation_layer
+  mediation_layer/potential
   util
   integration
   ros

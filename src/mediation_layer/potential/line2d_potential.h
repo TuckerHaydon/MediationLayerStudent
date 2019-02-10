@@ -1,16 +1,17 @@
 // Author: Tucker Haydon
 
-#ifndef PATH_PLANNING_MEDIATION_LAYER_LINE2D_FORCE_H
-#define PATH_PLANNING_MEDIATION_LAYER_LINE2D_FORCE_H
+#ifndef PATH_PLANNING_MEDIATION_LAYER_LINE2D_POTENTIAL_H
+#define PATH_PLANNING_MEDIATION_LAYER_LINE2D_POTENTIAL_H
 
 #include <algorithm>
 
 #include "line2d.h"
 #include "point2d.h"
 #include "vec2d.h"
+#include "potential2d.h"
 
 namespace path_planning {
-  class Line2DForce {
+  class Line2DPotential : public Potential {
     public:
       struct Options {
         double activation_dist = 1.0;
@@ -19,7 +20,8 @@ namespace path_planning {
         double activate_behind = false;
       };
 
-      Line2DForce(const Line2D& line, const Options& options)
+      Line2DPotential(const Line2D& line, 
+                      const Options& options)
         : line_(line),
           options_(options) {}
 
@@ -33,7 +35,7 @@ namespace path_planning {
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  Vec2D Line2DForce::Resolve(const Point2D& point) const {
+  Vec2D Line2DPotential::Resolve(const Point2D& point) const {
     // If the point if not within the orthogonal line bounds, no force
     if(false == this->line_.ProjectedContains(point))
     { return Point2D(0,0); }
@@ -56,10 +58,7 @@ namespace path_planning {
          1.0/std::pow(this->options_.activation_dist - this->options_.min_dist, 2))
         ) * 
       unit;
-
-
-  }
-  
+  } 
 }
 
 #endif

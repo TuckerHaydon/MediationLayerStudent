@@ -54,6 +54,7 @@ target_include_directories(path_planning_mediation_layer_example PUBLIC
   ../src/geometry
   ../src/util
   ../src/mediation_layer
+  ../src/mediation_layer/potential
   ../src/integration
   )
 target_link_libraries(path_planning_mediation_layer_example PUBLIC path_planning Eigen3::Eigen)

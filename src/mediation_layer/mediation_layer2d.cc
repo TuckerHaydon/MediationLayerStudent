@@ -4,11 +4,13 @@
 #include <thread>
 
 #include "mediation_layer2d.h"
-#include "line2d_force.h"
 #include "runge_kutta_4.h"
 #include "time_span.h"
 #include "vec2d.h"
 #include "timer.h"
+#include "trajectory2d_view.h"
+#include "line2d_potential.h"
+#include "point2d_potential.h"
 
 namespace path_planning {
   using Trajectory_t = Eigen::Matrix<double, 6, 1>;
@@ -46,26 +48,40 @@ namespace path_planning {
     }
 
     Trajectory2D GenerateSmoothTrajectory(
-        const Trajectory_t& start, 
-        const Trajectory_t& end, 
-        const double dt,
-        const double time) {
+        const TimeStampedPVAY2D& start, 
+        const double time,
+        const double dt) {
+      const double e_dt = std::exp(-dt); 
       const Eigen::Matrix<double, 6, 6> state_transition_matrix = 
         (Eigen::Matrix<double, 6, 6>() << 
-         1, 0, dt, 0   dt*dt/2, 0,
-         0, 1, 0,  dt, 0,       dt*dt/2,
-         0, 0, 1,  0,  dt,      0,
-         0, 0, 0,  1,  0,       dt,
-         0, 0, 0,  0,  1,       0,
-         0, 0, 0,  0,  0,       1
+         e_dt, 0, 0, 0, 0, 0,
+         0, e_dt, 0, 0, 0, 0,
+         0, 0, e_dt, 0, 0, 0,
+         0, 0, 0, e_dt, 0, 0,
+         0, 0, 0, 0, e_dt, 0,
+         0, 0, 0, 0, 0, e_dt
          ).finished();
 
       const int N = (int)(time / dt) + 1;
       std::vector<TimeStampedPVAY2D> tspvay2D;
       tspvay2D.reserve(N);
-      for(int idx = 0; idx < N; ++idx) {
+      tspvay2D.push_back(start);
+      for(int idx = 0; idx < N-1; ++idx) {
+        const Eigen::Matrix<double, 6, 1> current = (Eigen::Matrix<double, 6, 1>() <<
+          tspvay2D.back().pvay_.position_,
+          tspvay2D.back().pvay_.velocity_,
+          tspvay2D.back().pvay_.acceleration_).finished();
+        const Eigen::Matrix<double, 6, 1> next = state_transition_matrix * current;
 
+        tspvay2D.emplace_back(
+            PVAY2D(
+              Vec2D(next(0), next(1)),
+              Vec2D(next(2), next(3)),
+              Vec2D(next(4), next(5)),
+              0),
+            tspvay2D.back().time_ + dt);
       }
+      return Trajectory2D(tspvay2D);
     }
   }
   
@@ -76,37 +92,36 @@ namespace path_planning {
          Write resulting trajectory to updated_state
     */
 
-    const Point2D a(-0.6, -0.5), b(-0.4, -0.5);
-    const Line2D line(a,b);
-    Line2DForce::Options options;
-    options.activation_dist = 0.8;
-    options.min_dist = 0.1;
-    options.scale = 0.1;
-    const Line2DForce force_field(line, options);
+    // Line above pushing down, line below pushing up
+    const Point2D a(-10, -0.5), b(-1, -0.5), c(-1, 0.4), d(-10, 0.4), e(-4, 0.3), f(-0.5, -0.1), g(-0.5, 0.8);
+    const Line2D l1(a,b), l2(c,d);
+
+    Line2DPotential::Options line_options;
+    line_options.activation_dist = 0.8;
+    line_options.min_dist = 0.1;
+    line_options.scale = 0.1;
+
+    Point2DPotential::Options point_options;
+    point_options.activation_dist = 0.8;
+    point_options.min_dist = 0.1;
+    point_options.scale = 0.1;
+
+    std::vector<std::shared_ptr<Potential>> potentials;
+    potentials.push_back(std::make_shared<Line2DPotential>(l1, line_options));
+    potentials.push_back(std::make_shared<Line2DPotential>(l2, line_options));
+    potentials.push_back(std::make_shared<Point2DPotential>(e, point_options));
+    potentials.push_back(std::make_shared<Point2DPotential>(f, point_options));
+    potentials.push_back(std::make_shared<Point2DPotential>(g, point_options));
 
     const std::string& key = "test";
-    Trajectory2D proposed_trajectory({
-        TimeStampedPVAY2D(PVAY2D(Vec2D(-1.0,0), Vec2D(1,0), Vec2D(0,0), 0.0), 0.0),
-        TimeStampedPVAY2D(PVAY2D(Vec2D(-0.9,0), Vec2D(1,0), Vec2D(0,0), 0.0), 0.1),
-        TimeStampedPVAY2D(PVAY2D(Vec2D(-0.8,0), Vec2D(1,0), Vec2D(0,0), 0.0), 0.2),
-        TimeStampedPVAY2D(PVAY2D(Vec2D(-0.7,0), Vec2D(1,0), Vec2D(0,0), 0.0), 0.3),
-        TimeStampedPVAY2D(PVAY2D(Vec2D(-0.6,0), Vec2D(1,0), Vec2D(0,0), 0.0), 0.4),
-        TimeStampedPVAY2D(PVAY2D(Vec2D(-0.5,0), Vec2D(1,0), Vec2D(0,0), 0.0), 0.5),
-        TimeStampedPVAY2D(PVAY2D(Vec2D(-0.4,0), Vec2D(1,0), Vec2D(0,0), 0.0), 0.6),
-        TimeStampedPVAY2D(PVAY2D(Vec2D(-0.3,0), Vec2D(1,0), Vec2D(0,0), 0.0), 0.7),
-        TimeStampedPVAY2D(PVAY2D(Vec2D(-0.2,0), Vec2D(1,0), Vec2D(0,0), 0.0), 0.8),
-        TimeStampedPVAY2D(PVAY2D(Vec2D(-0.1,0), Vec2D(1,0), Vec2D(0,0), 0.0), 0.9),
-        TimeStampedPVAY2D(PVAY2D(Vec2D(-0.0,0), Vec2D(0,0), Vec2D(0,0), 0.0), 1.0),
-        TimeStampedPVAY2D(PVAY2D(Vec2D(-0.0,0), Vec2D(0,0), Vec2D(0,0), 0.0), 1.1),
-        TimeStampedPVAY2D(PVAY2D(Vec2D(-0.0,0), Vec2D(0,0), Vec2D(0,0), 0.0), 1.2),
-        TimeStampedPVAY2D(PVAY2D(Vec2D(-0.0,0), Vec2D(0,0), Vec2D(0,0), 0.0), 1.3),
-        TimeStampedPVAY2D(PVAY2D(Vec2D(-0.0,0), Vec2D(0,0), Vec2D(0,0), 0.0), 1.4),
-        TimeStampedPVAY2D(PVAY2D(Vec2D(-0.0,0), Vec2D(0,0), Vec2D(0,0), 0.0), 1.5),
-        TimeStampedPVAY2D(PVAY2D(Vec2D(-0.0,0), Vec2D(0,0), Vec2D(0,0), 0.0), 1.6),
-        TimeStampedPVAY2D(PVAY2D(Vec2D(-0.0,0), Vec2D(0,0), Vec2D(0,0), 0.0), 1.7),
-        TimeStampedPVAY2D(PVAY2D(Vec2D(-0.0,0), Vec2D(0,0), Vec2D(0,0), 0.0), 1.8),
-        TimeStampedPVAY2D(PVAY2D(Vec2D(-0.0,0), Vec2D(0,0), Vec2D(0,0), 0.0), 1.9)
-        });
+     Trajectory2D proposed_trajectory = GenerateSmoothTrajectory(
+         TimeStampedPVAY2D(
+           PVAY2D(
+             Vec2D(-5,0),
+             Vec2D(0,0),
+             Vec2D(0,0),
+             0),
+           0),10,0.1);
 
     this->proposed_state_->Add(key, proposed_trajectory);
     this->updated_state_->Add(key, proposed_trajectory);
@@ -122,13 +137,20 @@ namespace path_planning {
       ).finished();
 
     Trajectory_t X_ml = X0;
-    Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "[", "]");
 
     Timer timer("Mediation Layer Timer Terminated.");
     timer.Start();
     int idx = 0;
+    std::vector<TimeStampedPVAY2D> updated_trajectory_hist;
+    updated_trajectory_hist.reserve(proposed_trajectory.data_.size());
+    updated_trajectory_hist.emplace_back(
+        PVAY2D(
+          Vec2D(X_ml(0), X_ml(1)),
+          Vec2D(X_ml(2), X_ml(3)),
+          Vec2D(X_ml(4), X_ml(5)),
+          0),
+        proposed_trajectory.data_[idx].time_);
     while(true) {
-      if(idx == proposed_trajectory.data_.size()) { break; }
 
       const Trajectory_t X_reference = (Trajectory_t() <<
         proposed_trajectory.data_[idx].pvay_.position_,
@@ -138,23 +160,43 @@ namespace path_planning {
 
       auto rk4_fun = [&](const double time, 
                          const Trajectory_t& X_mediation_layer) {
+
+        const Point2D point(X_mediation_layer(0), X_mediation_layer(1));
+
+        const Vec2D resolved_force = std::accumulate(
+            potentials.begin(),
+            potentials.end(),
+            Vec2D(0,0),
+            [&](const Vec2D& sum, const std::shared_ptr<Potential>& potential) {
+              return sum + potential->Resolve(point);
+            });
+
         return DynamicsFun(
             time, 
             X_mediation_layer, 
             X_reference, 
-            force_field.Resolve(Point2D(X_mediation_layer(0), X_mediation_layer(1))));
+            resolved_force);
       };
 
       X_ml = rk4.ForwardIntegrate(rk4_fun, X_ml, ts);
-      std::cout << X_ml.transpose().format(CleanFmt) << std::endl;
 
       // this->proposed_state_->Read(key, proposed_trajectory);
       // this->updated_state_->Write(key, trajectory);
+      
+      updated_trajectory_hist.emplace_back(
+          PVAY2D(
+            Vec2D(X_ml(0), X_ml(1)),
+            Vec2D(X_ml(2), X_ml(3)),
+            Vec2D(X_ml(4), X_ml(5)),
+            0),
+          proposed_trajectory.data_[idx].time_);
 
-      idx++;
+      if(++idx == proposed_trajectory.data_.size()) { break; }
     }
 
     timer.Stop();
+    const Trajectory2D updated_trajectory(updated_trajectory_hist);
+    Trajectory2DView(updated_trajectory, potentials).Display();
 
     return true;
   }
