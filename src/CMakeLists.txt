@@ -5,6 +5,8 @@ set(TARGET path_planning)
 find_package (Eigen3 3.3 NO_MODULE)
 find_package(Boost 1.40.0 COMPONENTS filesystem system iostreams REQUIRED)
 
+add_subdirectory(ros)
+
 set(SOURCES 
   geometry/polygon.cc
   graph/graph.cc
@@ -28,7 +30,6 @@ include_directories(
   mediation_layer/potential
   util
   integration
-  ros
 )
 
 add_library(${TARGET} ${SOURCES})

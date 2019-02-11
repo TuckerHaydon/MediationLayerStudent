@@ -58,3 +58,18 @@ target_include_directories(path_planning_mediation_layer_example PUBLIC
   ../src/integration
   )
 target_link_libraries(path_planning_mediation_layer_example PUBLIC path_planning Eigen3::Eigen)
+
+add_executable(path_planning_ros2d_example ros2d_example.cc)
+target_include_directories(path_planning_ros2d_example PUBLIC 
+  ../src/graph
+  ../src/algorithm
+  ../src/gui
+  ../src/environment
+  ../src/geometry
+  ../src/util
+  ../src/mediation_layer
+  ../src/mediation_layer/potential
+  ../src/integration
+  ../src/ros
+  )
+target_link_libraries(path_planning_ros2d_example PUBLIC path_planning ros2d_lib Eigen3::Eigen)
