@@ -30,10 +30,12 @@ include_directories(
   mediation_layer/potential
   util
   integration
+  ros
 )
 
 add_library(${TARGET} ${SOURCES})
 
 target_link_libraries(${TARGET} 
+  ros2d_lib
   Eigen3::Eigen
   ${Boost_LIBRARIES})

@@ -2,12 +2,13 @@
 
 #pragma once
 
-#include "gnuplot-iostream.h"
+#include <visualization_msgs/Marker.h>
+#include <vector>
 
 namespace path_planning {
   class Potential2DView {
     public:
       virtual ~Potential2DView() = default;
-      virtual Gnuplot& Display(Gnuplot& gp) const = 0;
+      virtual std::vector<visualization_msgs::Marker> Markers() const = 0;
   };
 }

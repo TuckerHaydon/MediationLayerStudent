@@ -5,20 +5,28 @@ cmake_minimum_required(VERSION 2.8.3)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  # message_generation
-  nav_msgs
+  message_generation
+  visualization_msgs
+  jsk_rviz_plugins
+  geometry_msgs
 )
 
 # catkin_package(
-#   CATKIN_DEPENDS nav_msgs message_runtime
+#   CATKIN_DEPENDS visualization_msgs
 # )
 
-# include_directories(
-# 	${catkin_INCLUDE_DIRS}
-# )
-
-# file(GLOB_RECURSE SOURCE_FILES "*.cc")
-add_library(ros2d_lib marker_publisher_node.cc marker_publisher_node.h)
+add_library(ros2d_lib 
+  trajectory2d_view.h
+  potential2d_view.h
+  point2d_potential_view.h
+  # marker_publisher_node.h
+  # marker_publisher_node.cc 
+  # polygon_publisher_node.h
+  # polygon_publisher_node.cc 
+  tmp.cc
+  )
 target_include_directories(ros2d_lib PUBLIC ${catkin_INCLUDE_DIRS})
 target_link_libraries(ros2d_lib ${catkin_LIBRARIES})
-# add_dependencies(${PROJECT_NAME} nav_msgs_gencpp nav_msgs_generate_messages_cpp)
+
+add_dependencies(ros2d_lib visualization_msgs_generate_messages_cpp)
+add_dependencies(ros2d_lib geometry_msgs_generate_messages_cpp)

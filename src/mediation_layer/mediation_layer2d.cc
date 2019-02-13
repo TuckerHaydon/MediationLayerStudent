@@ -205,7 +205,9 @@ namespace path_planning {
 
     timer.Stop();
     const Trajectory2D updated_trajectory(updated_trajectory_hist);
-    Trajectory2DView(updated_trajectory, potential_views).Display();
+    Trajectory2DView view(updated_trajectory, potential_views);
+    view.DisplayDynamics();
+    view.DisplayPlots();
 
     return true;
   }
