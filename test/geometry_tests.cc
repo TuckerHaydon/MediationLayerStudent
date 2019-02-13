@@ -7,10 +7,8 @@
 #include <iostream>
 #include <Eigen/Core>
 
-#include "point2d.h"
 #include "line2d.h"
 #include "polygon.h"
-#include "point3d.h"
 #include "line3d.h"
 #include "plane3d.h"
 #include "polyhedron.h"
@@ -209,12 +207,7 @@ void test_Line2D() {
   }
 }
 
-void test_Point2D() {
-  const Point2D p(0,0); 
-}
-
 int main(int argc, char** argv) {
-  test_Point2D();
   test_Line2D();
   test_Polygon();
   test_Plane3D();

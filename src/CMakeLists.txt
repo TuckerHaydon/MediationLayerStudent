@@ -6,9 +6,9 @@ find_package (Eigen3 3.3 NO_MODULE)
 find_package(Boost 1.40.0 COMPONENTS filesystem system iostreams REQUIRED)
 
 add_subdirectory(ros)
+add_subdirectory(geometry)
 
 set(SOURCES 
-  geometry/polygon.cc
   graph/graph.cc
   algorithm/a_star.cc
   algorithm/dijkstra.cc
@@ -37,5 +37,6 @@ add_library(${TARGET} ${SOURCES})
 
 target_link_libraries(${TARGET} 
   ros2d_lib
+  geometry
   Eigen3::Eigen
   ${Boost_LIBRARIES})

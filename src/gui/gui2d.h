@@ -1,7 +1,6 @@
 // Author: Tucker Haydon
 
-#ifndef PATH_PLANNING_GUI_GUI2D_H
-#define PATH_PLANNING_GUI_GUI2D_H
+#pragma once
 
 #include <vector>
 #include <string>
@@ -10,7 +9,6 @@
 #include "gnuplot-iostream.h"
 #include "map2d.h"
 #include "occupancy_grid2d.h"
-#include "point2d.h"
 #include "polygon.h"
 
 namespace path_planning {
@@ -40,5 +38,3 @@ namespace path_planning {
 
   };
 }
-
-#endif

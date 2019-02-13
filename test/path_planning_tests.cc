@@ -3,7 +3,6 @@
 #include <cassert>
 #include <iostream>
 
-#include "point2d.h"
 #include "line2d.h"
 #include "polygon.h"
 #include "map2d.h"

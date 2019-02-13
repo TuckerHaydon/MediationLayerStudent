@@ -1,9 +1,8 @@
 // Author: Tucker Haydon
 
-#ifndef GEOMETRY_LINE3D_H
-#define GEOMETRY_LINE3D_H
+#pragma once 
 
-#include "point3d.h"
+#include "types.h"
 
 namespace path_planning {
   /*
@@ -55,5 +54,3 @@ namespace path_planning {
     return this->end_ - this->start_;
   }
 }
-
-#endif

@@ -1,13 +1,10 @@
 // Author: Tucker Haydon
 
-#ifndef PATH_PLANNING_MEDIATION_LAYER_LINE2D_POTENTIAL_H
-#define PATH_PLANNING_MEDIATION_LAYER_LINE2D_POTENTIAL_H
+#pragma once
 
 #include <algorithm>
 
 #include "line2d.h"
-#include "point2d.h"
-#include "vec2d.h"
 #include "potential2d.h"
 
 namespace path_planning {
@@ -60,5 +57,3 @@ namespace path_planning {
       unit;
   } 
 }
-
-#endif

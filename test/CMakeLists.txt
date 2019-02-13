@@ -17,7 +17,7 @@ add_executable(geometry_tests geometry_tests.cc)
 target_include_directories(geometry_tests PUBLIC 
   ../src/geometry
 )
-target_link_libraries(geometry_tests PUBLIC path_planning Eigen3::Eigen)
+target_link_libraries(geometry_tests PUBLIC geometry)
 
 add_executable(mediation_layer_tests mediation_layer_tests.cc)
 target_include_directories(mediation_layer_tests PUBLIC 

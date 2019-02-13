@@ -1,9 +1,8 @@
 // Author: Tucker Haydon
 
-#ifndef PATH_PLANNING_CONSTRAINT_LINEAR_CONSTRAINT_H
-#define PATH_PLANNING_CONSTRAINT_LINEAR_CONSTRAINT_H
+#pragma once
 
-#include "point2d.h"
+#include "types.h"
 
 namespace path_planning {
   // Abstraction of a linear constraint of the form AX < B, where X is
@@ -56,5 +55,3 @@ namespace path_planning {
 
   };
 }
-
-#endif

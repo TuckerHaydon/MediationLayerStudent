@@ -4,9 +4,7 @@
 
 #include <algorithm>
 
-#include "point2d.h"
 #include "potential2d.h"
-#include "vec2d.h"
 
 namespace path_planning {
 
@@ -46,5 +44,4 @@ namespace path_planning {
         ) * 
       unit;
   } 
-
 }

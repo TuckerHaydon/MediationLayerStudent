@@ -1,14 +1,12 @@
 // Author: Tucker Haydon
 
-#ifndef GEOMETRY_POLYHEDRON_H
-#define GEOMETRY_POLYHEDRON_H
+#pragma once
 
 #include <vector>
 #include <iostream>
 #include <cstdlib>
 
 #include "plane3d.h"
-#include "point3d.h"
 
 namespace path_planning {
   class Polyhedron {
@@ -72,5 +70,3 @@ namespace path_planning {
     return Polyhedron();
   }
 }
-
-#endif

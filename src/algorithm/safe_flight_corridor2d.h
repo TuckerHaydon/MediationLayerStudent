@@ -1,12 +1,10 @@
 // Author: Tucker Haydon
 
-#ifndef PATH_PLANNING_ALGORITHM_SAFE_FLIGHT_CORRIDOR2D
-#define PATH_PLANNING_ALGORITHM_SAFE_FLIGHT_CORRIDOR2D
+#pragma once
 
 #include <vector>
 
 #include "polygon.h"
-#include "point2d.h"
 #include "map2d.h"
 
 namespace path_planning {
@@ -30,5 +28,3 @@ namespace path_planning {
     return true;
   }
 }
-
-#endif

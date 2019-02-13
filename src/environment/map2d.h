@@ -1,14 +1,12 @@
 // Author: Tucker Haydon
 
-#ifndef PATH_PLANNING_ENVIRONMENT_MAP2D_H
-#define PATH_PLANNING_ENVIRONMENT_MAP2D_H
+#pragma once 
 
 #include <vector>
 #include <cstdlib>
 #include <iostream>
 
 #include "polygon.h"
-#include "point2d.h"
 
 namespace path_planning {
   class Map2D {
@@ -90,5 +88,3 @@ namespace path_planning {
     return this->boundary_.BoundingBox();
   }
 }
-
-#endif

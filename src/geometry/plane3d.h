@@ -1,9 +1,10 @@
 // Author: Tucker Haydon
 
-#ifndef GEOMETRY_PLANE3D_H
-#define GEOMETRY_PLANE3D_H
+#pragma once 
 
 #include <vector>
+
+#include "line3d.h"
 
 namespace path_planning {
   class Plane3D {
@@ -37,9 +38,8 @@ namespace path_planning {
   }
 
   inline bool Plane3D::OnLeftSide(const Point3D& point) const {
-    return (point - this->edges_[0].Start()).Dot(
-        this->edges_[0].AsVector().Cross(
+    return (point - this->edges_[0].Start()).dot(
+        this->edges_[0].AsVector().cross(
           this->edges_[1].AsVector())) > 0;
   }
 }
-#endif

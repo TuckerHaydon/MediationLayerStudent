@@ -1,10 +1,8 @@
 // Author: Tucker Haydon
 
-#ifndef PATH_PLANNING_MEDIATION_LAYER_POTENTIAL2D_H
-#define PATH_PLANNING_MEDIATION_LAYER_POTENTIAL2D_H
+#pragma once
 
-#include "point2d.h"
-#include "vec2d.h"
+#include "types.h"
 
 namespace path_planning {
   class Potential2D {
@@ -13,5 +11,3 @@ namespace path_planning {
       virtual Vec2D Resolve(const Point2D& point) const = 0;
   }; 
 }
-
-#endif

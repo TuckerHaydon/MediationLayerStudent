@@ -1,11 +1,13 @@
 // Author: Tucker Haydon
 
-#include "polygon.h"
-
+#include <cstdlib>
 #include <numeric>
 #include <iostream>
 #include <cmath>
 #include <queue>
+#include <limits>
+
+#include "polygon.h"
 
 namespace path_planning { 
   Polygon Polygon::Expand(double dist) const { 
@@ -106,5 +108,83 @@ namespace path_planning {
 
     *(this) = Polygon(edges);
     return true;
+  }
+
+  Polygon::Polygon(const std::vector<Line2D>& edges)
+    : edges_(edges) {
+      this->UpdateVertices(); 
+  }
+
+  bool Polygon::UpdateVertices() {
+    this->vertices_.clear();
+    this->vertices_.reserve(this->edges_.size());
+    for(const Line2D& edge: this->edges_) {
+      this->vertices_.push_back(edge.Start());
+    }
+    return true;
+  }
+
+  const std::vector<Line2D>& Polygon::Edges() const {
+    return this->edges_;
+  }
+
+  bool Polygon::SetEdges(const std::vector<Line2D>& edges) {
+    this->edges_ = edges;
+    this->UpdateVertices();
+
+    return true;
+  }
+
+  const std::vector<Point2D>& Polygon::Vertices() const {
+    return this->vertices_;
+  }
+
+  bool Polygon::Contains(const Point2D& point) const {
+    this->Check();
+
+    for(const Line2D& edge: this->edges_) {
+      if(false == edge.OnLeftSide(point)) { return false; }
+    }
+
+    return true;
+  }
+
+  Polygon Polygon::BoundingBox() const {
+    double min_x{std::numeric_limits<double>::max()},
+           min_y{std::numeric_limits<double>::max()},
+           max_x{std::numeric_limits<double>::min()},
+           max_y{std::numeric_limits<double>::min()};
+
+    for(const Point2D& point: this->vertices_) {
+      if(point.x() < min_x) { min_x = point.x(); }
+      if(point.x() > max_x) { max_x = point.x(); }
+      if(point.y() < min_y) { min_y = point.y(); }
+      if(point.y() > max_y) { max_y = point.y(); }
+    }
+
+    return Polygon({
+      Line2D(Point2D(min_x, min_y), Point2D(max_x, min_y)),
+      Line2D(Point2D(max_x, min_y), Point2D(max_x, max_y)),
+      Line2D(Point2D(max_x, max_y), Point2D(min_x, max_y)),
+      Line2D(Point2D(min_x, max_y), Point2D(min_x, min_y))});
+  }
+
+  bool Polygon::ConstructFromPoints(const std::vector<Point2D>& points) {
+    std::vector<Line2D> edges;
+    edges.reserve(points.size());
+    for(size_t idx = 0; idx < points.size(); ++idx) {
+      edges.emplace_back(points[idx], points[(idx + 1) % points.size()]);
+    }
+    *(this) = Polygon(edges);
+
+    return true;
+  }
+
+  void Polygon::Check() const {  
+    // TODO: Check that the polygon is complete
+    if(false == this->IsConvex()) {
+      std::cerr << "Polygon is not convex. Exiting." << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
   }
 }
