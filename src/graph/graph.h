@@ -1,14 +1,13 @@
 // Author: Tucker Haydon
 
-#ifndef PATH_PLANNING_GRAPH_H
-#define PATH_PLANNING_GRAPH_H
+#pragma once
 
 #include <unordered_map>
 #include <vector>
 
 #include "directed_edge.h"
 #include "node.h"
-#include "occupancy_grid2d.h"
+// #include "occupancy_grid2d.h"
 
 namespace path_planning{
   /*
@@ -18,18 +17,83 @@ namespace path_planning{
   class Graph {
     private: 
       std::unordered_map<Node, std::vector<DirectedEdge>, Node::Hash> edge_graph_;
-      static std::vector<DirectedEdge> EMPTY_EDGE_LIST;
   
     public:
       Graph(){};
-      Graph(const OccupancyGrid2D& occupancy_grid);
+      // Graph(const OccupancyGrid2D& occupancy_grid);
 
-      const std::vector<DirectedEdge>& Edges(const Node& node) const;
+      const std::vector<DirectedEdge> Edges(const Node& node) const;
   
       bool AddEdge(const DirectedEdge& edge);
       bool AddEdges(const std::vector<DirectedEdge>& edges);
 
   };
-}
 
-#endif
+  //============================
+  //     IMPLEMENTATION
+  //============================
+  // inline Graph::Graph(const OccupancyGrid2D& occupancy_grid) {
+  //   std::cout << occupancy_grid.SizeY() << " " << occupancy_grid.SizeX() << std::endl;
+
+  //   // Build node grid
+  //   Node node_grid[occupancy_grid.SizeY()][occupancy_grid.SizeX()];
+  //   for(size_t row = 0; row < occupancy_grid.SizeY(); ++row) {
+  //     for(size_t col = 0; col < occupancy_grid.SizeX(); ++col) {
+  //       int data[2] = {static_cast<int>(row), static_cast<int>(col)};
+  //       size_t data_size = 2 * sizeof(int);
+  //       node_grid[row][col].SetData(reinterpret_cast<uint8_t*>(&data), data_size);
+  //     }
+  //   }
+
+  //   // Convert node grid to directed edges and add to graph
+  //   std::vector<DirectedEdge> edges;
+  //   for(int row = 0; row < occupancy_grid.SizeY(); ++row) {
+  //     for(int col = 0; col < occupancy_grid.SizeX(); ++col) {
+	// 			// If current node is unreachable, pass	
+	// 			if(true == occupancy_grid.IsOccupied(row, col)) { continue; }
+
+  //       constexpr double ADJACENT_COST = 1.0;
+  //       constexpr double DIAGONAL_COST = std::sqrt(2);
+	// 			// Else, create paths from nearby nodes into this one
+  //       // 8 node surrounding the current node
+  //       if(row - 1 >= 0) { edges.emplace_back(node_grid[row - 1][col], node_grid[row][col], ADJACENT_COST); }
+  //       if(col - 1 >= 0) { edges.emplace_back(node_grid[row][col - 1], node_grid[row][col], ADJACENT_COST); }
+
+  //       if(row + 1 < occupancy_grid.SizeY()) { edges.emplace_back(node_grid[row + 1][col], node_grid[row][col], ADJACENT_COST); }
+  //       if(col + 1 < occupancy_grid.SizeX()) { edges.emplace_back(node_grid[row][col + 1], node_grid[row][col], ADJACENT_COST); }
+
+  //       if(row - 1 >= 0 && col - 1 >= 0) { 
+  //         edges.emplace_back(node_grid[row - 1][col - 1], node_grid[row][col], DIAGONAL_COST); }
+  //       if(row - 1 >= 0 && col + 1 < occupancy_grid.SizeX()) { 
+  //         edges.emplace_back(node_grid[row - 1][col + 1], node_grid[row][col], DIAGONAL_COST); }
+  //       if(row + 1 < occupancy_grid.SizeY() && col - 1 >= 0) { 
+  //         edges.emplace_back(node_grid[row + 1][col - 1], node_grid[row][col], DIAGONAL_COST); }
+  //       if(row + 1 < occupancy_grid.SizeY() && col +1 < occupancy_grid.SizeX()) { 
+  //         edges.emplace_back(node_grid[row + 1][col + 1], node_grid[row][col], DIAGONAL_COST); }
+  //     }
+  //   }
+
+  //   this->AddEdges(edges);
+  // } 
+
+  inline const std::vector<DirectedEdge> Graph::Edges(const Node& node) const {
+    try {
+      return this->edge_graph_.at(node);
+    } catch(const std::out_of_range& e) {
+      return {};
+    }
+  }
+  
+  inline bool Graph::AddEdge(const DirectedEdge& edge) {
+    this->edge_graph_[edge.source_].push_back(edge);   
+    return true;
+  }
+  
+  inline bool Graph::AddEdges(const std::vector<DirectedEdge>& edges) {
+    std::for_each(edges.begin(), edges.end(), 
+        [this](const DirectedEdge& edge){ 
+        this->AddEdge(edge); 
+    });
+    return true;
+  }
+}

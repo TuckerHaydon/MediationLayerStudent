@@ -1,7 +1,6 @@
 // Author: Tucker Haydon
 
-#ifndef PATH_PLANNING_MEDIATION_LAYER_TRAJECTORY2D_H
-#define PATH_PLANNING_MEDIATION_LAYER_TRAJECTORY2D_H
+#pragma once
 
 #include <vector>
 
@@ -15,5 +14,3 @@ namespace path_planning {
       : data_(data) {}
   };
 }
-
-#endif

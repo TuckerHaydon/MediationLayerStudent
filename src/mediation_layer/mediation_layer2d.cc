@@ -6,7 +6,6 @@
 #include "mediation_layer2d.h"
 #include "runge_kutta_4.h"
 #include "time_span.h"
-#include "vec2d.h"
 #include "timer.h"
 #include "trajectory2d_view.h"
 #include "line2d_potential.h"

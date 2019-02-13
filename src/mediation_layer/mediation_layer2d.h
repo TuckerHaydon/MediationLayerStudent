@@ -1,7 +1,6 @@
 // Author: Tucker Haydon
 
-#ifndef PATH_PLANNING_MEDIATION_LAYER_MEDIATION_LAYER2D_H
-#define PATH_PLANNING_MEDIATION_LAYER_MEDIATION_LAYER2D_H
+#pragma once
 
 #include <memory>
 
@@ -29,5 +28,3 @@ namespace path_planning {
       bool Run();
   };
 };
-
-#endif

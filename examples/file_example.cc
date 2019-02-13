@@ -68,12 +68,12 @@ int main(int argc, char** argv) {
     start.SetData(reinterpret_cast<const uint8_t*>(start_coordinate), data_size);
     end.SetData(reinterpret_cast<const uint8_t*>(end_coordinate), data_size);
 
-    OccupancyGrid2D occupancy_grid;
-    occupancy_grid.LoadFromFile(file_path);
-    Graph graph(occupancy_grid);
+    // OccupancyGrid2D occupancy_grid;
+    // occupancy_grid.LoadFromFile(file_path);
+    // Graph graph(occupancy_grid);
 
-    RunDijkstra(graph, occupancy_grid, start, end);
-    RunAStar(graph, occupancy_grid, start, end);
+    // RunDijkstra(graph, occupancy_grid, start, end);
+    // RunAStar(graph, occupancy_grid, start, end);
   } else {
     std::cout << "Did you forget command line args?" << std::endl;
   }

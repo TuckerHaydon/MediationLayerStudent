@@ -1,7 +1,6 @@
 // Author: Tucker Haydon
 
-#ifndef PATH_PLANNING_MEDIATION_LAYER_STATE_H
-#define PATH_PLANNING_MEDIATION_LAYER_STATE_H
+#pragma once
 
 #include <string>
 #include <unordered_map>
@@ -77,4 +76,3 @@ namespace path_planning {
 
 };
 
-#endif

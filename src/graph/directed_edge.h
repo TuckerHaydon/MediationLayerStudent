@@ -1,7 +1,6 @@
 // Author: Tucker Haydon
 
-#ifndef PATH_PLANNING_DIRECTED_EDGE_H
-#define PATH_PLANNING_DIRECTED_EDGE_H
+#pragma once
 
 #include <limits>
 
@@ -23,5 +22,3 @@ namespace path_planning {
       : source_(source), sink_(sink), cost_(cost) {}; 
   };
 }
-
-#endif

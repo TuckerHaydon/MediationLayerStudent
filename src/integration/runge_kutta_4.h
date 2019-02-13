@@ -1,7 +1,6 @@
 // Author: Tucker Haydon
 
-#ifndef PATH_PLANNING_INTEGRATION_RUNGE_KUTTA_4_H
-#define PATH_PLANNING_INTEGRATION_RUNGE_KUTTA_4_H
+#pragma once
 
 #include <functional>
 
@@ -48,5 +47,3 @@ namespace path_planning {
       }
   };
 }
-
-#endif

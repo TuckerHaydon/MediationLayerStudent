@@ -48,39 +48,39 @@ int main(int argc, char** argv) {
 
   OccupancyGrid2D occupancy_grid;
   occupancy_grid.LoadFromMap(map, SAMPLE_DELTA, SAFETY_BOUND);
-  Graph graph(occupancy_grid);
+  // Graph graph(occupancy_grid);
 
-  const size_t data_size = 2*sizeof(int);
-  const double start[2] = {1,1}, end[2] = {9,9};
-  const int start_int[2] = {(int)(start[0]/SAMPLE_DELTA),(int)(start[1]/SAMPLE_DELTA)};
-  const int end_int[2] = {(int)(end[0]/SAMPLE_DELTA),(int)(end[1]/SAMPLE_DELTA)};
+  // const size_t data_size = 2*sizeof(int);
+  // const double start[2] = {1,1}, end[2] = {9,9};
+  // const int start_int[2] = {(int)(start[0]/SAMPLE_DELTA),(int)(start[1]/SAMPLE_DELTA)};
+  // const int end_int[2] = {(int)(end[0]/SAMPLE_DELTA),(int)(end[1]/SAMPLE_DELTA)};
 
-  Node start_node, end_node;
-  start_node.SetData(reinterpret_cast<const uint8_t*>(start_int), data_size);
-  end_node.SetData(reinterpret_cast<const uint8_t*>(end_int), data_size);
+  // Node start_node, end_node;
+  // start_node.SetData(reinterpret_cast<const uint8_t*>(start_int), data_size);
+  // end_node.SetData(reinterpret_cast<const uint8_t*>(end_int), data_size);
 
-  const std::vector<Node> path = AStar().Run(graph, start_node, end_node);
-  std::cout << "Path (" << path.size() << " nodes):" << std::endl;
-  std::for_each(
-      path.begin(),
-      path.end(),
-      [](const Node& node){
-        std::cout << node << std::endl;
-      });
+  // const std::vector<Node> path = AStar().Run(graph, start_node, end_node);
+  // std::cout << "Path (" << path.size() << " nodes):" << std::endl;
+  // std::for_each(
+  //     path.begin(),
+  //     path.end(),
+  //     [](const Node& node){
+  //       std::cout << node << std::endl;
+  //     });
 
-  std::vector<Point2D> path_view;
-  path_view.reserve(path.size());
-  std::for_each(
-      path.begin(),
-      path.end(),
-      [&](const Node& node){
-        path_view.emplace_back(((int*)node.Data())[0], ((int*)node.Data())[1]);
-      });
+  // std::vector<Point2D> path_view;
+  // path_view.reserve(path.size());
+  // std::for_each(
+  //     path.begin(),
+  //     path.end(),
+  //     [&](const Node& node){
+  //       path_view.emplace_back(((int*)node.Data())[0], ((int*)node.Data())[1]);
+  //     });
 
-  Gui2D gui;
-  gui.LoadOccupancyGrid(&occupancy_grid);
-  gui.LoadPath(path_view);
-  gui.Display();
+  // Gui2D gui;
+  // gui.LoadOccupancyGrid(&occupancy_grid);
+  // gui.LoadPath(path_view);
+  // gui.Display();
 
   return 0;
 }

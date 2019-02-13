@@ -1,7 +1,6 @@
 // Author: Tucker Haydon
 
-#ifndef PATH_PLANNING_INTEGRATION_TIME_SPAN_H
-#define PATH_PLANNING_INTEGRATION_TIME_SPAN_H
+#pragma once
 
 #include <algorithm>
 #include <cassert>
@@ -27,5 +26,3 @@ namespace path_planning {
     }
   };
 }
-
-#endif

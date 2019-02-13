@@ -1,7 +1,6 @@
 // Author: Tucker Haydon
 
-#ifndef PATH_PLANNING_ENVIRONMENT_OCCUPANCY_GRID2D_H
-#define PATH_PLANNING_ENVIRONMENT_OCCUPANCY_GRID2D_H
+#pragma once
 
 #include <string>
 #include <cstdlib>
@@ -68,5 +67,3 @@ namespace path_planning {
     return const_cast<const bool**>(this->data_);
   }
 }
-
-#endif

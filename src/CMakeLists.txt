@@ -7,9 +7,11 @@ find_package(Boost 1.40.0 COMPONENTS filesystem system iostreams REQUIRED)
 
 add_subdirectory(ros)
 add_subdirectory(geometry)
+add_subdirectory(integration)
+add_subdirectory(graph)
 
 set(SOURCES 
-  graph/graph.cc
+  # graph/graph.cc
   algorithm/a_star.cc
   algorithm/dijkstra.cc
   algorithm/safe_flight_corridor2d.cc
@@ -20,23 +22,22 @@ set(SOURCES
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
-  geometry
   algorithm
   environment
-  graph
+  # graph
   gui
   constraint
   mediation_layer
   mediation_layer/potential
   util
-  integration
   ros
 )
-
 add_library(${TARGET} ${SOURCES})
 
 target_link_libraries(${TARGET} 
   ros2d_lib
-  geometry
+  lib_geometry
+  lib_integration
+  lib_graph
   Eigen3::Eigen
   ${Boost_LIBRARIES})

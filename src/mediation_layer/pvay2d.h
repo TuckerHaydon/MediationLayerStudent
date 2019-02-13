@@ -1,9 +1,8 @@
 // Author: Tucker Haydon
 
-#ifndef PATH_PLANNING_MEDIATION_LAYER_PVAY2D_H
-#define PATH_PLANNING_MEDIATION_LAYER_PVAY2D_H
+#pragma once
 
-#include "vec2d.h"
+#include "types.h"
 
 namespace path_planning {
   struct PVAY2D {
@@ -24,5 +23,3 @@ namespace path_planning {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW 
   };
 }
-
-#endif

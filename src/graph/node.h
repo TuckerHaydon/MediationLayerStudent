@@ -1,7 +1,6 @@
 // Author: Tucker Haydon
 
-#ifndef PATH_PLANNING_GRAPH_NODE_H
-#define PATH_PLANNING_GRAPH_NODE_H
+#pragma once
 
 #include <string>
 #include <cstdlib>
@@ -91,5 +90,3 @@ namespace path_planning {
     return seed;
   }
 }
-
-#endif

@@ -1,7 +1,6 @@
 // Author: Tucker Haydon
 
-#ifndef PATH_PLANNING_MEDIATION_LAYER_TIME_STAMPED_PVAY2D_H
-#define PATH_PLANNING_MEDIATION_LAYER_TIME_STAMPED_PVAY2D_H
+#pragma once
 
 #include "pvay2d.h"
 
@@ -16,4 +15,3 @@ namespace path_planning {
         time_(time) {}
   };
 }
-#endif

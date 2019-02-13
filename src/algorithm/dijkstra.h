@@ -1,7 +1,6 @@
 // Author: Tucker Haydon
 
-#ifndef PATH_PLANNING_DIJKSTRA_H
-#define PATH_PLANNING_DIJKSTRA_H
+#pragma once
 
 #include "graph.h"
 
@@ -16,5 +15,3 @@ namespace path_planning {
                                    const Node& end);
   };
 }
-
-#endif
