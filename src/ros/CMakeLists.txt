@@ -7,7 +7,6 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   message_generation
   visualization_msgs
-  jsk_rviz_plugins
   geometry_msgs
 )
 
@@ -21,8 +20,6 @@ add_library(ros2d_lib
   point2d_potential_view.h
   # marker_publisher_node.h
   # marker_publisher_node.cc 
-  # polygon_publisher_node.h
-  # polygon_publisher_node.cc 
   tmp.cc
   )
 target_include_directories(ros2d_lib PUBLIC ${catkin_INCLUDE_DIRS})

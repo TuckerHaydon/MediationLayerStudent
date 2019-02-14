@@ -6,6 +6,7 @@
 #include <cstdlib>
 
 #include "map2d.h"
+#include "graph.h"
 
 namespace path_planning {
   class OccupancyGrid2D {
@@ -26,9 +27,14 @@ namespace path_planning {
       OccupancyGrid2D& operator=(OccupancyGrid2D&& other) noexcept = delete;
       OccupancyGrid2D(OccupancyGrid2D&& other) noexcept  = delete;
 
+      // Load from various entities
       bool LoadFromFile(const std::string& file_path);
       bool LoadFromMap(const Map2D& map, const double sample_delta, const double safety_bound=0);
       bool LoadFromBuffer(const bool** buffer, const size_t size_x, const size_t size_y);
+
+      // Create a graph representation of this occupancy grid. Every cell has a
+      // directed edge to the 8 cells around it.
+      Graph2D AsGraph() const;
 
       size_t SizeX() const;
       size_t SizeY() const;

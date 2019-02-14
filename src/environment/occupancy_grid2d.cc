@@ -1,10 +1,12 @@
 // Author: Tucker Haydon
 
-#include "occupancy_grid2d.h"
-
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <memory>
+
+#include "occupancy_grid2d.h"
+#include "node2d.h"
 
 namespace path_planning {
   bool OccupancyGrid2D::LoadFromFile(const std::string& file_path) {
@@ -97,5 +99,48 @@ namespace path_planning {
     this->heap_allocated_ = true;
 
     return true;
+  }
+
+  Graph2D OccupancyGrid2D::AsGraph() const {
+    // Build a 2D array of nodes
+    std::shared_ptr<Node2D> node_grid[this->size_y_][this->size_x_];
+    for(size_t row = 0; row < this->size_y_; ++row) {
+      for(size_t col = 0; col < this->size_x_; ++col) {
+        // int data[2] = {static_cast<int>(row), static_cast<int>(col)};
+        // size_t data_size = 2 * sizeof(int);
+        // node_grid[row][col].SetData(reinterpret_cast<uint8_t*>(&data), data_size);
+        node_grid[row][col] = std::make_shared<Node2D>(Eigen::Matrix<double, 2, 1>(row, col));
+      }
+    }
+
+    // Convert node grid to directed edges and add to graph
+    std::vector<DirectedEdge2D> edges;
+    for(int row = 0; row < this->size_y_; ++row) {
+      for(int col = 0; col < this->size_x_; ++col) {
+				// If current node is unreachable, pass	
+				if(true == this->IsOccupied(row, col)) { continue; }
+
+        constexpr double ADJACENT_COST = 1.0;
+        constexpr double DIAGONAL_COST = std::sqrt(2);
+				// Else, create paths from nearby nodes into this one
+        // 8 node surrounding the current node
+        if(row - 1 >= 0) { edges.emplace_back(node_grid[row - 1][col], node_grid[row][col], ADJACENT_COST); }
+        if(col - 1 >= 0) { edges.emplace_back(node_grid[row][col - 1], node_grid[row][col], ADJACENT_COST); }
+
+        if(row + 1 < this->size_y_) { edges.emplace_back(node_grid[row + 1][col], node_grid[row][col], ADJACENT_COST); }
+        if(col + 1 < this->size_x_) { edges.emplace_back(node_grid[row][col + 1], node_grid[row][col], ADJACENT_COST); }
+
+        if(row - 1 >= 0 && col - 1 >= 0) { 
+          edges.emplace_back(node_grid[row - 1][col - 1], node_grid[row][col], DIAGONAL_COST); }
+        if(row - 1 >= 0 && col + 1 < this->size_x_) { 
+          edges.emplace_back(node_grid[row - 1][col + 1], node_grid[row][col], DIAGONAL_COST); }
+        if(row + 1 < this->size_y_ && col - 1 >= 0) { 
+          edges.emplace_back(node_grid[row + 1][col - 1], node_grid[row][col], DIAGONAL_COST); }
+        if(row + 1 < this->size_y_ && col +1 < this->size_x_) { 
+          edges.emplace_back(node_grid[row + 1][col + 1], node_grid[row][col], DIAGONAL_COST); }
+      }
+    }
+
+    return Graph2D(edges);
   }
 }
