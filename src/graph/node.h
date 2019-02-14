@@ -2,91 +2,52 @@
 
 #pragma once
 
-#include <string>
-#include <cstdlib>
-#include <cstring>
-#include <iostream>
+#include <Eigen/Dense>
+#include <functional>
+#include <type_traits>
 
 namespace path_planning {
+  template <class T>
   class Node {
-    private:
-      uint8_t* data_;
-      size_t data_size_;
-      bool heap_allocated_{false};
-
-      void CleanUp();
+    protected:
+      const T data_;
+      const std::function<bool(const T& other)> f_equals_;
+      const std::function<size_t()> f_hash_;
 
     public:
-      Node() {}
-      ~Node();
+      Node(const T& data = T(),
+           std::function<bool(const T&)> f_equals = [](const T& t){ return false; }, 
+           std::function<size_t()> f_hash = [](const T& t) { return 0; })
+        : data_(data),
+          f_equals_(f_equals),
+          f_hash_(f_hash) {}
 
-      // Copy constructor and assignment
-      Node(const Node& other);
-      Node& operator=(const Node& other);
+      bool operator==(const Node& other) const {
+        return this->f_equals_(other.data_);
+      }
 
-      // Prevent moves (for now)
-      Node& operator=(Node&& other) noexcept = delete;
-      Node(Node&& other) noexcept  = delete;
-      
-      const uint8_t* Data() const;
-      bool SetData(const uint8_t* data, const size_t size);
-  
-      bool operator==(const Node& other) const;
+      struct Equals {
+        bool operator()(const Node& lhs, const Node& rhs) const {
+          return lhs == rhs;
+        }
+      };
 
-		  struct Hash {
-        size_t operator()(const Node& node) const;
-		  };
+      struct EqualsPointer {  
+        bool operator()(const std::shared_ptr<Node>& lhs, const std::shared_ptr<Node>& rhs) const {
+          return *lhs == *rhs;
+        }
+      };
+
+      struct Hash {
+        size_t operator()(const Node& node) const {
+          return node.f_hash_();
+        }
+      };
+
+      struct HashPointer {
+        size_t operator()(const std::shared_ptr<Node>& node_ptr) const {
+          return node_ptr->f_hash_();
+        }
+      };
   };
-
-  //  ******************
-  //  * IMPLEMENTATION *
-  //  ******************
-  inline Node::Node(const Node& other) {
-    this->SetData(other.data_, other.data_size_);
-  }
-
-  inline Node& Node::operator=(const Node& other) {
-    this->SetData(other.data_, other.data_size_);
-    return *(this);
-  }
-
-  inline Node::~Node() {
-    this->CleanUp();
-  }
-
-  inline void Node::CleanUp() {
-    if(true == this->heap_allocated_) {
-      std::free(this->data_);
-      this->heap_allocated_ = false;
-    }
-  }
-
-  inline const uint8_t* Node::Data() const {
-    return this->data_;
-  }
-
-  inline bool Node::SetData(const uint8_t* data, const size_t size) {
-    this->CleanUp();
-    this->data_size_ = size;
-    this->data_ = reinterpret_cast<uint8_t*>(std::malloc(this->data_size_));
-    this->heap_allocated_ = true;
-    std::memcpy(this->data_, data, this->data_size_);
-    return true;
-  }
-  
-  inline bool Node::operator==(const Node& other) const {
-    return 
-      this->data_size_ == other.data_size_ &&
-      0 == std::memcmp(this->data_, other.data_, this->data_size_);
-  }
-
-  // Reference: 
-  // https://stackoverflow.com/questions/20511347/a-good-hash-function-for-a-vector
-  inline size_t Node::Hash::operator()(const Node& node) const {
-    size_t seed = node.data_size_;
-    for(size_t idx = 0; idx < node.data_size_; ++idx) {
-      seed ^= node.data_[idx] + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-    }
-    return seed;
-  }
 }

@@ -8,7 +8,7 @@ target_link_libraries(geometry_tests PUBLIC lib_geometry)
 
 
 # Graph library tests
-add_executable(graph_tests graphs_tests.cc)
+add_executable(graph_tests graph_tests.cc)
 target_link_libraries(graph_tests PUBLIC lib_graph)
 
 
