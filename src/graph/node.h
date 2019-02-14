@@ -5,6 +5,7 @@
 #include <Eigen/Dense>
 #include <functional>
 #include <type_traits>
+#include <memory>
 
 namespace path_planning {
   template <class T>

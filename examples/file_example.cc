@@ -4,76 +4,35 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include <memory>
+#include <Eigen/Dense>
 
-#include "node.h"
-#include "directed_edge.h"
+#include "node2d.h"
 #include "graph.h"
-#include "dijkstra.h"
 #include "occupancy_grid2d.h"
-#include "a_star.h"
+#include "dijkstra.h"
 
 using namespace path_planning;
 
-
-std::ostream & operator<<(std::ostream& out, const Node& node) {
-  const int* data = reinterpret_cast<const int*>(node.Data());
-  out << data[0] << ", " << data[1];
-  return out;
-}
-
-void RunAStar(const Graph& graph, 
-              const OccupancyGrid2D& occupancy_grid,
-              const Node& start, 
-              const Node& end) {
-
-    const std::vector<Node> path = AStar().Run(graph, start, end);
-
-    std::cout << "Path (" << path.size() << " nodes):" << std::endl;
-    std::for_each(
-        path.begin(),
-        path.end(),
-        [](const Node& node){
-          std::cout << node << std::endl;
-        });
-
-    // GNUVisualizer().Run(occupancy_grid, path);
-}
-
-void RunDijkstra(const Graph& graph, 
-                 const OccupancyGrid2D& occupancy_grid,
-                 const Node& start, 
-                 const Node& end) {
-
-    const std::vector<Node> path = Dijkstra().Run(graph, start, end);
-
-    std::cout << "Path (" << path.size() << " nodes):" << std::endl;
-    std::for_each(
-        path.begin(),
-        path.end(),
-        [](const Node& node){
-          std::cout << node << std::endl;
-        });
-
-    // GNUVisualizer().Run(occupancy_grid, path);
-}
-
 int main(int argc, char** argv) {
   if(argc == 6) {
-    const int start_coordinate[2] = {std::stoi(argv[1]), std::stoi(argv[2])};
-    const int end_coordinate[2] = {std::stoi(argv[3]), std::stoi(argv[4])};
+    const double start_coordinate[2] = {std::stod(argv[1]), std::stod(argv[2])};
+    const double end_coordinate[2] = {std::stod(argv[3]), std::stod(argv[4])};
     const std::string file_path = argv[5];
 
-    const size_t data_size = 2*sizeof(int);
-    Node start, end;
-    start.SetData(reinterpret_cast<const uint8_t*>(start_coordinate), data_size);
-    end.SetData(reinterpret_cast<const uint8_t*>(end_coordinate), data_size);
+    const auto start_node = std::make_shared<Node2D>(Eigen::Vector2d(
+        start_coordinate[0],
+        start_coordinate[1]));
+    const auto end_node = std::make_shared<Node2D>(Eigen::Vector2d(
+        end_coordinate[0],
+        end_coordinate[1]));
 
-    // OccupancyGrid2D occupancy_grid;
-    // occupancy_grid.LoadFromFile(file_path);
-    // Graph graph(occupancy_grid);
+    OccupancyGrid2D occupancy_grid;
+    occupancy_grid.LoadFromFile(file_path);
+    const Graph2D graph = occupancy_grid.AsGraph();
+    const Dijkstra2D::Path path = Dijkstra2D().Run(graph, start_node, end_node);
+    path.statistics.Print();
 
-    // RunDijkstra(graph, occupancy_grid, start, end);
-    // RunAStar(graph, occupancy_grid, start, end);
   } else {
     std::cout << "Did you forget command line args?" << std::endl;
   }

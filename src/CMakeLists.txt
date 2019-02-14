@@ -11,9 +11,6 @@ add_subdirectory(integration)
 add_subdirectory(graph)
 
 set(SOURCES 
-  # graph/graph.cc
-  algorithm/a_star.cc
-  algorithm/dijkstra.cc
   algorithm/safe_flight_corridor2d.cc
   environment/occupancy_grid2d.cc
   gui/gui2d.cc

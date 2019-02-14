@@ -12,12 +12,12 @@ namespace path_planning {
    * Node implementation for 2D floating point data. Implementation requires
    * that floating point data have no more that 4 significant decimals.
    */
-  class Node2D : public Node<Eigen::Matrix<double, 2, 1>> {
+  class Node2D : public Node<Eigen::Vector2d> {
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      Node2D(const Eigen::Matrix<double, 2, 1>& data = Eigen::Matrix<double, 2, 1>()) 
-        : Node<Eigen::Matrix<double, 2, 1>>(
+      Node2D(const Eigen::Vector2d& data = Eigen::Vector2d()) 
+        : Node<Eigen::Vector2d>(
             data, 
             std::bind(&Node2D::operator==, this, std::placeholders::_1), 
             std::bind(&Node2D::Hash, this)
