@@ -22,6 +22,10 @@ namespace path_planning {
           f_equals_(f_equals),
           f_hash_(f_hash) {}
 
+      const T& Data() const {
+        return data_;
+      }
+
       bool operator==(const Node& other) const {
         return this->f_equals_(other.data_);
       }

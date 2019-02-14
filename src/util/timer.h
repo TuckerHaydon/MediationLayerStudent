@@ -1,7 +1,6 @@
 // Author: Tucker Haydon
 
-#ifndef PATH_PLANNING_UTIL_TIMER
-#define PATH_PLANNING_UTIL_TIMER
+#pragma once
 
 #include <string>
 #include <iostream>
@@ -19,31 +18,26 @@ namespace path_planning {
       std::string message_;
 
     public:
-      Timer(const std::string& message);
-      bool Start();
-      bool Stop();
+      Timer(const std::string& message = "")
+        : message_(message) {}
+
+      bool Start() {
+        this->start_time_ = Time::now();
+        return true;
+      }
+
+      duration_t Stop() {
+        this->end_time_ = Time::now();
+        duration_t elapsed_time = this->end_time_ - this->start_time_;
+        return elapsed_time;
+      }
+
+      bool Print() {
+        duration_t elapsed_time = this->end_time_ - this->start_time_;
+        ms elapsed_ms = std::chrono::duration_cast<ms>(elapsed_time);
+        std::cout << this->message_ << std::endl;
+        std::cout << "Elapsed Time: " << elapsed_ms.count() << " ms" << std::endl << std::endl;
+        return true;
+      }
   };
-
-  //  ******************
-  //  * IMPLEMENTATION *
-  //  ******************
-  inline Timer::Timer(const std::string& message) {
-    this->message_ = message;
-  }
-
-  inline bool Timer::Start() {
-    this->start_time_ = Time::now();
-    return true;
-  }
-
-  inline bool Timer::Stop() {
-    this->end_time_ = Time::now();
-    duration_t elapsed_time = this->end_time_ - this->start_time_;
-    ms elapsed_ms = std::chrono::duration_cast<ms>(elapsed_time);
-    std::cout << this->message_ << std::endl;
-    std::cout << "Elapsed Time: " << elapsed_ms.count() << " ms" << std::endl << std::endl;
-    return true;
-  }
-};
-
-#endif
+}

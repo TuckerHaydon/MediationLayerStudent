@@ -70,36 +70,67 @@ void test_Map2D() {
 }
 
 void test_OccupancyGrid2D() {
-  Polygon boundary;
-  {
-    const Point2D a(0,0), b(10,0), c(10,10), d(0,10);
-    const Line2D l1(a,b), l2(b,c), l3(c,d), l4(d,a);
-    boundary.SetEdges({l1,l2,l3,l4});
+  { // LoadFromBuffer
+    // Array
+    const bool array[4][4] = {
+      {0,0,0,0},
+      {0,1,0,0},
+      {0,1,1,0},
+      {0,1,0,0}
+    };
+
+    // Allocate buffer
+    bool** buffer = (bool**) std::malloc(4*sizeof(bool*));
+    for(size_t idx = 0; idx < 4; ++idx) {
+      buffer[idx] = (bool*) std::malloc(4*sizeof(bool));
+    }
+
+    // Copy array into buffer
+    for(size_t row = 0; row < 4; ++row) {
+      for (size_t col = 0; col < 4; ++col) {
+        buffer[row][col] = array[row][col];
+      }
+    }
+
+    OccupancyGrid2D occupancy_grid;
+    occupancy_grid.LoadFromBuffer(const_cast<const bool**>(buffer), 4, 4);
+
+    assert(false == occupancy_grid.IsOccupied(0,0));
+    assert(true == occupancy_grid.IsOccupied(1,1));
   }
 
-  Polygon obstacle;
-  {
-    const Point2D a(4,4), b(6,4), c(6,6), d(4,6);
-    const Line2D l1(a,b), l2(b,c), l3(c,d), l4(d,a);
-    obstacle.SetEdges({l1,l2,l3,l4});
-  }
+  { // ToGraph
+    Polygon boundary;
+    {
+      const Point2D a(0,0), b(10,0), c(10,10), d(0,10);
+      const Line2D l1(a,b), l2(b,c), l3(c,d), l4(d,a);
+      boundary.SetEdges({l1,l2,l3,l4});
+    }
 
-  const Map2D map(boundary, {obstacle});
+    Polygon obstacle;
+    {
+      const Point2D a(4,4), b(6,4), c(6,6), d(4,6);
+      const Line2D l1(a,b), l2(b,c), l3(c,d), l4(d,a);
+      obstacle.SetEdges({l1,l2,l3,l4});
+    }
 
-  const double sample_delta = 0.1;
-  const double safety_bound = 0;
-  OccupancyGrid2D occupancy_grid;
-  occupancy_grid.LoadFromMap(map, sample_delta, safety_bound);
-  const Graph2D graph = occupancy_grid.AsGraph();
+    const Map2D map(boundary, {obstacle});
 
-  {
-    const auto n = std::make_shared<Node2D>(Eigen::Matrix<double, 2, 1>(0,0));
-    assert(3 == graph.Edges(n).size());
-  }
+    const double sample_delta = 0.1;
+    const double safety_bound = 0;
+    OccupancyGrid2D occupancy_grid;
+    occupancy_grid.LoadFromMap(map, sample_delta, safety_bound);
+    const Graph2D graph = occupancy_grid.AsGraph();
 
-  {
-    const auto n = std::make_shared<Node2D>(Eigen::Matrix<double, 2, 1>(1,1));
-    assert(8 == graph.Edges(n).size());
+    {
+      const auto n = std::make_shared<Node2D>(Eigen::Matrix<double, 2, 1>(0,0));
+      assert(3 == graph.Edges(n).size());
+    }
+
+    {
+      const auto n = std::make_shared<Node2D>(Eigen::Matrix<double, 2, 1>(1,1));
+      assert(8 == graph.Edges(n).size());
+    }
   }
 }
 

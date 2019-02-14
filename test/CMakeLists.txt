@@ -21,6 +21,17 @@ target_include_directories(environment_tests PUBLIC
 target_link_libraries(environment_tests PUBLIC lib_graph lib_geometry)
 
 
+# Path planning unit tests
+add_executable(path_planning_tests path_planning_tests.cc
+  ../src/environment/occupancy_grid2d.cc)
+target_include_directories(path_planning_tests PUBLIC 
+  ../src/environment
+  ../src/algorithm
+  )
+target_link_libraries(path_planning_tests PUBLIC lib_graph lib_geometry)
+
+
+
 # Integration library tests
 add_executable(integration_tests integration_tests.cc)
 target_link_libraries(integration_tests PUBLIC lib_integration Eigen3::Eigen)
