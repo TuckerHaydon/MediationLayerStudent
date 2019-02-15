@@ -2,7 +2,7 @@
 
 #include "polygon_publisher_node.h"
 
-namespace path_planning {
+namespace mediation_layer {
   PolygonPublisherNode::PolygonPublisherNode(int argc, char** argv) {
     // ros::init(argc, argv, "PolygonPublisherNode", 
     //     ros::init_options::NoSigintHandler);

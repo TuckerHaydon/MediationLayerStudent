@@ -11,7 +11,7 @@
 #include "occupancy_grid2d.h"
 #include "polygon.h"
 
-namespace path_planning {
+namespace mediation_layer {
 
   class Gui2D {
     public:

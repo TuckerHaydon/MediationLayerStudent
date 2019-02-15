@@ -12,7 +12,7 @@
 #include "directed_edge.h"
 #include "graph.h"
 
-using namespace path_planning;
+using namespace mediation_layer;
 
 void test_Node2D() {
   { // Check equality

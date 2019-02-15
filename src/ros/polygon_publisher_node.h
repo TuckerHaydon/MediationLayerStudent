@@ -6,7 +6,7 @@
 #include <ros/ros.h>
 #include <jsk_recognition_msgs/PolygonArray.h>
 
-namespace path_planning {
+namespace mediation_layer {
   class PolygonPublisherNode {
     private:
       std::shared_ptr<ros::NodeHandle> nh_;

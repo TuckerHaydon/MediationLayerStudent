@@ -6,7 +6,7 @@
 
 #include "time_stamped_pvay2d.h"
 
-namespace path_planning {
+namespace mediation_layer {
   struct Trajectory2D {
     std::vector<TimeStampedPVAY2D> data_;
 

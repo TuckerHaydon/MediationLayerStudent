@@ -8,7 +8,7 @@
 
 #include "polygon.h"
 
-namespace path_planning {
+namespace mediation_layer {
   class Map2D {
     private:
       Polygon boundary_;

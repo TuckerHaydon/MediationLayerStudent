@@ -12,7 +12,7 @@
 
 #include "line2d.h"
 
-namespace path_planning{
+namespace mediation_layer{
   // Class representing a 2D convex polygon.
   class Polygon {
     private:

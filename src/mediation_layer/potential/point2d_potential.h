@@ -6,7 +6,7 @@
 
 #include "potential2d.h"
 
-namespace path_planning {
+namespace mediation_layer {
 
   class Point2DPotential : public Potential2D {
     public:

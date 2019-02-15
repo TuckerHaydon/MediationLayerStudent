@@ -7,7 +7,7 @@
 #include "state2d.h"
 #include "map2d.h"
 
-namespace path_planning {
+namespace mediation_layer {
   // 2D mediation layer (ML). The ML should run as an independent thread. The ML
   // reads from proposed_state and modifies the trajectories to adhere to the
   // map and simulation constraints. The modifications are written to

@@ -8,7 +8,7 @@
 
 #include "point2d_potential.h"
 
-namespace path_planning {
+namespace mediation_layer {
   class Point2DPotentialView : public Potential2DView {
     private:
       static uint32_t GenerateUniqueId();

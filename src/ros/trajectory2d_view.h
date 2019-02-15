@@ -14,7 +14,7 @@
 #include <ros/ros.h>
 #include <visualization_msgs/Marker.h>
 
-namespace path_planning {
+namespace mediation_layer {
   class Trajectory2DView {
     private:
       Trajectory2D trajectory_;

@@ -6,7 +6,7 @@
 
 #include "line3d.h"
 
-namespace path_planning {
+namespace mediation_layer {
   class Plane3D {
     private:
       std::vector<Line3D> edges_;

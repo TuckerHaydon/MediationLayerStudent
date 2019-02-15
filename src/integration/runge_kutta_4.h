@@ -6,7 +6,7 @@
 
 #include "time_span.h"
 
-namespace path_planning {
+namespace mediation_layer {
   /*
    * 4th-order RungeKutta integrator
    * Reference: http://mathworld.wolfram.com/Runge-KuttaMethod.html

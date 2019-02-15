@@ -5,7 +5,7 @@
 #include <visualization_msgs/Marker.h>
 #include <vector>
 
-namespace path_planning {
+namespace mediation_layer {
   class Potential2DView {
     public:
       virtual ~Potential2DView() = default;

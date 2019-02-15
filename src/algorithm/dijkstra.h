@@ -15,7 +15,7 @@
 #include "graph.h"
 #include "timer.h"
 
-namespace path_planning {
+namespace mediation_layer {
   namespace {
     template <class T>
     struct DijkstraNode {

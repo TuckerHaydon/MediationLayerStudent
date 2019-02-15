@@ -8,7 +8,7 @@
 
 // #include "marker_publisher_node.h"
 
-// using namespace path_planning; 
+// using namespace mediation_layer; 
 
 int main(int argc, char** argv) {
   // MarkerPublisherNode marker_pub(argc, argv);

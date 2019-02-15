@@ -6,7 +6,7 @@
 #include <ros/ros.h>
 #include <visualization_msgs/Marker.h>
 
-namespace path_planning {
+namespace mediation_layer {
   class MarkerPublisherNode {
     private:
       std::shared_ptr<ros::NodeHandle> nh_;

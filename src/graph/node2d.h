@@ -7,7 +7,7 @@
 
 #include "node.h"
 
-namespace path_planning {
+namespace mediation_layer {
   /* 
    * Node implementation for 2D floating point data. Implementation requires
    * that floating point data have no more that 4 significant decimals.

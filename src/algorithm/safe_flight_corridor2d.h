@@ -7,7 +7,7 @@
 #include "polygon.h"
 #include "map2d.h"
 
-namespace path_planning {
+namespace mediation_layer {
   class SafeFlightCorridor2D {
     private:
       Map2D map_;

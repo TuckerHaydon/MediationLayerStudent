@@ -6,7 +6,7 @@
 #include "safe_flight_corridor2d.h"
 #include "linear_constraint2d.h"
 
-namespace path_planning {
+namespace mediation_layer {
   namespace {
     // Shift all the coordinates in the map by a certain amount
     Map2D ShiftMap(const Map2D& map, const Point2D& shift) {

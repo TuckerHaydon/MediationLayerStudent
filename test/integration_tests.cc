@@ -10,7 +10,7 @@
 #include "runge_kutta_4.h"
 #include "time_span.h"
 
-using namespace path_planning;
+using namespace mediation_layer;
 
 void TestRK4Eigen(double epsilon) {
   

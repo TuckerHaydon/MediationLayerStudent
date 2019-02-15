@@ -13,7 +13,7 @@
 #include "plane3d.h"
 #include "polyhedron.h"
 
-using namespace path_planning;
+using namespace mediation_layer;
 
 void test_Polyhedron() {
   std::vector<Plane3D> faces(6);

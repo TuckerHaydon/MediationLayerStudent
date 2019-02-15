@@ -4,7 +4,7 @@
 
 #include "pvay2d.h"
 
-namespace path_planning {
+namespace mediation_layer {
   struct TimeStampedPVAY2D {
     PVAY2D pvay_;
     double time_;

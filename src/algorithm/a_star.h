@@ -16,7 +16,7 @@
 #include "timer.h"
 #include "node2d.h"
 
-namespace path_planning {
+namespace mediation_layer {
   namespace {
     template <class T>
     struct NodeWrapper {

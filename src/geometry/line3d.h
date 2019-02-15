@@ -4,7 +4,7 @@
 
 #include "types.h"
 
-namespace path_planning {
+namespace mediation_layer {
   /*
    * Encapsulates information about a 3D line
    */

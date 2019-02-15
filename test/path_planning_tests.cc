@@ -10,7 +10,7 @@
 #include "occupancy_grid2d.h"
 #include "node2d.h"
 
-using namespace path_planning;
+using namespace mediation_layer;
 
 void test_Dijkstra2D() {
   // Array

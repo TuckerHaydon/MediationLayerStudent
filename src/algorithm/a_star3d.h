@@ -8,7 +8,7 @@
 #include "a_star.h"
 #include "node.h"
 
-namespace path_planning {
+namespace mediation_layer {
   class AStar3D : public AStar<Eigen::Vector3d> {
     private:
       double Heuristic(const Node<Eigen::Vector3d>& a, 

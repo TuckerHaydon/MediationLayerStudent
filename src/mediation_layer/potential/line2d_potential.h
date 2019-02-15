@@ -7,7 +7,7 @@
 #include "line2d.h"
 #include "potential2d.h"
 
-namespace path_planning {
+namespace mediation_layer {
   class Line2DPotential : public Potential2D {
     public:
       struct Options {

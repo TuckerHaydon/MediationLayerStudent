@@ -2,7 +2,7 @@
 
 #include "line2d.h"
 
-namespace path_planning {
+namespace mediation_layer {
   const Point2D& Line2D::Start() const {
     return this->start_;
   }

@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <cassert>
 
-namespace path_planning {
+namespace mediation_layer {
   /*
    * POD structure containing time span information used during integrator
    */

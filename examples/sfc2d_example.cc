@@ -7,7 +7,7 @@
 #include "map2d.h"
 #include "gui2d.h"
 
-using namespace path_planning;
+using namespace mediation_layer;
 
 
 int main(int argc, char** argv) {

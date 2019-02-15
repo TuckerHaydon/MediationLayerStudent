@@ -8,7 +8,7 @@
 
 #include "plane3d.h"
 
-namespace path_planning {
+namespace mediation_layer {
   class Polyhedron {
     private:
       std::vector<Plane3D> faces_;

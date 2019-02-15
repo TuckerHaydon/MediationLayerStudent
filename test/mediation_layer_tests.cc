@@ -12,7 +12,7 @@
 #include "line2d_potential.h"
 #include "point2d_potential.h"
 
-using namespace path_planning;
+using namespace mediation_layer;
 
 void test_Point2DPotential() {
   { // No force outside of range

@@ -8,7 +8,7 @@
 
 #include "node.h"
 
-namespace path_planning {
+namespace mediation_layer {
   /* 
    * POD abstraction of a directed edge for a graph. Every directed edge has a
    * single source, sink, and cost.

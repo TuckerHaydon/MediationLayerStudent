@@ -2,7 +2,7 @@
 
 #include "gui2d.h"
 
-namespace path_planning {
+namespace mediation_layer {
   namespace {
     struct PolygonView {
       struct Options {

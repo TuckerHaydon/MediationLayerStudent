@@ -6,7 +6,7 @@
 #include <iostream>
 #include <chrono>
 
-namespace path_planning {
+namespace mediation_layer {
 
   class Timer {
     private:

@@ -4,7 +4,7 @@
 
 #include "types.h"
 
-namespace path_planning {
+namespace mediation_layer {
   struct PVAY2D {
     Vec2D position_;
     Vec2D velocity_;

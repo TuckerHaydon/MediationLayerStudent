@@ -7,7 +7,7 @@
 #include <type_traits>
 #include <memory>
 
-namespace path_planning {
+namespace mediation_layer {
   template <class T>
   class Node {
     protected:

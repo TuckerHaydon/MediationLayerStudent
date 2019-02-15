@@ -4,7 +4,7 @@
 
 #include "types.h"
 
-namespace path_planning {
+namespace mediation_layer {
   class Potential2D {
     public:
       virtual ~Potential2D() = default;

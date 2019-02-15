@@ -4,7 +4,7 @@
 
 #include "types.h"
 
-namespace path_planning {
+namespace mediation_layer {
   // Abstraction of a linear constraint of the form AX < B, where X is
   // two-dimensional
   struct LinearConstraint2D {

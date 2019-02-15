@@ -11,7 +11,7 @@
 #include "dijkstra.h"
 #include "timer.h"
 
-using namespace path_planning;
+using namespace mediation_layer;
 
 int main(int argc, char** argv) {
   Map2D map;

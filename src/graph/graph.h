@@ -8,7 +8,7 @@
 #include "directed_edge.h"
 #include "node.h"
 
-namespace path_planning{
+namespace mediation_layer{
   /*
    * Abstraction of a graph. A graph maintains a set of directed edges
    * connecting various nodes.

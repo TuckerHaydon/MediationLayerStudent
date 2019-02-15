@@ -9,7 +9,7 @@
 
 #include "polygon.h"
 
-namespace path_planning { 
+namespace mediation_layer { 
   Polygon Polygon::Expand(double dist) const { 
     this->Check();
 

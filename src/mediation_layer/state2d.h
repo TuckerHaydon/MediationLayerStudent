@@ -10,7 +10,7 @@
 
 #include "trajectory2d.h"
 
-namespace path_planning {
+namespace mediation_layer {
   class State2D {
     private:
       struct TrajectoryContainer {

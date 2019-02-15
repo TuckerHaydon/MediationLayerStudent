@@ -12,7 +12,7 @@
 #include "point2d_potential.h"
 #include "point2d_potential_view.h"
 
-namespace path_planning {
+namespace mediation_layer {
   using Trajectory_t = Eigen::Matrix<double, 6, 1>;
 
   namespace {

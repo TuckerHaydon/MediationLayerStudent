@@ -12,7 +12,7 @@
 #include "graph.h"
 #include "node2d.h"
 
-namespace path_planning {
+namespace mediation_layer {
   class OccupancyGrid2D {
     private:
       bool** data_;
