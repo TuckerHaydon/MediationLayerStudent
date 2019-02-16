@@ -21,12 +21,12 @@ namespace mediation_layer {
     template <class T>
     struct NodeWrapper {
       const std::shared_ptr<NodeWrapper> parent_;
-      const std::shared_ptr<Node<T>> node_;
+      const std::shared_ptr<T> node_;
       const double cost_;
       const double heuristic_;
   
       NodeWrapper(const std::shared_ptr<NodeWrapper>& parent = nullptr,
-                  const std::shared_ptr<Node<T>> node = nullptr,
+                  const std::shared_ptr<T> node = nullptr,
                   const double cost = std::numeric_limits<double>::max(),
                   const double heuristic = std::numeric_limits<double>::max()) 
         : parent_(parent),
@@ -70,7 +70,7 @@ namespace mediation_layer {
 
       struct Hash {
         size_t operator()(const NodeWrapper& dijkstra_node) const {
-          return typename Node<T>::HashPointer()(dijkstra_node.node_);
+          return typename T::HashPointer()(dijkstra_node.node_);
         }
       };
 
@@ -80,20 +80,12 @@ namespace mediation_layer {
         }
       };
     };
-
-    std::function<double(
-        const std::shared_ptr<Node2D>&,
-        const std::shared_ptr<Node2D>&)> AStar2DHeuristic =
-      [](const std::shared_ptr<Node2D>& n1,
-         const std::shared_ptr<Node2D>& n2) {
-        return ((n1->Data() - n2->Data()).norm());
-      };
   }
 
   template <class T>
   struct AStar {
     private:
-      std::function<double(const Node<T>&, const Node<T>&)> heuristic_;
+      std::function<double(const T&, const T&)> heuristic_;
 
     public:
       // Return value structure
@@ -114,17 +106,17 @@ namespace mediation_layer {
           }
         };
        
-        std::vector<std::shared_ptr<Node<T>>> nodes;
+        std::vector<std::shared_ptr<T>> nodes;
         Statistics statistics; 
       };
 
-      AStar(const std::function<double(const Node<T>&, const Node<T>&)>& heuristic)
+      AStar(const std::function<double(const T&, const T&)>& heuristic)
         : heuristic_(heuristic) {}
 
       Path Run(
           const Graph<T>& graph,
-          const std::shared_ptr<Node<T>> start, 
-          const std::shared_ptr<Node<T>> end) {
+          const std::shared_ptr<T> start, 
+          const std::shared_ptr<T> end) {
         Timer timer;
         timer.Start();
       
@@ -167,11 +159,11 @@ namespace mediation_layer {
           }
 
           explored_paths[path_to_explore] = true;
-          const std::shared_ptr<Node<T>> explored_node = path_to_explore->node_;
+          const std::shared_ptr<T> explored_node = path_to_explore->node_;
       
           // Check terminal conditions
           if(*explored_node == *end) {
-            std::vector<std::shared_ptr<Node<T>>> solution;
+            std::vector<std::shared_ptr<T>> solution;
             std::shared_ptr<NodeWrapper<T>> dijkstra_node_ptr = path_to_explore;
             while(dijkstra_node_ptr->parent_ != nullptr) {
               solution.push_back(dijkstra_node_ptr->node_);

@@ -6,7 +6,8 @@
 #include <vector>
 
 #include "directed_edge.h"
-#include "node.h"
+#include "node2d.h"
+#include "node3d.h"
 
 namespace mediation_layer{
   /*
@@ -17,15 +18,15 @@ namespace mediation_layer{
   class Graph {
     private: 
       std::unordered_map<
-        std::shared_ptr<Node<T>>, 
+        std::shared_ptr<T>, 
         std::vector<DirectedEdge<T>>,
-        class Node<T>::HashPointer,
-        class Node<T>::EqualsPointer> edge_graph_;
+        class T::HashPointer,
+        class T::EqualsPointer> edge_graph_;
   
     public:
       Graph(const std::vector<DirectedEdge<T>>& edges = {});
 
-      const std::vector<DirectedEdge<T>> Edges(const std::shared_ptr<Node<T>>& node) const;
+      const std::vector<DirectedEdge<T>> Edges(const std::shared_ptr<T>& node) const;
   
       bool AddEdge(const DirectedEdge<T>& edge);
       bool AddEdges(const std::vector<DirectedEdge<T>>& edges);
@@ -41,7 +42,7 @@ namespace mediation_layer{
   }
 
   template <class T>
-  inline const std::vector<DirectedEdge<T>> Graph<T>::Edges(const std::shared_ptr<Node<T>>& node) const {
+  inline const std::vector<DirectedEdge<T>> Graph<T>::Edges(const std::shared_ptr<T>& node) const {
     try {
       return this->edge_graph_.at(node);
     } catch(const std::out_of_range& e) {
@@ -64,6 +65,6 @@ namespace mediation_layer{
     return true;
   }
 
-  using Graph2D = Graph<Eigen::Matrix<double, 2, 1>>;
-  using Graph3D = Graph<Eigen::Matrix<double, 3, 1>>;
+  using Graph2D = Graph<Node2D>;
+  using Graph3D = Graph<Node3D>;
 }

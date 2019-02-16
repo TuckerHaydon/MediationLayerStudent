@@ -20,11 +20,11 @@ namespace mediation_layer {
     template <class T>
     struct DijkstraNode {
       const std::shared_ptr<DijkstraNode> parent_;
-      const std::shared_ptr<Node<T>> node_;
+      const std::shared_ptr<T> node_;
       const double cost_;
   
       DijkstraNode(const std::shared_ptr<DijkstraNode>& parent = nullptr,
-                  const std::shared_ptr<Node<T>> node = nullptr,
+                  const std::shared_ptr<T> node = nullptr,
                   const double cost = std::numeric_limits<double>::max()) 
         : parent_(parent),
           node_(node),
@@ -66,7 +66,7 @@ namespace mediation_layer {
 
       struct Hash {
         size_t operator()(const DijkstraNode& dijkstra_node) const {
-          return typename Node<T>::HashPointer()(dijkstra_node.node_);
+          return typename T::HashPointer()(dijkstra_node.node_);
         }
       };
 
@@ -99,15 +99,15 @@ namespace mediation_layer {
         }
       };
      
-      std::vector<std::shared_ptr<Node<T>>> nodes;
+      std::vector<std::shared_ptr<T>> nodes;
       Statistics statistics; 
     };
 
-    // std::vector<std::shared_ptr<Node<T>>> Run(
+    // std::vector<std::shared_ptr<T>> Run(
     Path Run(
         const Graph<T>& graph, 
-        const std::shared_ptr<Node<T>> start, 
-        const std::shared_ptr<Node<T>> end) {
+        const std::shared_ptr<T> start, 
+        const std::shared_ptr<T> end) {
       Timer timer;
       timer.Start();
     
@@ -150,11 +150,11 @@ namespace mediation_layer {
         }
 
         explored_paths[path_to_explore] = true;
-        const std::shared_ptr<Node<T>> explored_node = path_to_explore->node_;
+        const std::shared_ptr<T> explored_node = path_to_explore->node_;
     
         // Check terminal conditions
         if(*explored_node == *end) {
-          std::vector<std::shared_ptr<Node<T>>> solution;
+          std::vector<std::shared_ptr<T>> solution;
           std::shared_ptr<DijkstraNode<T>> dijkstra_node_ptr = path_to_explore;
           while(dijkstra_node_ptr->parent_ != nullptr) {
             solution.push_back(dijkstra_node_ptr->node_);
@@ -193,6 +193,6 @@ namespace mediation_layer {
     }
   };
 
-  using Dijkstra2D = Dijkstra<Eigen::Matrix<double, 2, 1>>;
-  using Dijkstra3D = Dijkstra<Eigen::Matrix<double, 3, 1>>;
+  using Dijkstra2D = Dijkstra<Node2D>;
+  using Dijkstra3D = Dijkstra<Node3D>;
 }

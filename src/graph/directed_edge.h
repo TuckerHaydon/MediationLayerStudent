@@ -6,7 +6,8 @@
 #include <memory>
 #include <Eigen/Dense>
 
-#include "node.h"
+#include "node2d.h"
+#include "node3d.h"
 
 namespace mediation_layer {
   /* 
@@ -15,32 +16,32 @@ namespace mediation_layer {
    */
   template <class T>
   struct DirectedEdge {
-    const std::shared_ptr<Node<T>> source_;
-    const std::shared_ptr<Node<T>> sink_;
+    const std::shared_ptr<T> source_;
+    const std::shared_ptr<T> sink_;
     double cost_;
   
-    DirectedEdge(const std::shared_ptr<Node<T>>& source = nullptr, 
-                 const std::shared_ptr<Node<T>>& sink = nullptr, 
+    DirectedEdge(const std::shared_ptr<T>& source = nullptr, 
+                 const std::shared_ptr<T>& sink = nullptr, 
                  double cost = std::numeric_limits<double>::max()) 
       : source_(source), sink_(sink), cost_(cost) {}; 
 
-    const std::shared_ptr<Node<T>>& Source() const;
-    const std::shared_ptr<Node<T>>& Sink() const;
+    const std::shared_ptr<T>& Source() const;
+    const std::shared_ptr<T>& Sink() const;
   };
 
   //============================
   //     IMPLEMENTATION
   //============================
   template <class T>
-  inline const std::shared_ptr<Node<T>>& DirectedEdge<T>::Source() const {
+  inline const std::shared_ptr<T>& DirectedEdge<T>::Source() const {
     return this->source_;
   }
 
   template <class T>
-  inline const std::shared_ptr<Node<T>>& DirectedEdge<T>::Sink() const {
+  inline const std::shared_ptr<T>& DirectedEdge<T>::Sink() const {
     return this->sink_;
   }
 
-  using DirectedEdge2D = DirectedEdge<Eigen::Matrix<double, 2, 1>>;
-  using DirectedEdge3D = DirectedEdge<Eigen::Matrix<double, 3, 1>>;
+  using DirectedEdge2D = DirectedEdge<Node2D>;
+  using DirectedEdge3D = DirectedEdge<Node3D>;
 }

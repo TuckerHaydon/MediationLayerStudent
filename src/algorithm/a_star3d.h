@@ -6,13 +6,13 @@
 #include <functional>
 
 #include "a_star.h"
-#include "node.h"
+#include "node3d.h"
 
 namespace mediation_layer {
-  class AStar3D : public AStar<Eigen::Vector3d> {
+  class AStar3D : public AStar<Node3D> {
     private:
-      double Heuristic(const Node<Eigen::Vector3d>& a, 
-                       const Node<Eigen::Vector3d>& b) { 
+      double Heuristic(const Node<Node3D>& a, 
+                       const Node<Node3D>& b) { 
         return (a.Data() - b.Data()).norm(); 
       };
 

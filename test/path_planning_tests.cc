@@ -76,9 +76,9 @@ void test_AStar2D() {
   auto start = std::make_shared<Node2D>(Eigen::Vector2d(0,0));
   auto end   = std::make_shared<Node2D>(Eigen::Vector2d(3,3));
 
-  const std::function<double(const Node<Eigen::Vector2d>&, const Node<Eigen::Vector2d>&)> heuristic 
-    = [](const Node<Eigen::Vector2d>& a, 
-         const Node<Eigen::Vector2d>& b) { 
+  const std::function<double(const Node2D&, const Node2D&)> heuristic 
+    = [](const Node2D& a, 
+         const Node2D& b) { 
     return (a.Data() - b.Data()).norm(); };
 
   AStar2D::Path path = AStar2D().Run(graph, start, end);
