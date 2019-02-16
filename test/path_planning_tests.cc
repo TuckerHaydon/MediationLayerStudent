@@ -8,7 +8,7 @@
 #include "dijkstra.h"
 #include "a_star2d.h"
 #include "occupancy_grid2d.h"
-#include "node2d.h"
+#include "node_eigen.h"
 
 using namespace mediation_layer;
 

@@ -6,7 +6,7 @@
 #include <iostream>
 
 #include "occupancy_grid2d.h"
-#include "node2d.h"
+#include "node_eigen.h"
 
 using namespace mediation_layer;
 

@@ -6,8 +6,7 @@
 #include <vector>
 
 #include "directed_edge.h"
-#include "node2d.h"
-#include "node3d.h"
+#include "node_eigen.h"
 
 namespace mediation_layer{
   /*

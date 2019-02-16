@@ -6,7 +6,7 @@
 #include <functional>
 
 #include "a_star.h"
-#include "node2d.h"
+#include "node_eigen.h"
 
 namespace mediation_layer {
   class AStar2D : public AStar<Node2D> {

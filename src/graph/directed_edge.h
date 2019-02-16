@@ -6,8 +6,7 @@
 #include <memory>
 #include <Eigen/Dense>
 
-#include "node2d.h"
-#include "node3d.h"
+#include "node_eigen.h"
 
 namespace mediation_layer {
   /* 

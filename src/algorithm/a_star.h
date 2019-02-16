@@ -14,7 +14,7 @@
 
 #include "graph.h"
 #include "timer.h"
-#include "node2d.h"
+#include "node_eigen.h"
 
 namespace mediation_layer {
   namespace {

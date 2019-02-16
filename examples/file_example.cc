@@ -7,7 +7,7 @@
 #include <memory>
 #include <Eigen/Dense>
 
-#include "node2d.h"
+#include "node_eigen.h"
 #include "graph.h"
 #include "occupancy_grid2d.h"
 #include "dijkstra.h"

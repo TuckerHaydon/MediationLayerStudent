@@ -7,12 +7,15 @@
 #include <memory>
 
 #include "node.h"
-#include "node2d.h"
-#include "node3d.h"
+#include "node_eigen.h"
 #include "directed_edge.h"
 #include "graph.h"
 
 using namespace mediation_layer;
+
+void test_NodeEigen() {
+  NodeEigen<2> n1(Eigen::Vector2d(0,0));
+}
 
 void test_Node2D() {
   { // Check equality
@@ -77,6 +80,7 @@ void test_Graph2D() {
 }
 
 int main(int argc, char** argv) {
+  test_NodeEigen();
   test_Node2D();
   test_Node3D();
   test_DirectedEdge2D();

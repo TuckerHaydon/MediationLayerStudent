@@ -8,22 +8,19 @@
 #include "node.h"
 
 namespace mediation_layer {
-  /* 
-   * Node implementation for 3D floating point data. Implementation requires
-   * that floating point data have no more that 4 significant decimals.
-   */
-  class Node3D : public Node<Eigen::Matrix<double, 3, 1>> {
+  template <int D>
+  class NodeEigen : public Node<Eigen::Matrix<double, D, 1>> {
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      Node3D(const Eigen::Matrix<double, 3, 1>& data = Eigen::Matrix<double, 3, 1>()) 
-        : Node<Eigen::Matrix<double, 3, 1>>(
+      NodeEigen(const Eigen::Matrix<double, D, 1>& data = Eigen::Matrix<double, D, 1>()) 
+        : Node<Eigen::Matrix<double, D, 1>>(
             data, 
-            std::bind(&Node3D::operator==, this, std::placeholders::_1), 
-            std::bind(&Node3D::Hash, this)
+            std::bind(&NodeEigen::operator==, this, std::placeholders::_1), 
+            std::bind(&NodeEigen::Hash, this)
             ) {}
 
-      bool operator==(const Node3D& other) const;
+      bool operator==(const NodeEigen& other) const;
 
       size_t Hash() const;
 
@@ -32,12 +29,14 @@ namespace mediation_layer {
   //============================
   //     IMPLEMENTATION
   //============================
-  inline bool Node3D::operator==(const Node3D& other) const {
+  template <int D>
+  inline bool NodeEigen<D>::operator==(const NodeEigen<D>& other) const {
     const double epsilon = 1e-4;
     return this->data_.isApprox(other.data_, epsilon);
   }
 
-  inline size_t Node3D::Hash() const {
+  template <int D>
+  inline size_t NodeEigen<D>::Hash() const {
     const auto RoundDouble = [](const double d) {
       // Multiply by 10,000 and round to the nearest integer
       return static_cast<size_t>(d * 1e4);
@@ -49,4 +48,7 @@ namespace mediation_layer {
     }
     return seed;    
   }
+
+  using Node2D = NodeEigen<2>;
+  using Node3D = NodeEigen<3>;
 }

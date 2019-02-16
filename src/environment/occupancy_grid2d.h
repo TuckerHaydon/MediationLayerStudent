@@ -10,7 +10,7 @@
 
 #include "map2d.h"
 #include "graph.h"
-#include "node2d.h"
+#include "node_eigen.h"
 
 namespace mediation_layer {
   class OccupancyGrid2D {
