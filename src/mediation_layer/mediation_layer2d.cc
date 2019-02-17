@@ -85,7 +85,9 @@ namespace mediation_layer {
     }
   }
   
-  bool MediationLayer2D::Run() {
+  bool MediationLayer2D::Run(
+      State2D& proposed_state,
+      State2D& updated_state) {
     /* ALGORITHM
       for every trajectory in proposed_state
          Forward integrate mediation layer dynamics
@@ -131,8 +133,8 @@ namespace mediation_layer {
              0),
            0),10,0.1);
 
-    this->proposed_state_->Add(key, proposed_trajectory);
-    this->updated_state_->Add(key, proposed_trajectory);
+    proposed_state.Add(key, proposed_trajectory);
+    updated_state.Add(key, proposed_trajectory);
 
     const double t0{0}, tf{0.1}, dt{0.01};
     const TimeSpan ts(t0, tf, dt);
@@ -158,7 +160,7 @@ namespace mediation_layer {
           Vec2D(X_ml(4), X_ml(5)),
           0),
         proposed_trajectory.data_[idx].time_);
-    while(true) {
+    while(true == this->ok_) {
 
       const Trajectory_t X_reference = (Trajectory_t() <<
         proposed_trajectory.data_[idx].pvay_.position_,
@@ -188,8 +190,8 @@ namespace mediation_layer {
 
       X_ml = rk4.ForwardIntegrate(rk4_fun, X_ml, ts);
 
-      // this->proposed_state_->Read(key, proposed_trajectory);
-      // this->updated_state_->Write(key, trajectory);
+      // proposed_state->Read(key, proposed_trajectory);
+      // updated_state->Write(key, trajectory);
       
       updated_trajectory_hist.emplace_back(
           PVAY2D(
@@ -208,6 +210,11 @@ namespace mediation_layer {
     view.DisplayDynamics();
     view.DisplayPlots();
 
+    return true;
+  }
+
+  bool MediationLayer2D::Stop() {
+    this->ok_ = false;
     return true;
   }
 }

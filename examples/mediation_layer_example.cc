@@ -10,11 +10,11 @@ using namespace mediation_layer;
 
 int main(int argc, char** argv) {
 
-  auto proposed_state = std::make_shared<State2D>();
-  auto updated_state = std::make_shared<State2D>();
+  State2D proposed_state, updated_state;
 
-  MediationLayer2D ml(proposed_state, updated_state);
-  ml.Run();
+  Map2D map;
+  MediationLayer2D ml(map);
+  ml.Run(proposed_state, updated_state);
 
   return EXIT_SUCCESS;
 }

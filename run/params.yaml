@@ -1,0 +1,9 @@
+team_assignments:
+  "phoenix": "blue"
+  "gryphon": "red"
+
+proposed_trajectory_topics:
+  "phoenix": "/phoenix/proposed_trajectory"
+  "gryphon": "/gryphon/proposed_trajectory"
+
+map_filename: "arena.map"
