@@ -10,7 +10,11 @@ target_include_directories(path_planning_file_example PUBLIC
   ../src/environment
   ../src/geometry
   )
-target_link_libraries(path_planning_file_example PUBLIC path_planning Eigen3::Eigen)
+target_link_libraries(path_planning_file_example PUBLIC 
+  lib_mediation_layer
+  Eigen3::Eigen)
+
+
 
 add_executable(path_planning_map_example map_example.cc)
 target_include_directories(path_planning_map_example PUBLIC 
@@ -21,7 +25,11 @@ target_include_directories(path_planning_map_example PUBLIC
   ../src/geometry
   ../src/util
   )
-target_link_libraries(path_planning_map_example PUBLIC path_planning Eigen3::Eigen)
+target_link_libraries(path_planning_map_example PUBLIC 
+  lib_mediation_layer
+  Eigen3::Eigen)
+
+
 
 add_executable(path_planning_sfc2d_example sfc2d_example.cc)
 target_include_directories(path_planning_sfc2d_example PUBLIC 
@@ -32,7 +40,11 @@ target_include_directories(path_planning_sfc2d_example PUBLIC
   ../src/geometry
   ../src/util
   )
-target_link_libraries(path_planning_sfc2d_example PUBLIC path_planning Eigen3::Eigen)
+target_link_libraries(path_planning_sfc2d_example PUBLIC 
+  lib_mediation_layer
+  Eigen3::Eigen)
+
+
 
 add_executable(path_planning_map2sfc_example map2sfc_example.cc)
 target_include_directories(path_planning_map2sfc_example PUBLIC 
@@ -43,7 +55,11 @@ target_include_directories(path_planning_map2sfc_example PUBLIC
   ../src/geometry
   ../src/util
   )
-target_link_libraries(path_planning_map2sfc_example PUBLIC path_planning Eigen3::Eigen)
+target_link_libraries(path_planning_map2sfc_example PUBLIC 
+  lib_mediation_layer
+  Eigen3::Eigen)
+
+
 
 add_executable(path_planning_mediation_layer_example mediation_layer_example.cc)
 target_include_directories(path_planning_mediation_layer_example PUBLIC 
@@ -57,7 +73,11 @@ target_include_directories(path_planning_mediation_layer_example PUBLIC
   ../src/mediation_layer/potential
   ../src/integration
   )
-target_link_libraries(path_planning_mediation_layer_example PUBLIC path_planning Eigen3::Eigen)
+target_link_libraries(path_planning_mediation_layer_example PUBLIC 
+  lib_mediation_layer
+  Eigen3::Eigen)
+
+
 
 add_executable(path_planning_ros2d_example ros2d_example.cc)
 target_include_directories(path_planning_ros2d_example PUBLIC 
@@ -72,4 +92,8 @@ target_include_directories(path_planning_ros2d_example PUBLIC
   ../src/integration
   ../src/ros
   )
-target_link_libraries(path_planning_ros2d_example PUBLIC path_planning ros2d_lib Eigen3::Eigen)
+target_link_libraries(path_planning_ros2d_example PUBLIC 
+  lib_mediation_layer
+  ros2d_lib 
+  Eigen3::Eigen)
+

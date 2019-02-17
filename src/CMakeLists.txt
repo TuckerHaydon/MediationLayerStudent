@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
 
-set(TARGET path_planning)
+set(TARGET lib_mediation_layer)
 
 find_package (Eigen3 3.3 NO_MODULE)
 find_package(Boost 1.40.0 COMPONENTS filesystem system iostreams REQUIRED)

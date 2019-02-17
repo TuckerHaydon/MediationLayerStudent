@@ -41,5 +41,7 @@ target_include_directories(mediation_layer_tests PUBLIC
   ../src/mediation_layer/potential
   ../src/geometry
 )
-target_link_libraries(mediation_layer_tests PUBLIC path_planning Eigen3::Eigen)
+target_link_libraries(mediation_layer_tests PUBLIC 
+  lib_mediation_layer
+  Eigen3::Eigen)
 
