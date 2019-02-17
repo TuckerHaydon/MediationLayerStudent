@@ -7,6 +7,7 @@
 
 #include "occupancy_grid2d.h"
 #include "node_eigen.h"
+#include "yaml-cpp/yaml.h"
 
 using namespace mediation_layer;
 
@@ -66,6 +67,32 @@ void test_Map2D() {
     assert(false == inflated_map.Contains(point_outside));
     assert(true == inflated_map.IsFreeSpace(point_still_free));
     assert(false == inflated_map.IsFreeSpace(point_not_free));
+  }
+
+  { // Load from file
+    const std::string map_yaml = R"V0G0N(
+      map: 
+        boundary: [
+            [0, 0, 10, 0],
+            [10, 0, 10, 10],
+            [10, 10, 0, 10],
+            [0, 10, 0, 0]
+        ]
+        obstacles: [
+          [
+            [4, 4, 6, 4],
+            [6, 4, 6, 6],
+            [6, 6, 4, 6],
+            [4, 6, 4, 4]
+          ]
+        ])V0G0N";
+
+    YAML::Node node = YAML::Load(map_yaml);
+    const Map2D map = node["map"].as<Map2D>();
+    assert(1 == map.Obstacles().size());
+    assert(false == map.IsFreeSpace(Point2D(5,5)));
+    assert(true == map.IsFreeSpace(Point2D(1,1)));
+    assert(true == map.Contains(Point2D(1,1)));
   }
 }
 

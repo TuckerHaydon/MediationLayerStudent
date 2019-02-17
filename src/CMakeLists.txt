@@ -31,6 +31,7 @@ include_directories(
 add_library(${TARGET} ${SOURCES})
 
 target_link_libraries(${TARGET} 
+  yaml-cpp
   lib_integration
   lib_geometry
   lib_graph

@@ -11,6 +11,7 @@
 #include <limits>
 
 #include "line2d.h"
+#include "yaml-cpp/yaml.h"
 
 namespace mediation_layer{
   // Class representing a 2D convex polygon.
@@ -20,6 +21,7 @@ namespace mediation_layer{
       std::vector<Point2D> vertices_;
 
       bool UpdateVertices();
+      friend class YAML::convert<Polygon>;
 
     public:
       Polygon(const std::vector<Line2D>& edges = {});
@@ -241,4 +243,30 @@ namespace mediation_layer{
       std::exit(EXIT_FAILURE);
     }
   }
+}
+
+namespace YAML {
+template<>
+struct convert<mediation_layer::Polygon> {
+  static Node encode(const mediation_layer::Polygon& rhs) {
+    Node node;
+    node.push_back(rhs.edges_);
+    return node;
+  }
+
+  static bool decode(const Node& node, mediation_layer::Polygon& rhs) {
+    if(!node.IsSequence()) {
+      return false;
+    }
+
+    std::vector<mediation_layer::Line2D> edges;
+    edges.reserve(node.size());
+    for(size_t idx = 0; idx < node.size(); ++idx) {
+      edges.push_back(node[idx].as<mediation_layer::Line2D>());
+    }
+
+    rhs.SetEdges(edges);
+    return true;
+  }
+};
 }

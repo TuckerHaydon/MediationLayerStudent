@@ -5,6 +5,7 @@
 #include <utility>
 
 #include "types.h"
+#include "yaml-cpp/yaml.h"
 
 namespace mediation_layer {
   /*
@@ -14,6 +15,7 @@ namespace mediation_layer {
     private:
       Point2D start_;
       Point2D end_;
+      friend class YAML::convert<Line2D>;
 
     public:
       Line2D(const Point2D& start = Point2D(),
@@ -151,3 +153,28 @@ namespace mediation_layer {
   }
 }
 
+namespace YAML {
+template<>
+struct convert<mediation_layer::Line2D> {
+  static Node encode(const mediation_layer::Line2D& rhs) {
+    Node node;
+    node.push_back(rhs.start_.x());
+    node.push_back(rhs.start_.y());
+    node.push_back(rhs.end_.x());
+    node.push_back(rhs.end_.y());
+    return node;
+  }
+
+  static bool decode(const Node& node, mediation_layer::Line2D& rhs) {
+    if(!node.IsSequence() || node.size() != 4) {
+      return false;
+    }
+
+    rhs.start_.x() = node[0].as<double>();
+    rhs.start_.y() = node[1].as<double>();
+    rhs.end_.x()   = node[2].as<double>();
+    rhs.end_.y()   = node[3].as<double>();
+    return true;
+  }
+};
+}

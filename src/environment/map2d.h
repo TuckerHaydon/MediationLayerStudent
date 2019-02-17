@@ -7,12 +7,14 @@
 #include <iostream>
 
 #include "polygon.h"
+#include "yaml-cpp/yaml.h"
 
 namespace mediation_layer {
   class Map2D {
     private:
       Polygon boundary_;
       std::vector<Polygon> obstacles_;
+      friend class YAML::convert<Map2D>;
 
     public:
       Map2D(const Polygon& boundary = Polygon(),
@@ -87,4 +89,30 @@ namespace mediation_layer {
   inline Polygon Map2D::Extents() const {
     return this->boundary_.BoundingBox();
   }
+}
+
+namespace YAML {
+template<>
+struct convert<mediation_layer::Map2D> {
+  static Node encode(const mediation_layer::Map2D& rhs) {
+    Node node;
+    node["boundary"] = rhs.boundary_;
+    node["obstacles"] = rhs.obstacles_;
+    return node;
+  }
+
+  static bool decode(const Node& node, mediation_layer::Map2D& rhs) {
+    if(!node.IsMap() || !node["boundary"]) {
+      return false;
+    }
+
+    rhs.boundary_ = node["boundary"].as<mediation_layer::Polygon>();
+
+    if(node["obstacles"]) {
+      rhs.obstacles_ = node["obstacles"].as<std::vector<mediation_layer::Polygon>>();
+    }
+
+    return true;
+  }
+};
 }

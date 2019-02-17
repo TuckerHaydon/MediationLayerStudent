@@ -10,44 +10,18 @@
 #include "a_star2d.h"
 #include "dijkstra.h"
 #include "timer.h"
+#include "yaml-cpp/yaml.h"
 
 using namespace mediation_layer;
 
 int main(int argc, char** argv) {
-  Map2D map;
-  {
-    Polygon boundary;
-    {
-      const Point2D a(0,0), b(10,0), c(10,10), d(0,10);
-      boundary.ConstructFromPoints({a,b,c,d});
-    }
-
-    std::vector<Polygon> obstacles;
-
-    {
-      const Point2D a(5,2), b(6,2), c(6,3), d(5,3);
-      Polygon obstacle;
-      obstacle.ConstructFromPoints({a,b,c,d});
-      obstacles.push_back(obstacle);
-    }
-
-    {
-      const Point2D a(2,4), b(3,4), c(3,10), d(2,10);
-      Polygon obstacle;
-      obstacle.ConstructFromPoints({a,b,c,d});
-      obstacles.push_back(obstacle);
-    }
-
-    {
-      const Point2D a(7,4), b(8,4), c(8,5), d(7,5);
-      Polygon obstacle;
-      obstacle.ConstructFromPoints({a,b,c,d});
-      obstacles.push_back(obstacle);
-    }
-
-    map.SetObstacles(obstacles);
-    map.SetBoundary(boundary);
+  if(argc != 2) {
+    std::cout << "Usage: ${executable} ${full_path_to_map_file}" << std::endl;
+    std::exit(1);
   }
+
+  YAML::Node node = YAML::LoadFile(argv[1]);
+  const Map2D map = node["map"].as<Map2D>();
 
   const double SAFETY_BOUND = 0.3;
   const double SAMPLE_DELTA = 0.5;

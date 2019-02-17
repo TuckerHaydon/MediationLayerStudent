@@ -12,6 +12,7 @@
 #include "line3d.h"
 #include "plane3d.h"
 #include "polyhedron.h"
+#include "yaml-cpp/yaml.h"
 
 using namespace mediation_layer;
 
@@ -124,6 +125,21 @@ void test_Polygon() {
     assert(false == poly.Contains(exterior_point));
   }
 
+  { // Read from file
+    const std::string polygon_yaml = R"V0G0N(
+      polygon: [
+        [0, 0, 1, 0],
+        [1, 0, 1, 1],
+        [1, 1, 0, 1],
+        [0, 1, 0, 0]
+      ])V0G0N";
+
+    YAML::Node node = YAML::Load(polygon_yaml);
+    const Polygon polygon = node["polygon"].as<Polygon>();
+    assert(4 == polygon.Vertices().size());
+    assert(1 == polygon.Vertices()[2].x());
+    assert(1 == polygon.Vertices()[2].y());
+  }
 }
 
 void test_Line2D() {
@@ -204,6 +220,15 @@ void test_Line2D() {
       const Line2D l(a,e);
       assert(l.OrthogonalUnitVector().isApprox(Point2D(std::sqrt(2)/2,std::sqrt(2)/2)));  
     }
+  }
+
+  { // Read from file
+    YAML::Node node = YAML::Load("test_line: [0, 0, 1, 2]");
+    const Line2D line = node["test_line"].as<Line2D>();
+    assert(0 == line.Start().x());
+    assert(0 == line.Start().y());
+    assert(1 == line.End().x());
+    assert(2 == line.End().y());
   }
 }
 
