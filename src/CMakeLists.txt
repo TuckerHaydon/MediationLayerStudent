@@ -5,6 +5,8 @@ set(TARGET path_planning)
 find_package (Eigen3 3.3 NO_MODULE)
 find_package(Boost 1.40.0 COMPONENTS filesystem system iostreams REQUIRED)
 
+# Build libraries
+add_subdirectory(lib)
 add_subdirectory(integration)
 add_subdirectory(geometry)
 add_subdirectory(graph)
@@ -36,3 +38,6 @@ target_link_libraries(${TARGET}
   ros2d_lib
   Eigen3::Eigen
   ${Boost_LIBRARIES})
+
+# Build the final executables
+add_subdirectory(exe)
