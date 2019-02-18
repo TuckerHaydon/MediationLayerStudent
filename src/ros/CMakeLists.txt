@@ -16,7 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_library(ros2d_lib 
   trajectory2d_view.h
-  potential2d_view.h
+  potential_view.h
   point2d_potential_view.h
   # marker_publisher_node.h
   # marker_publisher_node.cc 

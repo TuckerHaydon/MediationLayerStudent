@@ -9,7 +9,7 @@
 #include "point2d_potential.h"
 
 namespace mediation_layer {
-  class Point2DPotentialView : public Potential2DView {
+  class Point2DPotentialView : public PotentialView {
     private:
       static uint32_t GenerateUniqueId();
 
@@ -28,7 +28,6 @@ namespace mediation_layer {
   //  * IMPLEMENTATION *
   //  ******************
   inline std::vector<visualization_msgs::Marker> Point2DPotentialView::Markers() const {
-    static uint8_t id = 0;
     visualization_msgs::Marker max_circle, min_circle;
     const double max_radius = this->potential_->options_.activation_dist;
     const double min_radius = this->potential_->options_.min_dist;

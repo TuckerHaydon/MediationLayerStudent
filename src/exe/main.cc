@@ -33,12 +33,13 @@ int main(int argc, char** argv) {
    */
   std::string map_file_path;
   if(false == nh.getParam("map_file_path", map_file_path)) {
-    std::cerr << "Required parameter: map_file_path" << std::endl;
+    std::cerr << "Required parameter not found on server: map_file_path" << std::endl;
     std::exit(1);
   }
 
   const YAML::Node node = YAML::LoadFile(map_file_path);
   const Map2D map = node["map"].as<Map2D>();
+
 
   /*
    * Start mediation layer
@@ -52,13 +53,14 @@ int main(int argc, char** argv) {
         mediation_layer.Run(proposed_state, updated_state);
       });
 
+
   /*
    * Start the subscribers
    */
   // Load the subscriber topics
   std::map<std::string, std::string> proposed_trajectory_topics;
   if(false == nh.getParam("proposed_trajectory_topics", proposed_trajectory_topics)) {
-    std::cerr << "Required parameter: proposed_trajectory_topics" << std::endl;
+    std::cerr << "Required parameter not found on server: proposed_trajectory_topics" << std::endl;
     std::exit(1);
   }
 
@@ -71,14 +73,11 @@ int main(int argc, char** argv) {
   }
   
 
-
-
-
-
   /*
    * Spin and process subscription messages
    */
   ros::spin();
+
 
   /*
    * Wait for thread termination

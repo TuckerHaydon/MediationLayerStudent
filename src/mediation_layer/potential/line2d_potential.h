@@ -27,6 +27,7 @@ namespace mediation_layer {
     private:
       Line2D line_;
       Options options_;
+      friend class Line2DPotentialView;
   };
 
   //  ******************

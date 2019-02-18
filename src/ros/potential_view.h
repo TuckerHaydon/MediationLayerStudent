@@ -6,9 +6,9 @@
 #include <vector>
 
 namespace mediation_layer {
-  class Potential2DView {
+  class PotentialView {
     public:
-      virtual ~Potential2DView() = default;
+      virtual ~PotentialView() = default;
       virtual std::vector<visualization_msgs::Marker> Markers() const = 0;
   };
 }

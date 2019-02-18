@@ -64,6 +64,9 @@ namespace mediation_layer {
       // Determines if a point projected onto the line is between the start and
       // end point
       bool ProjectedContains(const Point2D& point) const;
+
+      // Midpoint of the line
+      Point2D Midpoint() const;
   };
 
   //============================
@@ -150,6 +153,10 @@ namespace mediation_layer {
     const Point2D projected_point = (point - this->start_).dot(this->AsUnitVector()) *
       this->AsUnitVector() + this->start_;
     return this->Contains(projected_point);
+  }
+
+  inline Point2D Line2D::Midpoint() const {
+    return this->start_ + this->AsVector() / 2;
   }
 }
 

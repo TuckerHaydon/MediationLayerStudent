@@ -9,6 +9,7 @@
 #include "timer.h"
 #include "trajectory2d_view.h"
 #include "line2d_potential.h"
+#include "line2d_potential_view.h"
 #include "point2d_potential.h"
 #include "point2d_potential_view.h"
 
@@ -95,7 +96,7 @@ namespace mediation_layer {
     */
 
     // Line above pushing down, line below pushing up
-    const Point2D a(-10, -0.5), b(-1, -0.5), c(-1, 0.4), d(-10, 0.4), e(-4, 0.3), f(-0.5, -0.1), g(-0.5, 0.8);
+    const Point2D a(-5, -1), b(2, -1), c(2, 1), d(-5, 1), e(-4, 0.3), f(-0.5, -0.1), g(-0.5, 0.8);
     const Line2D l1(a,b), l2(c,d);
 
     Line2DPotential::Options line_options;
@@ -112,16 +113,21 @@ namespace mediation_layer {
     auto e_pot = std::make_shared<Point2DPotential>(e, point_options);
     auto f_pot = std::make_shared<Point2DPotential>(f, point_options);
     auto g_pot = std::make_shared<Point2DPotential>(g, point_options);
-    // potentials.push_back(std::make_shared<Line2DPotential>(l1, line_options));
-    // potentials.push_back(std::make_shared<Line2DPotential>(l2, line_options));
+    auto l1_pot = std::make_shared<Line2DPotential>(l1, line_options);
+    auto l2_pot = std::make_shared<Line2DPotential>(l2, line_options);
+
+    potentials.push_back(l1_pot);
+    potentials.push_back(l2_pot);
     potentials.push_back(e_pot);
     potentials.push_back(f_pot);
     potentials.push_back(g_pot);
 
-    std::vector<std::shared_ptr<Potential2DView>> potential_views;
+    std::vector<std::shared_ptr<PotentialView>> potential_views;
     potential_views.push_back(std::make_shared<Point2DPotentialView>(e_pot));
     potential_views.push_back(std::make_shared<Point2DPotentialView>(f_pot));
     potential_views.push_back(std::make_shared<Point2DPotentialView>(g_pot));
+    potential_views.push_back(std::make_shared<Line2DPotentialView>(l1_pot));
+    potential_views.push_back(std::make_shared<Line2DPotentialView>(l2_pot));
 
     const std::string& key = "test";
      Trajectory2D proposed_trajectory = GenerateSmoothTrajectory(

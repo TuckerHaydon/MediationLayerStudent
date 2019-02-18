@@ -1,13 +1,10 @@
 // Author: Tucker Haydon
 
-#ifndef PATH_PLANNING_GUI_TRAJECTORY2D_VIEW_H
-#define PATH_PLANNING_GUI_TRAJECTORY2D_VIEW_H
+#pragma once
 
 #include "gnuplot-iostream.h"
 #include "trajectory2d.h"
-#include "potential2d_view.h"
-// #include "marker_publisher_node.h"
-// #include "polygon_publisher_node.h"
+#include "potential_view.h"
 
 #include <thread>
 #include <chrono>
@@ -18,11 +15,11 @@ namespace mediation_layer {
   class Trajectory2DView {
     private:
       Trajectory2D trajectory_;
-      std::vector<std::shared_ptr<Potential2DView>> potential_views_;
+      std::vector<std::shared_ptr<PotentialView>> potential_views_;
 
     public:
       Trajectory2DView(const Trajectory2D& trajectory, 
-                       const std::vector<std::shared_ptr<Potential2DView>>& potential_views)
+                       const std::vector<std::shared_ptr<PotentialView>>& potential_views)
         : trajectory_(trajectory),
           potential_views_(potential_views) {}
       bool DisplayPlots() const;
@@ -110,7 +107,7 @@ namespace mediation_layer {
     double time = hist.front().get<0>();
 
     for(const auto& tup: hist) {
-      for(const std::shared_ptr<Potential2DView>& view: this->potential_views_) {
+      for(const std::shared_ptr<PotentialView>& view: this->potential_views_) {
         const std::vector<visualization_msgs::Marker> markers = view->Markers();
         for(const visualization_msgs::Marker& marker: markers) {
           marker_pub.publish(marker);
@@ -154,5 +151,3 @@ namespace mediation_layer {
     return true;
   }
 }
-
-#endif
