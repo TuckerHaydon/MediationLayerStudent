@@ -3,7 +3,6 @@
 #pragma once
 
 #include <memory>
-#include <atomic>
 
 #include "state2d.h"
 #include "map2d.h"
@@ -16,13 +15,13 @@ namespace mediation_layer {
   class MediationLayer2D {
     private:
       Map2D map_;
-      std::atomic<bool> ok_{true};
+      volatile bool ok_{true};
 
     public:
       MediationLayer2D(const Map2D& map)
         : map_(map){}
 
-      bool Run(State2D& proposed_state, State2D& updated_state);
+      bool Run(std::shared_ptr<State2D> proposed_state, std::shared_ptr<State2D> updated_state);
       bool Stop();
   };
 };

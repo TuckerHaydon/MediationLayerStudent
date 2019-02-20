@@ -6,4 +6,8 @@ proposed_trajectory_topics:
   "phoenix": "/phoenix/proposed_trajectory"
   "gryphon": "/gryphon/proposed_trajectory"
 
+updated_trajectory_topics:
+  "phoenix": "/phoenix/updated_trajectory"
+  "gryphon": "/gryphon/updated_trajectory"
+
 map_file_path: "/home/aerial-robotics/Workspace/MediationLayer/data/arena.map"
