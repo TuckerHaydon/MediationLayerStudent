@@ -45,8 +45,8 @@ namespace mediation_layer {
     max_circle.pose.orientation.y = 0.0;
     max_circle.pose.orientation.z = 0.0;
     max_circle.pose.orientation.w = 1.0;
-    max_circle.scale.x = max_radius;
-    max_circle.scale.y = max_radius;
+    max_circle.scale.x = 2*max_radius;
+    max_circle.scale.y = 2*max_radius;
     max_circle.scale.z = 0.01;
     max_circle.color.r = 1.0f;
     max_circle.color.g = 0.0f;
@@ -67,8 +67,8 @@ namespace mediation_layer {
     min_circle.pose.orientation.y = 0.0;
     min_circle.pose.orientation.z = 0.0;
     min_circle.pose.orientation.w = 1.0;
-    min_circle.scale.x = min_radius;
-    min_circle.scale.y = min_radius;
+    min_circle.scale.x = 2*min_radius;
+    min_circle.scale.y = 2*min_radius;
     min_circle.scale.z = 0.02;
     min_circle.color.r = 0.0f;
     min_circle.color.g = 0.0f;

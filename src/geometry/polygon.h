@@ -59,6 +59,15 @@ namespace mediation_layer{
       // of points should form a convex polygon.
       bool ConstructFromPoints(const std::vector<Point2D>& points);
 
+      // Reverse the start and end points of all the edges to reverse the
+      // direction of the edges. 
+      std::vector<Line2D> ReversedEdges() const;
+
+      // Inverts a polygon. Returns a polygon whose edge order and node order
+      // are reversed. Edges will now point outwards. Functions that assume
+      // edge order will not work as expected.
+      Polygon Invert() const;
+
       // Check that the polygon is valid
       void Check() const;
   };
@@ -242,6 +251,25 @@ namespace mediation_layer{
       std::cerr << "Polygon is not convex. Exiting." << std::endl;
       std::exit(EXIT_FAILURE);
     }
+  }
+  
+  inline std::vector<Line2D> Polygon::ReversedEdges() const {
+    std::vector<Line2D> reversed_edges;
+    for(const Line2D& edge: this->edges_) {
+      reversed_edges.emplace_back(edge.End(), edge.Start());
+    }
+
+    return reversed_edges;
+  }
+
+  inline Polygon Polygon::Invert() const {
+    std::vector<Line2D> edges = this->edges_;
+    std::reverse(edges.begin(), edges.end());
+    std::vector<Line2D> reversed_edges;
+    for(const Line2D& edge: edges) {
+      reversed_edges.emplace_back(edge.End(), edge.Start());
+    }
+    return Polygon(reversed_edges);
   }
 }
 

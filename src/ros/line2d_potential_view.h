@@ -6,7 +6,7 @@
 #include <thread>
 #include <visualization_msgs/Marker.h>
 
-#include "point2d_potential.h"
+#include "line2d_potential.h"
 
 namespace mediation_layer {
   class Line2DPotentialView : public PotentialView {
