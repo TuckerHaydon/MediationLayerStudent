@@ -3,6 +3,7 @@
 #pragma once
 
 #include <memory>
+#include <atomic>
 
 #include "state2d.h"
 #include "map2d.h"
@@ -15,7 +16,7 @@ namespace mediation_layer {
   class MediationLayer2D {
     private:
       Map2D map_;
-      volatile bool ok_{true};
+      volatile std::atomic_bool ok_{true};
 
     public:
       MediationLayer2D(const Map2D& map)

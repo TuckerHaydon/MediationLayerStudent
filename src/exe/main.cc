@@ -16,7 +16,7 @@
 #include "yaml-cpp/yaml.h"
 #include "map2d.h"
 #include "mediation_layer2d.h"
-#include "trajectory_dispatcher.h"
+#include "state2d_dispatcher.h"
 
 using namespace mediation_layer;
 
@@ -178,8 +178,8 @@ int main(int argc, char** argv) {
       0.1
       );
 
-  proposed_state->Add(key, proposed_trajectory);
   updated_state->Add(key, proposed_trajectory); 
+  proposed_state->Add(key, proposed_trajectory);
 
   // Wait for thread termination
   ros::spin();

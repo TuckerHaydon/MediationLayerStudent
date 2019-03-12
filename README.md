@@ -23,11 +23,11 @@ make -j4
 ### Examples
 ```bash
 cd build/examples
-# Run various example executables
+./$EXECUTABLE_OF_CHOICE
 ```
 
 ### Tests
 ```bash
 cd build/test
-# Run various test executables
+./EXECUTABLE_OF_CHOICE
 ```

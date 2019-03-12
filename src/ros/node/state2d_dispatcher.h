@@ -6,6 +6,7 @@
 #include <memory>
 #include <thread>
 #include <functional>
+#include <atomic>
 #include <ros/ros.h>
 
 #include "publisher_guard.h"
@@ -17,7 +18,7 @@ namespace mediation_layer {
         std::string& key,
         std::shared_ptr<State2D>& state,
         std::shared_ptr<PublisherGuard<std_msgs::String>>& publisher,
-        volatile bool& ok
+        volatile std::atomic_bool& ok
         ) {
 
       Trajectory2D trajectory;
@@ -42,7 +43,7 @@ namespace mediation_layer {
     private:
       std::shared_ptr<State2D> state_;
       std::vector<std::shared_ptr<PublisherGuard<std_msgs::String>>> publishers_;
-      volatile bool ok_{true};
+      volatile std::atomic_bool ok_{true};
 
     public:
       State2DDispatcher(

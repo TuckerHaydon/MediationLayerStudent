@@ -7,13 +7,6 @@
 #include "runge_kutta_4.h"
 #include "time_span.h"
 #include "timer.h"
-// #include "trajectory2d_view.h"
-// #include "line2d_potential.h"
-// #include "line2d_potential_view.h"
-// #include "point2d_potential.h"
-// #include "point2d_potential_view.h"
-// #include "polygon_potential.h"
-// #include "polygon_potential_view.h"
 
 using PVA_t = Eigen::Matrix<double, 6, 1>;
 
@@ -105,6 +98,7 @@ namespace mediation_layer {
           updated_trajectory.Append(updated_instance);
         }
        
+        // Write output
         updated_state->Write(key, updated_trajectory);
       }
     }
