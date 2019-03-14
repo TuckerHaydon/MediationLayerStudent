@@ -90,10 +90,12 @@ target_include_directories(path_planning_ros2d_example PUBLIC
   ../src/mediation_layer
   ../src/mediation_layer/potential
   ../src/integration
-  ../src/ros
+  ../src/ros/node
+  ../src/ros/view
   )
 target_link_libraries(path_planning_ros2d_example PUBLIC 
   lib_mediation_layer
-  ros2d_lib 
+  lib_ros_view
+  lib_ros_node
   Eigen3::Eigen)
 

@@ -1,3 +1,5 @@
+set(TARGET lib_ros_node)
+
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   message_generation
@@ -5,13 +7,14 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
 )
 
-add_library(node 
-  trajectory2d_view.h
-  potential_view.h
-  point2d_potential_view.h
+add_library(${TARGET}
+  marker_publisher_node.cc
+  marker_publisher_node.h
+  publisher_guard.h
+  state2d_dispatcher.h
   )
-target_include_directories(node PUBLIC ${catkin_INCLUDE_DIRS})
-target_link_libraries(node ${catkin_LIBRARIES})
+target_include_directories(${TARGET} PUBLIC ${catkin_INCLUDE_DIRS})
+target_link_libraries(${TARGET} ${catkin_LIBRARIES})
 
-add_dependencies(node visualization_msgs_generate_messages_cpp)
-add_dependencies(node geometry_msgs_generate_messages_cpp)
+add_dependencies(${TARGET} visualization_msgs_generate_messages_cpp)
+add_dependencies(${TARGET} geometry_msgs_generate_messages_cpp)

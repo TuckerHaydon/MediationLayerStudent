@@ -57,9 +57,11 @@ void test_DirectedEdge2D() {
   { // Construction
     const auto source = std::make_shared<Node2D>(Eigen::Matrix<double, 2, 1>(1,2));
     const auto sink = std::make_shared<Node2D>(Eigen::Matrix<double, 2, 1>(2,2));
-    const DirectedEdge2D edge(source, sink);
+    const double cost = 3.14;
+    const DirectedEdge2D edge(source, sink, cost);
     assert(true == (*edge.Source() == *source));
     assert(true == (*edge.Sink() == *sink));
+    assert(true == (cost == edge.Cost()));
   }
 }
 

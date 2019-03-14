@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 
-set(TARGET lib_environment)
+set(TARGET lib_util)
 add_library(${TARGET} INTERFACE)
 target_include_directories(${TARGET} INTERFACE
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
-target_link_libraries(${TARGET} INTERFACE lib_geometry lib_graph)

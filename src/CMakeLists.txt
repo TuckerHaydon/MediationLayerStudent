@@ -7,6 +7,7 @@ find_package(Boost 1.40.0 COMPONENTS filesystem system iostreams REQUIRED)
 
 # Build libraries
 add_subdirectory(lib)
+add_subdirectory(util)
 add_subdirectory(integration)
 add_subdirectory(geometry)
 add_subdirectory(graph)
@@ -25,18 +26,20 @@ include_directories(
   gui
   mediation_layer
   mediation_layer/potential
-  util
-  ros
+  ros/node
+  ros/view
 )
 add_library(${TARGET} ${SOURCES})
 
 target_link_libraries(${TARGET} 
   yaml-cpp
+  lib_util
   lib_integration
   lib_geometry
   lib_graph
   lib_environment
-  ros2d_lib
+  lib_ros_view
+  lib_ros_node
   Eigen3::Eigen
   ${Boost_LIBRARIES})
 

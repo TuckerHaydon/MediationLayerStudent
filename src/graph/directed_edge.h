@@ -26,6 +26,7 @@ namespace mediation_layer {
 
     const std::shared_ptr<T>& Source() const;
     const std::shared_ptr<T>& Sink() const;
+    const double Cost() const;
   };
 
   //============================
@@ -39,6 +40,11 @@ namespace mediation_layer {
   template <class T>
   inline const std::shared_ptr<T>& DirectedEdge<T>::Sink() const {
     return this->sink_;
+  }
+
+  template <class T>
+  inline const double DirectedEdge<T>::Cost() const {
+    return this->cost_;
   }
 
   using DirectedEdge2D = DirectedEdge<Node2D>;
