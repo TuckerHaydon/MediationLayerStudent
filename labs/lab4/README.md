@@ -46,7 +46,7 @@ Afterwards, run the example and see the output.
 
 ```bash
 cd ~/Workspace/MediationLayerStudent/build/
-./labs/src/examples ../labs/data/test_grid_medium
+./labs/lab4/src/examples ../labs/lab4/data/test_grid_medium
 ```
 
 ## Path Planning
@@ -122,7 +122,7 @@ worried about the total force the quadcopter might have to generate throughout
 the trajectory, one might want to minimize the acceleration.
 
 The theory of the polynomial solver is described in detail in [LaTex in the P4
-repo](../../src/P4/doc/tex). Run the makefile to build the corresponding PDF.
+repo](../../../src/P4/doc/tex). Run the makefile to build the corresponding PDF.
 Writing the code to solve the for the polynomials is mostly an exercise in
 bookkeeping so you are not required to write any of code.
 
@@ -167,7 +167,7 @@ cmake .. && make -j1
 ### Run the Lab
 ```bash
 cd ~/Workspace/MediationLayerStudent/build
-./labs/src/lab4 ../labs/data/test_grid_medium
+./labs/lab4/src/main ../labs/lab4/data/test_grid_medium
 ```
 
 ### Create your own data
