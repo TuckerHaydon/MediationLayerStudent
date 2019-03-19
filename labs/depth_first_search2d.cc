@@ -1,6 +1,6 @@
 // Author: Tucker Haydon
 
-#include "dijkstra2d.h"
+#include "depth_first_search2d.h"
 
 namespace mediation_layer {
   // Hiding extraneous information
@@ -12,7 +12,7 @@ namespace mediation_layer {
 
   }
 
-  PathInfo Dijkstra2D::Run(
+  PathInfo DepthFirstSearch2D::Run(
       const Graph2D& graph, 
       const Node2DPtr start_node, 
       const Node2DPtr end_node) {

@@ -23,7 +23,8 @@ You will not have to use most of it, but it may be helpful to some of you to see
 what a C++ library looks like. 
 
 ---
-**What differences stand out to you between Matlab and C++?**
+**Q**: What differences stand out to you between Matlab and C++? Don't list every
+   detail. Try to be general.
 ---
 
 Let's make sure the project builds.
@@ -38,12 +39,12 @@ If there were no errors, then the project build just fine. If not, contact one
 of the TA's to help you fix the error. 
 
 Now, let's run an example. The example source code is in
-"MediationLayerStudent/src/exe/bad_path_planner.cc". Open the file and read the
+"MediationLayerStudent/labs/examples.cc". Open the file and read the
 comments at the top of the file to get an understanding of what it's doing.
 Afterwards, run the example and see the output.
 
 ```bash
-cd ~/Workspace/MediationLayerStudent/build/src/exe/
-./random_path
+cd ~/Workspace/MediationLayerStudent/build/
+./labs/examples
 ```
 

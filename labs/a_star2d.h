@@ -13,7 +13,7 @@
 
 namespace mediation_layer {
 
-  struct Dijkstra2D {
+  struct AStar2D {
     using Node2DPtr = std::shared_ptr<Node2D>;
 
     PathInfo Run(const Graph2D& graph, const Node2DPtr start, const Node2DPtr end);

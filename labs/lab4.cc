@@ -4,7 +4,10 @@
 #include <iostream>
 
 #include "dijkstra2d.h"
+#include "depth_first_search2d.h"
+#include "a_star2d.h"
 #include "occupancy_grid2d.h"
+#include "path_info.h"
 
 using namespace mediation_layer;
 using Node2DPtr = std::shared_ptr<Node2D>;
@@ -67,23 +70,24 @@ void RunDepthFirstSearch(
     const Node2DPtr& start_node,
     const Node2DPtr& end_node) {
   
+  
   std::cout << "============================================" << std::endl;
-  std::cout << "======== RUNNING DEPTH FIRST SEARCH ========" << std::endl;
+  std::cout << "=============    RUNNING DFS   =============" << std::endl;
   std::cout << "============================================" << std::endl;
 
   // Run Dijkstra
-  // Dijkstra2D dijkstra;
-  // Dijkstra2D::Work work = dijkstra.Run(graph, start_node, end_node);
+  DepthFirstSearch2D dfs;
+  PathInfo path_info = dfs.Run(graph, start_node, end_node);
 
   // Print the solution
-  // work.statistics.Print();
+  path_info.details.Print();
 
-  // std::cout << "===== PATH =====" << std::endl;
-  // for(const Node2DPtr& node: work.path) {
-  //   std::cout << "[" << node->Data().transpose() << "]" << std::endl;
-  // }
+  std::cout << "===== PATH =====" << std::endl;
+  for(const Node2DPtr& node: path_info.path) {
+    std::cout << "[" << node->Data().transpose() << "]" << std::endl;
+  }
 
-  // std::cout << std::endl;
+  std::cout << std::endl;
 }
 
 void RunDijkstra(
@@ -91,19 +95,19 @@ void RunDijkstra(
     const Node2DPtr& start_node,
     const Node2DPtr& end_node) {
   
-  std::cout << "==================================" << std::endl;
-  std::cout << "======== RUNNING DIJKSTRA ========" << std::endl;
-  std::cout << "==================================" << std::endl;
+  std::cout << "============================================" << std::endl;
+  std::cout << "============= RUNNING DIJKSTRA =============" << std::endl;
+  std::cout << "============================================" << std::endl;
 
   // Run Dijkstra
   Dijkstra2D dijkstra;
-  Dijkstra2D::Work work = dijkstra.Run(graph, start_node, end_node);
+  PathInfo path_info = dijkstra.Run(graph, start_node, end_node);
 
   // Print the solution
-  work.statistics.Print();
+  path_info.details.Print();
 
   std::cout << "===== PATH =====" << std::endl;
-  for(const Node2DPtr& node: work.path) {
+  for(const Node2DPtr& node: path_info.path) {
     std::cout << "[" << node->Data().transpose() << "]" << std::endl;
   }
 
@@ -115,21 +119,21 @@ void RunAStar(
     const Node2DPtr& start_node,
     const Node2DPtr& end_node) {
   
-  std::cout << "==================================" << std::endl;
-  std::cout << "======== RUNNING A* ==============" << std::endl;
-  std::cout << "==================================" << std::endl;
+  std::cout << "============================================" << std::endl;
+  std::cout << "=============  RUNNING A Star  =============" << std::endl;
+  std::cout << "============================================" << std::endl;
 
   // Run Dijkstra
-  // Dijkstra2D dijkstra;
-  // Dijkstra2D::Work work = dijkstra.Run(graph, start_node, end_node);
+  AStar2D a_star;
+  PathInfo path_info = a_star.Run(graph, start_node, end_node);
 
-  // // Print the solution
-  // work.statistics.Print();
+  // Print the solution
+  path_info.details.Print();
 
-  // std::cout << "===== PATH =====" << std::endl;
-  // for(const Node2DPtr& node: work.path) {
-  //   std::cout << "[" << node->Data().transpose() << "]" << std::endl;
-  // }
+  std::cout << "=====  PATH   =====" << std::endl;
+  for(const Node2DPtr& node: path_info.path) {
+    std::cout << "[" << node->Data().transpose() << "]" << std::endl;
+  }
 
-  // std::cout << std::endl;
+  std::cout << std::endl;
 }
