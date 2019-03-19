@@ -11,6 +11,7 @@ their safety.
 1. [Eigen](https://eigen.tuxfamily.org)
 2. [ROS](http://www.ros.org)
 3. [P4 Requirements](https://github.com/tuckerhaydon/P4.git)
+3. sudo apt install gnuplot
 
 
 ### Build

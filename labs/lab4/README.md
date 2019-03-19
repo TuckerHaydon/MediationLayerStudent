@@ -40,7 +40,7 @@ If there were no errors, then the project build just fine. If not, contact one
 of the TA's to help you fix the error. 
 
 Now, let's run an example. The example source code is in
-"MediationLayerStudent/labs/examples.cc". Open the file and read the
+"MediationLayerStudent/labs/lab4/src/examples.cc". Open the file and read the
 comments at the top of the file to get an understanding of what it's doing.
 Afterwards, run the example and see the output.
 
@@ -52,13 +52,13 @@ cd ~/Workspace/MediationLayerStudent/build/
 ## Path Planning
 The first half of the lab is dicrete path-planning. You will implement a
 Depth-First Search (DFS), Dijkstra's Algorithm (Dijkstra's), and A\* Search
-(A\*). The main function that you will be using is: labs/src/lab4.cc. You will
-not need to edit lab4.cc. Instead, a number of helper files have been created
-for you. You will put all of your code in these files.
+(A\*). The main function that you will be using is: labs/lab4/src/main.cc. **Do
+not edit main.cc**. Instead, a number of helper files have been created for you.
+You will put all of your code in these files.
 
 
 ### Depth-First Search
-Complete the algorithm in labs/src/depth_first_search2d.cc. Your complete
+Complete the algorithm in labs/lab4/src/depth_first_search2d.cc. Your complete
 implementation should be in this file only.
 
 **Experiment**
@@ -68,12 +68,12 @@ implementation should be in this file only.
 
 
 ### Dijkstra's Algorithm
-Complete the algorithm in labs/src/dijkstra2d.cc. Your complete implementation
+Complete the algorithm in labs/lab4/src/dijkstra2d.cc. Your complete implementation
 should be in this file only.
 
 
 ### A\* Algorithm
-Complete the algorithm in labs/src/a_star2d.cc. Your complete implementation
+Complete the algorithm in labs/lab4/src/a_star2d.cc. Your complete implementation
 should be in this file only.
 
 **Experiment**
@@ -121,10 +121,11 @@ minimizing one of the derivatives of the polynomials. For example, if one were
 worried about the total force the quadcopter might have to generate throughout
 the trajectory, one might want to minimize the acceleration.
 
-The theory of the polynomial solver is described in detail in [LaTex in the P4
-repo](../../../src/P4/doc/tex). Run the makefile to build the corresponding PDF.
-Writing the code to solve the for the polynomials is mostly an exercise in
-bookkeeping so you are not required to write any of code.
+The theory of the polynomial solver is described in detail in LaTex in the [P4
+repository](https://github.com/tuckerhaydon/P4/doc/tex). Run the makefile to
+build the corresponding PDF.  Writing the code to solve the for the polynomials
+is mostly an exercise in bookkeeping so you are not required to write any of
+code.
 
 Instead, you will write and run a series of experiments using the polynomial
 solver. The intention is that you will build up a more intuitive understanding
