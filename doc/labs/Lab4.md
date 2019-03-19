@@ -22,10 +22,10 @@ Games will use. Feel free to poke around the source code. There is a lot of it!
 You will not have to use most of it, but it may be helpful to some of you to see
 what a C++ library looks like. 
 
----
-**Q**: What differences stand out to you between Matlab and C++? Don't list every
+***
+Q: What differences stand out to you between Matlab and C++? Don't list every
    detail. Try to be general.
----
+***
 
 Let's make sure the project builds.
 ```bash
