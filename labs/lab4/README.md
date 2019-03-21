@@ -59,7 +59,8 @@ You will put all of your code in these files.
 
 ### Depth-First Search
 Complete the algorithm in labs/lab4/src/depth_first_search2d.cc. Your complete
-implementation should be in this file only.
+implementation should be fully contained in this file -- do not put your code
+anywhere else.
 
 **Experiment**
 > Depth-First Search is not guaranteed to find the shortest path. Construct an
@@ -68,13 +69,14 @@ implementation should be in this file only.
 
 
 ### Dijkstra's Algorithm
-Complete the algorithm in labs/lab4/src/dijkstra2d.cc. Your complete implementation
-should be in this file only.
+Complete the algorithm in labs/lab4/src/dijkstra2d.cc. Your complete
+implementation should be fully contained in this file -- do not put your code
+anywhere else.
 
 
 ### A\* Algorithm
 Complete the algorithm in labs/lab4/src/a_star2d.cc. Your complete implementation
-should be in this file only.
+should be fully contained in this file --- do not put your code anywhere else.
 
 **Experiment**
 > Recall that an A\* heuristic function must be optimistic: it must always
@@ -122,10 +124,10 @@ worried about the total force the quadcopter might have to generate throughout
 the trajectory, one might want to minimize the acceleration.
 
 The theory of the polynomial solver is described in detail in LaTex in the [P4
-repository](https://github.com/tuckerhaydon/P4/doc/tex). Run the makefile to
-build the corresponding PDF.  Writing the code to solve the for the polynomials
-is mostly an exercise in bookkeeping so you are not required to write any of
-code.
+repository](https://github.com/TuckerHaydon/P4/tree/master/doc/tex). Run the
+makefile to build the corresponding PDF.  Writing the code to solve the for the
+polynomials is mostly an exercise in bookkeeping so you are not required to
+write any of code.
 
 Instead, you will write and run a series of experiments using the polynomial
 solver. The intention is that you will build up a more intuitive understanding
@@ -197,4 +199,4 @@ as follows:
 ```
 
 ### Appendix 2: FAQ
-No FAR so far.
+No FAQ so far.
