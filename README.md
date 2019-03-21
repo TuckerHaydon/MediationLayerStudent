@@ -13,6 +13,13 @@ their safety.
 3. [P4 Requirements](https://github.com/tuckerhaydon/P4.git)
 3. sudo apt install gnuplot
 
+### Clone
+```bash
+git clone https://github.com/tuckerhaydon/MediationLayer.git
+cd MediationLayer
+git submodule update --init --recursive
+```
+
 
 ### Build
 ```bash
