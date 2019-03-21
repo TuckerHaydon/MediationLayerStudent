@@ -76,7 +76,8 @@ namespace mediation_layer {
         std::vector<std::pair<double, double>> data;
         data.reserve(this->path_.size());
         for(const std::shared_ptr<Node2D>& node: this->path_) {
-          data.emplace_back(node->Data().x(), node->Data().y());
+          // This is flipped because of the x,y -> row,col correspondence
+          data.emplace_back(node->Data().y(), node->Data().x());
         }
 
         std::string command = "'-' ";

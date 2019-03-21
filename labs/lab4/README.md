@@ -140,7 +140,8 @@ of how the polynomial solver fits into the general path-planning framework.
 > Design a 2D square trajectory. Run the polynomial solver over the waypoints,
 > minimizing snap, and varying the arrival time in three ways: reasonable
 > arrival time, unreasonably short arrival time, unreasonably long arrival time.
-> How does varying the arrival time affect the shape of the trajectory?
+> How does varying the arrival time affect the shape of the trajectory? What
+> happens when the arrival time is too short?
 
 **Experiment**
 > Design a 2D circular trajectory. Run the polynomial solver over the waypoints,

@@ -13,6 +13,7 @@ add_subdirectory(geometry)
 add_subdirectory(graph)
 add_subdirectory(environment)
 add_subdirectory(ros)
+add_subdirectory(P4)
 
 set(SOURCES 
   algorithm/safe_flight_corridor2d.cc
