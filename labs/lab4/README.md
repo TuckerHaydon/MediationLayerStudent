@@ -1,4 +1,16 @@
 # Lab 4
+## Preamble
+The document below is Lab 4. Questions and experiments to be completed and
+reported in the submitted lab report are outlined as follows:
+
+**Question: Q0**
+> This box contains a question that you must answer.
+
+**Experiment: E0**
+> This box contains an experiment that you must complete.
+
+To submit your lab, zip the entire MediationLayerStudent directory and submit it to canvas.
+
 ## Assignment
 In the lecture we discussed four types of path planning algorithms: 
 1) Depth-First Search
@@ -22,7 +34,7 @@ Games will use. Feel free to poke around the source code. There is a lot of it!
 You will not have to use most of it, but it may be helpful to some of you to see
 what a C++ library looks like. 
 
-**Question**
+**Question: Q#**
 > What differences stand out to you between Matlab and C++? Don't list every
 > detail. Try to be general.
 
@@ -52,49 +64,54 @@ cd ~/Workspace/MediationLayerStudent/build/
 ## Path Planning
 The first half of the lab is dicrete path-planning. You will implement a
 Depth-First Search (DFS), Dijkstra's Algorithm (Dijkstra's), and A\* Search
-(A\*). The main function that you will be using is: labs/lab4/src/main.cc. **Do
-not edit main.cc**. Instead, a number of helper files have been created for you.
-You will put all of your code in these files.
+(A\*). The main function that you will be using is:
+path_planning.cc. **Do not edit path_planning.cc**. Instead, a
+number of helper files have been created for you.  You will put all of your code
+in these files.
 
 
 ### Depth-First Search
-Complete the algorithm in labs/lab4/src/depth_first_search2d.cc. Your complete
+Complete the algorithm in depth_first_search2d.cc. Your complete
 implementation should be fully contained in this file -- do not put your code
 anywhere else.
 
-**Experiment**
+**Experiment: E#**
 > Depth-First Search is not guaranteed to find the shortest path. Construct an
-> example grid where DFS does not find the longest path. Submit is picture of the
-> grid and the found path.
+> example grid where DFS does not find the longest path. Report the example
+> grid, the path that DFS found, the length of the found path, and the optimal
+> length of the path.
 
 
 ### Dijkstra's Algorithm
-Complete the algorithm in labs/lab4/src/dijkstra2d.cc. Your complete
-implementation should be fully contained in this file -- do not put your code
-anywhere else.
+Complete the algorithm in dijkstra2d.cc. Your complete implementation should be
+fully contained in this file -- do not put your code anywhere else.
+
+**Experiment: E#**
+> Run Dijkstra's and DFS over the same grid. Which finds the shortest path?
+> Which explores the fewest nodes? Which runs the fastest?
 
 
 ### A\* Algorithm
 Complete the algorithm in labs/lab4/src/a_star2d.cc. Your complete implementation
 should be fully contained in this file --- do not put your code anywhere else.
 
-**Experiment**
+**Experiment: E#**
 > Recall that an A\* heuristic function must be optimistic: it must always
 > _underestimate_ the true cost of proceeding from a given node to the end node.
 > Design and report a cost function that _overestimates_ the true cost. Run your
 > A\* solver.  How does the A\* solver with the overestimate compare to that with
 > the underestimate?
 
-**Experiment**
+**Experiment: E#**
 > Recall that the performance of A\* depends on the hueristic function. Design and
 > report three distict heuristic functions. Evaluate each one using your A\*
 > solver. 
 
-**Experiment**
+**Experiment: E#**
 > Evaluate the performance of A\* using a zero heuristic function: h(current, end)
 > = 0. How does it compare to Dijkstra's?
 
-**Question**
+**Question: Q#**
 > The A\* algorithm that you have implemented solves for the position of
 > waypoints for the quadopters, but your Matlab simulation requires position,
 > velocity, acceleration, and yaw time histories. How would you modify the above
@@ -108,7 +125,7 @@ histories to be specified. One could derive these values by assuming the
 quadcopter will fly in a straight line from point to point and stopping at every
 waypoint before continuing onto the next. 
 
-**Question**
+**Question: Q#**
 > Describe a disadvantage of using the point-to-point, line-based approach.
 
 One could also fit a set of piece-wise smooth polynomials over the set of
@@ -133,26 +150,26 @@ Instead, you will write and run a series of experiments using the polynomial
 solver. The intention is that you will build up a more intuitive understanding
 of how the polynomial solver fits into the general path-planning framework.
 
-**Experiment**
+**Experiment: E#**
 > Design a 2D square trajectory. Run the polynomial solver over the waypoints,
 > minimizing derivatives 0 through 4. Describe how the trajectory history
 > changes as you increase the derivative.
 
-**Experiment**
+**Experiment: E#**
 > Design a 2D square trajectory. Run the polynomial solver over the waypoints,
 > minimizing snap, and varying the arrival time in three ways: reasonable
 > arrival time, unreasonably short arrival time, unreasonably long arrival time.
 > How does varying the arrival time affect the shape of the trajectory? What
 > happens when the arrival time is too short?
 
-**Experiment**
+**Experiment: E#**
 > Design a 2D circular trajectory. Run the polynomial solver over the waypoints,
 > minimizing snap, and varying the number of waypoints on the edge of the
 > circle. How does increasing or decreasing the number of waypoints affect the
 > final trajectory?
 
 ## Putting it all together
-**Experiment**
+**Experiment: E#**
 > Feed the output of your A\* path planner into the P4 solver. Print out the
 > resulting polynomial coefficients and load them into Matlab. Sample the
 > polynomial in Matlab and insert them into quadcopter simulator. Can the
