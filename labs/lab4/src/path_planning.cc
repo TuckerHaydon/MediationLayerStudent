@@ -41,21 +41,24 @@ void RunAStar(
 // DO NOT MODIFY
 ///////////////////////////////////////////////////////////////////
 int main(int argc, char** argv) {
-  if(argc != 2) {
-    std::cerr << "Usage: ./lab4 occupancy_grid_file" << std::endl;
+  if(argc != 6) {
+    std::cerr << "Usage: ./path_planning occupancy_grid_file x1 y1 x2 y2" << std::endl;
     return EXIT_FAILURE;
   }
 
+  // Parsing input
+  const std::string occupancy_grid_file = argv[1];
+  const Node2DPtr start_node = std::make_shared<Node2D>(
+      Eigen::Vector2d(std::stoi(argv[2]),std::stoi(argv[3])));
+  const Node2DPtr end_node = std::make_shared<Node2D>(
+      Eigen::Vector2d(std::stoi(argv[4]),std::stoi(argv[5])));
+
   // Load an occupancy grid from a file
   OccupancyGrid2D occupancy_grid;
-  occupancy_grid.LoadFromFile(argv[1]);
+  occupancy_grid.LoadFromFile(occupancy_grid_file);
 
   // Transform an occupancy grid into a graph
-  Graph2D graph = occupancy_grid.AsGraph();
-
-  // Define the start and end points
-  Node2DPtr start_node = std::make_shared<Node2D>(Eigen::Vector2d(0,0));
-  Node2DPtr end_node = std::make_shared<Node2D>(Eigen::Vector2d(4,4));
+  const Graph2D graph = occupancy_grid.AsGraph();
 
   // Run the path planning algorithms
   RunDepthFirstSearch(graph, &occupancy_grid, start_node, end_node);
