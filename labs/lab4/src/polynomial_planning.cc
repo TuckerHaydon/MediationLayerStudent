@@ -63,7 +63,7 @@ void Example() {
 
   // Options to configure the polynomial solver with
   PolynomialSolver::Options solver_options;
-  solver_options.num_dimensions = 2;     // 3D
+  solver_options.num_dimensions = 2;     // 2D
   solver_options.polynomial_order = 8;   // Fit an 8th-order polynomial
   solver_options.continuity_order = 4;   // Require continuity to the 4th order
   solver_options.derivative_order = 2;   // Minimize the 2nd order (acceleration)
@@ -125,7 +125,7 @@ void DerivativeExperiments() {
   solver_options.num_dimensions = 2;     // 2D
   solver_options.polynomial_order = 8;   // Fit an 8th-order polynomial
   solver_options.continuity_order = 4;   // Require continuity to the 4th order
-  solver_options.derivative_order = 2;   // TODO: VARY THE DERIVATIVE ORDER
+  solver_options.derivative_order = 0;   // TODO: VARY THE DERIVATIVE ORDER
   solver_options.polish = true;          // Polish the solution
 
   // Use PolynomialSolver object to solve for polynomial trajectories
