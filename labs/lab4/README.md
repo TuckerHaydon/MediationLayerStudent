@@ -1,15 +1,17 @@
 # Lab 4
 ## Preamble
-The document below is Lab 4. Questions and experiments to be completed and
-reported in the submitted lab report are outlined as follows:
+Questions and experiments to be completed and reported in the submitted lab
+report are designated as follows:
 
 **Question: Q0**
 > This box contains a question that you must answer.
 
-**Experiment: E0**
-> This box contains an experiment that you must complete.
+Point values for each part of the lab are specified. 25 points are reserved for
+the lab report. Remember to write for busy readers \-\-\- _concisely_ answer all
+the questions.
 
-To submit your lab, zip the entire MediationLayerStudent directory and submit it to canvas.
+To submit your lab, zip the entire MediationLayerStudent directory and submit it
+to canvas.
 
 ## Assignment
 In the lecture we discussed four types of path planning algorithms: 
@@ -19,7 +21,7 @@ In the lecture we discussed four types of path planning algorithms:
 4) A\* Algorithm
 
 Now you must implement the algorithms in C++. First create a workspace directory
-and download the path-planning library.
+and download the MediationLayerStudent repository.
 ```bash
 cd ~
 mkdir Workspace && cd Workspace
@@ -34,7 +36,7 @@ Games will use. Feel free to poke around the source code. There is a lot of it!
 You will not have to use most of it, but it may be helpful to some of you to see
 what a C++ library looks like. 
 
-**Question: Q#**
+**Question: Q1**
 > What differences stand out to you between Matlab and C++? Don't list every
 > detail. Try to be general.
 
@@ -48,13 +50,16 @@ cd build
 cmake .. && make -j1
 ```
 
-If there were no errors, then the project build just fine. If not, contact one
-of the TA's to help you fix the error. 
+If there were no errors, then the project built just fine. If not, contact one
+of the TAs to help you fix the error. 
 
 Now, let's run an example. The example source code is in
 "MediationLayerStudent/labs/lab4/src/examples.cc". Open the file and read the
 comments at the top of the file to get an understanding of what it's doing.
-Afterwards, run the example and see the output.
+Afterwards, run the example and see the output. When running the program, you
+must also specify the path to an occupancy grid. Some example occupancy grid
+files are located in lab4/data/. You may examine those. The structure of these
+files is explained in the appendix at the end of this document.
 
 ```bash
 cd ~/Workspace/MediationLayerStudent/build/
@@ -62,70 +67,71 @@ cd ~/Workspace/MediationLayerStudent/build/
 ```
 
 ## Path Planning
-The first half of the lab is dicrete path-planning. You will implement a
+The first half of the lab is discrete path-planning. You will implement a
 Depth-First Search (DFS), Dijkstra's Algorithm (Dijkstra's), and A\* Search
-(A\*). The main function that you will be using is:
-path_planning.cc. **Do not edit path_planning.cc**. Instead, a
-number of helper files have been created for you.  You will put all of your code
-in these files.
+(A\*). The main function that you will be using is: path_planning.cc. **Do not
+edit path_planning.cc**. Instead, a number of helper files have been created for
+you.  You will put all of your code in these files.
 
 
-### Depth-First Search
-Complete the algorithm in depth_first_search2d.cc. Your complete
+### Depth-First Search (15 Points)
+Complete the algorithm in lab4/src/depth_first_search2d.cc. Your complete
 implementation should be fully contained in this file -- do not put your code
 anywhere else.
 
-**Experiment: E#**
+**Question: Q2**
 > Depth-First Search is not guaranteed to find the shortest path. Construct an
 > example grid where DFS does not find the longest path. Report the example
 > grid, the path that DFS found, the length of the found path, and the optimal
-> length of the path.
+> length of the path. Hint: use a small grid with a trivial solution.
 
 
-### Dijkstra's Algorithm
-Complete the algorithm in dijkstra2d.cc. Your complete implementation should be
+### Dijkstra's Algorithm (15 Points)
+Complete the algorithm in lab4/src/dijkstra2d.cc. Your complete implementation should be
 fully contained in this file -- do not put your code anywhere else.
 
-**Experiment: E#**
-> Run Dijkstra's and DFS over the same grid. Which finds the shortest path?
-> Which explores the fewest nodes? Which runs the fastest?
+**Question: Q3**
+> Run Dijkstra's and DFS over the same grid. Report which grid you used. Which
+> finds the shortest path?  Which explores the fewest nodes? Which runs the
+> fastest?
 
 
-### A\* Algorithm
-Complete the algorithm in labs/lab4/src/a_star2d.cc. Your complete implementation
+### A\* Algorithm (15 Points)
+Complete the algorithm in lab4/src/a_star2d.cc. Your complete implementation
 should be fully contained in this file --- do not put your code anywhere else.
 
-**Experiment: E#**
+**Question: Q4**
 > Recall that an A\* heuristic function must be optimistic: it must always
 > _underestimate_ the true cost of proceeding from a given node to the end node.
-> Design and report a cost function that _overestimates_ the true cost. Run your
+> Design a cost function that _overestimates_ the true cost. Run your
 > A\* solver.  How does the A\* solver with the overestimate compare to that with
 > the underestimate?
 
-**Experiment: E#**
-> Recall that the performance of A\* depends on the hueristic function. Design and
-> report three distict heuristic functions. Evaluate each one using your A\*
+**Question: Q5**
+> Recall that the performance of A\* depends on the heuristic function. Design and
+> report three distinct heuristic functions. Evaluate each one using your A\*
 > solver. 
 
-**Experiment: E#**
+**Question: Q6**
 > Evaluate the performance of A\* using a zero heuristic function: h(current, end)
 > = 0. How does it compare to Dijkstra's?
 
-**Question: Q#**
+**Question: Q7**
 > The A\* algorithm that you have implemented solves for the position of
 > waypoints for the quadopters, but your Matlab simulation requires position,
-> velocity, acceleration, and yaw time histories. How would you modify the above
-> A\* implementation to generate these? Why don't we do this?
+> velocity, acceleration, and yaw time histories. How would you modify the 2D
+> position-only A\* implementation to generate position, velocity, and
+> acceleration time histories? Why isn't this done in practice?
 
 
-## Polynomial Smoothing
+## Polynomial Smoothing (15 Points)
 A\* quickly finds a set of position waypoints for a quadcopter to follow, but
 the simulator requires position, velocity, acceleration, and yaw time
 histories to be specified. One could derive these values by assuming the
 quadcopter will fly in a straight line from point to point and stopping at every
 waypoint before continuing onto the next. 
 
-**Question: Q#**
+**Question: Q8**
 > Describe a disadvantage of using the point-to-point, line-based approach.
 
 One could also fit a set of piece-wise smooth polynomials over the set of
@@ -135,46 +141,50 @@ histories from the position polynomial. Moreover, if the degree of the
 polynomials is high-enough, then continuity in velocity, acceleration, and
 higher derivatives can be maintained throughout the trajectory. 
 
-An optimization problem can be formulated with the piecewise polynomials,
-minimizing one of the derivatives of the polynomials. For example, if one were
+An optimization problem may be formulated with the piecewise polynomials that
+minimizes one of the derivatives of the polynomials. For example, if one were
 worried about the total force the quadcopter might have to generate throughout
 the trajectory, one might want to minimize the acceleration.
 
 The theory of the polynomial solver is described in detail in LaTex in the [P4
 repository](https://github.com/TuckerHaydon/P4/tree/master/doc/tex). Run the
 makefile to build the corresponding PDF.  Writing the code to solve the for the
-polynomials is mostly an exercise in bookkeeping so you are not required to
-write any of code.
+polynomials is mostly an exercise in bookkeeping, so you are not required to
+write any of it.
 
 Instead, you will write and run a series of experiments using the polynomial
 solver. The intention is that you will build up a more intuitive understanding
 of how the polynomial solver fits into the general path-planning framework.
 
-**Experiment: E#**
-> Design a 2D square trajectory. Run the polynomial solver over the waypoints,
-> minimizing derivatives 0 through 4. Describe how the trajectory history
-> changes as you increase the derivative.
+**Question: Q9**
+> Create a 2D trajectory by placing four waypoints in a square layout. Run the
+> polynomial solver over the waypoints, minimizing derivatives 0 through 4.
+> Describe how the trajectory changes as you increase the derivative.
 
-**Experiment: E#**
-> Design a 2D square trajectory. Run the polynomial solver over the waypoints,
-> minimizing snap, and varying the arrival time in three ways: reasonable
-> arrival time, unreasonably short arrival time, unreasonably long arrival time.
-> How does varying the arrival time affect the shape of the trajectory? What
-> happens when the arrival time is too short?
+**Question: Q10**
+> Create a 2D trajectory by placing four waypoints in a square layout. Run the
+> polynomial solver over the waypoints, minimizing acceleration, and varying the
+> arrival time in three ways: reasonable arrival time, unreasonably short
+> arrival time, unreasonably long arrival time.  How does varying the arrival
+> time affect the shape of the trajectory? How does it affect the velocity and
+> acceleration profiles?
 
-**Experiment: E#**
-> Design a 2D circular trajectory. Run the polynomial solver over the waypoints,
-> minimizing snap, and varying the number of waypoints on the edge of the
-> circle. How does increasing or decreasing the number of waypoints affect the
-> final trajectory?
+**Question: Q11**
+> Create a 2D trajectory by placing N waypoints uniformly around a circle. Run
+> the polynomial solver over the waypoints, minimizing acceleration, and varying
+> the number of waypoints on the edge of the circle. How does increasing or
+> decreasing the number of waypoints affect the final trajectory?
 
-## Putting it all together
-**Experiment: E#**
-> Feed the output of your A\* path planner into the P4 solver. Print out the
-> resulting polynomial coefficients and load them into Matlab. Sample the
-> polynomial in Matlab and insert them into quadcopter simulator. Can the
-> quadcopter follow the trajectory? Overlay plots of the intended and actual
-> position, velocity, and acceleration time histories.
+## Putting it all together (15 points)
+**Question: Q12**
+> Run your A\* solver over lab4/data/full_stack_grid from (0,0) to (9,9). Feed
+> the waypoints generated by A\* directly into the polynomial solver. Give the
+> solver 1 second to go from waypoint to waypoint. Sample the position,
+> velocity, and acceleration of the trajectory at 20Hz and figure out a way to
+> load the data into Matlab. Maybe you can save it to a CSV file? Load the
+> position, velocity, acceleration, and time histories into your Matlab
+> simulator and execute it (assume z=0 for all time). Does your quadcopter
+> follow the trajectory? Include plots and commentary in your report.
 
 ## Appendix 1: Reference
 ### Build The Lab
@@ -185,15 +195,14 @@ cd build
 cmake .. && make -j1
 ```
 
-### Run the Lab
+### Run an executable
 ```bash
 cd ~/Workspace/MediationLayerStudent/build
-./labs/lab4/src/main ../labs/lab4/data/test_grid_medium
+./labs/lab4/src/EXECUTABLE ../labs/lab4/data/test_grid_medium
 ```
 
 ### Create your own data
-Example data has been created in labs/data. Inside this folder, you will find
-two files: test_grid_empty and test_grid_full. These are plain-text files that
+Example data has been created in labs/data. These are plain-text files that
 define occupancy grids that you can run your path planner on. An occupancy grid
 is structured as follows:
 
