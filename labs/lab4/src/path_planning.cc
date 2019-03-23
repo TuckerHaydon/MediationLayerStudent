@@ -42,7 +42,7 @@ void RunAStar(
 ///////////////////////////////////////////////////////////////////
 int main(int argc, char** argv) {
   if(argc != 6) {
-    std::cerr << "Usage: ./path_planning occupancy_grid_file x1 y1 x2 y2" << std::endl;
+    std::cerr << "Usage: ./path_planning occupancy_grid_file row1 col1 row2 col2" << std::endl;
     return EXIT_FAILURE;
   }
 
