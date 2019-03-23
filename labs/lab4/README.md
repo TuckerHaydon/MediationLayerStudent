@@ -253,4 +253,8 @@ as follows:
 ```
 
 ### Appendix 2: FAQ
-No FAQ so far.
+**The TA said a new update was available. How do I update my repository?**
+```bash
+cd ~/Workspace/MediationLayer/
+git pull origin master
+```
