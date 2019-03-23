@@ -169,9 +169,14 @@ namespace mediation_layer {
     }
     this->gp_ << std::endl;
 
+    // Send all the data
     for(const CommandUnit cu: this->command_units_) {
       this->gp_.send1d(cu.data_);
     }
+
+    // Reverse y-direction to match the occupancy grid file
+    this->gp_ << "set yrange [*:*] reverse" << std::endl;
+    this->gp_ << "replot" << std::endl;
 
     return true;
   }
