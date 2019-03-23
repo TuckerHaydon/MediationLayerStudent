@@ -9,6 +9,7 @@
 #include "polynomial_solver.h"
 #include "polynomial_sampler.h"
 #include "gnuplot-iostream.h"
+#include "gui2d.h"
 
 using namespace mediation_layer;
 using Node2DPtr = std::shared_ptr<Node2D>;
