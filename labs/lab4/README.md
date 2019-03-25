@@ -114,7 +114,7 @@ executable in the appendix.
 
 **Question: Q5**
 > Recall that the performance of A\* depends on the heuristic function. Design and
-> report three distinct heuristic functions. Evaluate each one using your A\*
+> report two distinct heuristic functions. Evaluate each one using your A\*
 > solver. 
 
 **Question: Q6**
@@ -198,6 +198,9 @@ instructions for full_stack_planning in the appendix.
 > Load the position, velocity, acceleration, and time histories into your Matlab
 > simulator and execute it (assume z=0 for all time). Does your quadcopter
 > follow the trajectory? Include plots and commentary in your report.
+
+Note that you may have to rework portions of the topSimulateControl.m file to work with
+the incoming data.
 
 ## Appendix 1: Reference
 ### Build The Lab
