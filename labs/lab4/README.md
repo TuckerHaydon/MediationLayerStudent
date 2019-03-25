@@ -21,7 +21,9 @@ In the lecture we discussed four types of path planning algorithms:
 4) A\* Algorithm
 
 Now you must implement the algorithms in C++. First create a workspace directory
-and download the MediationLayerStudent repository.
+and download the MediationLayerStudent repository. Open the terminal by clicking
+'Activities' in the upper-left corner and searching for 'Terminal'. Then enter
+the following commands.
 ```bash
 cd ~
 mkdir Workspace && cd Workspace
@@ -114,7 +116,7 @@ executable in the appendix.
 
 **Question: Q5**
 > Recall that the performance of A\* depends on the heuristic function. Design and
-> report three distinct heuristic functions. Evaluate each one using your A\*
+> report two distinct heuristic functions. Evaluate each one using your A\*
 > solver. 
 
 **Question: Q6**
@@ -198,6 +200,9 @@ instructions for full_stack_planning in the appendix.
 > Load the position, velocity, acceleration, and time histories into your Matlab
 > simulator and execute it (assume z=0 for all time). Does your quadcopter
 > follow the trajectory? Include plots and commentary in your report.
+
+Note that you may have to rework portions of the topSimulateControl.m file to work with
+the incoming data.
 
 ## Appendix 1: Reference
 ### Build The Lab
