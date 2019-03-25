@@ -21,7 +21,9 @@ In the lecture we discussed four types of path planning algorithms:
 4) A\* Algorithm
 
 Now you must implement the algorithms in C++. First create a workspace directory
-and download the MediationLayerStudent repository.
+and download the MediationLayerStudent repository. Open the terminal by clicking
+'Activities' in the upper-left corner and searching for 'Terminal'. Then enter
+the following commands.
 ```bash
 cd ~
 mkdir Workspace && cd Workspace
