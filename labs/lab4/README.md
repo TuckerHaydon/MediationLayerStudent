@@ -27,6 +27,7 @@ cd ~
 mkdir Workspace && cd Workspace
 git clone https://github.com/tuckerhaydon/MediationLayerStudent.git
 cd MediationLayerStudent
+git submodule update --init --recursive
 ```
 
 You should have successfully cloned the MediationLayerStudent project into your
