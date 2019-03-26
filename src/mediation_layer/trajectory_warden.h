@@ -9,20 +9,26 @@
 #include <set>
 #include <condition_variable>
 
-#include "trajectory2d.h"
+#include "trajectory.h"
 
 namespace mediation_layer {
-  class State2D {
+  // TrajectoryWarden is a thread-safe abstraction around an unordered map
+  // [trajectory_name -> trajectory]. TrajectoryWarden provides thread-safe access,
+  // modification, and await-modification of the underlying trajectory.
+  template <size_t T>
+  class TrajectoryWarden {
     private:
+      // Wraps a Trajectory with local mutexes and condition variables that
+      // ensure thread-safe access
       struct TrajectoryContainer {
-        Trajectory2D trajectory_;
+        Trajectory<T> trajectory_;
         std::mutex access_mtx_;
 
         std::mutex modified_mtx_;
         bool modified_{false};
         std::condition_variable modified_cv_;
 
-        TrajectoryContainer(const Trajectory2D& trajectory)
+        TrajectoryContainer(const Trajectory<T>& trajectory)
           : trajectory_(trajectory) {}
       };
 
@@ -30,11 +36,22 @@ namespace mediation_layer {
       std::set<std::string> keys_;
 
     public:
-      State2D(){};
-      bool Add(const std::string& key, const Trajectory2D& trajectory);
-      bool Write(const std::string& key,  const Trajectory2D& trajectory);
-      bool Read(const std::string& key, Trajectory2D& trajectory);
-      bool Await(const std::string& key, Trajectory2D& trajectory);
+      // Constructor
+      TrajectoryWarden(){};
+
+      // Add a key-value pair to the map
+      bool Register(const std::string& key);
+
+      // Write a new trajectory
+      bool Write(const std::string& key,  const Trajectory<T>& trajectory);
+
+      // Copy the latest trajectory associated with a key
+      bool Read(const std::string& key, Trajectory<T>& trajectory);
+
+      // Await a change to the trajectory associated with the key
+      bool Await(const std::string& key, Trajectory<T>& trajectory);
+
+      // Getter
       const std::set<std::string>& Keys() const;
 
   };
@@ -42,18 +59,20 @@ namespace mediation_layer {
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  inline bool State2D::Add(const std::string& key, const Trajectory2D& trajectory) {
+  template <size_t T>
+  inline bool TrajectoryWarden<T>::Register(const std::string& key) {
     // If this key already exists, return false
     if(this->map_.end() != this->map_.find(key)) {
       return false;
     }
 
-    this->map_[key] = std::make_shared<TrajectoryContainer>(trajectory); 
+    this->map_[key] = std::make_shared<TrajectoryContainer>(Trajectory<T>()); 
     keys_.insert(key);
     return true;
   }
 
-  inline bool State2D::Write(const std::string& key, const Trajectory2D& trajectory) {
+  template <size_t T>
+  inline bool TrajectoryWarden<T>::Write(const std::string& key, const Trajectory<T>& trajectory) {
     // If key does not exist, return false
     if(this->map_.end() == this->map_.find(key)) {
       return false;
@@ -68,12 +87,13 @@ namespace mediation_layer {
     { // Lock mutex for modification
       std::lock_guard<std::mutex> lock(container->modified_mtx_);
       container->modified_ = true;
-      container->modified_cv_.notify_one();
+      container->modified_cv_.notify_all();
     }
     return true;
   }
 
-  inline bool State2D::Read(const std::string& key, Trajectory2D& trajectory) {
+  template <size_t T>
+  inline bool TrajectoryWarden<T>::Read(const std::string& key, Trajectory<T>& trajectory) {
     // If key does not exist, return false
     if(this->map_.end() == this->map_.find(key)) {
       return false;
@@ -87,7 +107,8 @@ namespace mediation_layer {
     return true;
   }
   
-  inline bool State2D::Await(const std::string& key, Trajectory2D& trajectory) {
+  template <size_t T>
+  inline bool TrajectoryWarden<T>::Await(const std::string& key, Trajectory<T>& trajectory) {
     if(this->map_.end() == this->map_.find(key)) {
       return false;
     }
@@ -96,16 +117,23 @@ namespace mediation_layer {
     { // Lock mutex, wait cv, copy, set cv, release mutex
       std::unique_lock<std::mutex> lock(container->modified_mtx_);
       container->modified_cv_.wait(lock, [container]{ return true == container->modified_; });
-      trajectory = container->trajectory_;
+      { // Lock mutex for copy
+        std::lock_guard<std::mutex> lock(container->access_mtx_);
+        trajectory = container->trajectory_;
+      }
       container->modified_ = false;
       lock.unlock();
     }
     return true;
   }
   
-  inline const std::set<std::string>& State2D::Keys() const {
+  template <size_t T>
+  inline const std::set<std::string>& TrajectoryWarden<T>::Keys() const {
     return this->keys_;
   }
+
+  using TrajectoryWarden2D = TrajectoryWarden<2>;
+  using TrajectoryWarden3D = TrajectoryWarden<3>;
 
 };
 

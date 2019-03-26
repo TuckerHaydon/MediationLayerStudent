@@ -18,7 +18,7 @@ add_subdirectory(P4)
 set(SOURCES 
   algorithm/safe_flight_corridor2d.cc
   gui/gui2d.cc
-  mediation_layer/mediation_layer2d.cc
+  # mediation_layer/mediation_layer2d.cc
   )
 
 include_directories(

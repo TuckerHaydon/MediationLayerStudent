@@ -1,12 +1,12 @@
 // Author: Tucker Haydon
 
 #include <cstdlib>
-#include <memory>
-
-#include "mediation_layer2d.h"
-#include "state2d.h"
-
-using namespace mediation_layer;
+// #include <memory>
+// 
+// #include "mediation_layer2d.h"
+// #include "state2d.h"
+// 
+// using namespace mediation_layer;
 
 int main(int argc, char** argv) {
 
