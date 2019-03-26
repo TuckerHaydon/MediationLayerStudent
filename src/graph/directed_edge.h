@@ -17,13 +17,14 @@ namespace mediation_layer {
   struct DirectedEdge {
     const std::shared_ptr<T> source_;
     const std::shared_ptr<T> sink_;
-    double cost_;
+    const double cost_;
   
     DirectedEdge(const std::shared_ptr<T>& source = nullptr, 
                  const std::shared_ptr<T>& sink = nullptr, 
                  double cost = std::numeric_limits<double>::max()) 
       : source_(source), sink_(sink), cost_(cost) {}; 
 
+    // Getters
     const std::shared_ptr<T>& Source() const;
     const std::shared_ptr<T>& Sink() const;
     const double Cost() const;

@@ -53,6 +53,18 @@ int main(int argc, char** argv) {
       << std::endl;
   }
 
+  // Access neighbors of a given node
+  const std::vector<Node2DPtr> neighbors = graph.Neighbors(start_node);
+
+  // Iterate through the list of neighbors and print
+  for(const Node2DPtr neighbor: neighbors) {
+    std::cout 
+      << "[" << neighbor->Data().transpose() << "]"
+      << " is a neighbor of "
+      << "[" << start_node->Data().transpose() << "]"
+      << std::endl;
+  }
+
   // Check node equality
   std::cout << "Are the start and end nodes equal: " << (*start_node == *end_node) << std::endl;
   std::cout << "Is the start node equal to itself: " << (*start_node == *start_node) << std::endl;
