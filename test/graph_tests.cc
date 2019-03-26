@@ -79,6 +79,16 @@ void test_Graph2D() {
     assert(2 == graph.Edges(n5).size());
     assert(0 == graph.Edges(n6).size());  
   }
+
+  { // Test neighbors function
+    const auto n1 = std::make_shared<Node2D>(Eigen::Matrix<double, 2, 1>(1,2));
+    const auto n2 = std::make_shared<Node2D>(Eigen::Matrix<double, 2, 1>(2,2));
+    const DirectedEdge2D edge1(n1,n2);
+    const Graph2D graph({edge1});
+
+    assert(1 == graph.Neighbors(n1).size());
+    assert(*n2 == *graph.Neighbors(n1)[0]);
+  }
 }
 
 int main(int argc, char** argv) {

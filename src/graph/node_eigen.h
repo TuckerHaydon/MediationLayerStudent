@@ -8,6 +8,7 @@
 #include "node.h"
 
 namespace mediation_layer {
+  // Abstract node that contains Eigen data
   template <int D>
   class NodeEigen : public Node<Eigen::Matrix<double, D, 1>> {
     public:

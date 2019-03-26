@@ -8,14 +8,24 @@
 #include <memory>
 
 namespace mediation_layer {
+
+  // Abstract node class for use in Graph and DirectedEdge. A node is a simple
+  // data container.
   template <class T>
   class Node {
     protected:
+      // Data
       const T data_;
+
+      // Required equality function so that the node may be used in std
+      // containers
       const std::function<bool(const T& other)> f_equals_;
+
+      // Required hash function so that the node may be used in std containers
       const std::function<size_t()> f_hash_;
 
     public:
+      // Constructor
       Node(const T& data = T(),
            std::function<bool(const T&)> f_equals = [](const T& t){ return false; }, 
            std::function<size_t()> f_hash = [](const T& t) { return 0; })
@@ -23,10 +33,12 @@ namespace mediation_layer {
           f_equals_(f_equals),
           f_hash_(f_hash) {}
 
+      // Getter
       const T& Data() const {
         return data_;
       }
 
+      // Operators for std containers
       bool operator==(const Node& other) const {
         return this->f_equals_(other.data_);
       }
