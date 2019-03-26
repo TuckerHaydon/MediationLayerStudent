@@ -265,6 +265,9 @@ cd ~/Workspace/MediationLayerStudent/
 git pull origin master
 ```
 
+If a window pops open asking for a merge message, just accept the default merge
+message by quitting the screen. For the default editor, just press control-x.
+
 **I got a merge conflict error when I tried to update. What do I do?**
 Merge conflicts occur when the update you are pulling modifies the same code
 that you have been working on. Git doesn't know which modification is the 'truth', so it asks you to clarify. You can do some research and figure out how to fix the merge conflict yourself, or email/visit one of the TA's for help fixing it.
