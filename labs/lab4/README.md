@@ -261,6 +261,6 @@ as follows:
 ### Appendix 2: FAQ
 **The TA said a new update was available. How do I update my repository?**
 ```bash
-cd ~/Workspace/MediationLayer/
+cd ~/Workspace/MediationLayerStudent/
 git pull origin master
 ```
