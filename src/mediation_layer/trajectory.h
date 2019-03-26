@@ -16,8 +16,9 @@ namespace mediation_layer {
   template <size_t T>
   class Trajectory {
     private:
-      // Underlying data structure
-      std::vector<
+      // Underlying data structure. Formatted as follows:
+      //   [ pos(T), vel(T), acc(T), yaw(1), time(1)]
+      const std::vector<
         Eigen::Vector<double, 3*T + 2>, 
         Eigen::aligned_allocator<Eigen::Vector<double, 3*T + 2>>> data_;
   
@@ -41,9 +42,6 @@ namespace mediation_layer {
       const Eigen::Vector<double, 3*T> PVA(const size_t idx) const;
       const Eigen::Vector<double, 3*T + 2> PVAYT(const size_t idx) const;
       const size_t Size() const;
-
-      // Data modification
-      bool Append(const Eigen::Vector<double, 3*T + 2>& instance);
   };
 
   //  ******************
