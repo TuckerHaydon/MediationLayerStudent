@@ -10,6 +10,9 @@
 
 #include "trajectory.h"
 #include "trajectory_warden.h"
+#include "quad_state.h"
+#include "state_warden.h"
+
 // #include "state2d.h"
 // #include "line2d_potential.h"
 // #include "point2d_potential.h"
@@ -133,9 +136,17 @@ void test_Trajectory2D() {
   }
 }
 
+void test_State2D() {
+  { // Trivial
+
+  }
+
+}
+
 int main(int argc, char** argv) {
   test_Trajectory2D();
   test_TrajectoryWarden2D();
+  test_State2D();
 //   test_State2D();
 //   test_Line2DPotential();
 //   test_Point2DPotential();

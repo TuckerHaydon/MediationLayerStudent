@@ -1,10 +1,14 @@
 // Author: Tucker Haydon
 
+#pragma once
+
+#include <Eigen/Dense>
+
 namespace mediation_layer {
   // Abstract class encapsulating the current state of an element in the
   // mediation layer
   template <size_t T>
-  class UnitState {
+  class QuadState {
     private:
       // The structure of the state is:
       //   [pos(T), vel(T), q(4), e_dot(3)]
@@ -14,7 +18,7 @@ namespace mediation_layer {
       // Required by Eigen
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      UnitState(const Eigen::Vector<double, 2*T + 7>& data)
+      QuadState(const Eigen::Vector<double, 2*T + 7>& data)
         : data_(data) {}
 
       // Getters
@@ -28,22 +32,22 @@ namespace mediation_layer {
   //  * IMPLEMENTATION *
   //  ******************
   template <size_t T>
-  Eigen::Vector<double, T> UnitState::Position() const {
+  Eigen::Vector<double, T> QuadState::Position() const {
     return data_.segment(0*T,T);
   }
 
   template <size_t T>
-  Eigen::Vector<double, T> UnitState::Velocity() const {
+  Eigen::Vector<double, T> QuadState::Velocity() const {
     return data_.segment(1*T,T);
   }
 
   template <size_t T>
-  Eigen::Vector<double, T> UnitState::Orientation() const {
+  Eigen::Vector<double, T> QuadState::Orientation() const {
     return data_.segment(2*T,4);
   }
 
   template <size_t T>
-  Eigen::Vector<double, T> UnitState::Twist() const {
+  Eigen::Vector<double, T> QuadState::Twist() const {
     return data_.segment(2*T+4,3);
   }
 }
