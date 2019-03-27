@@ -15,8 +15,6 @@
 
 #include "yaml-cpp/yaml.h"
 #include "map2d.h"
-// #include "mediation_layer2d.h"
-// #include "state2d_dispatcher.h"
 #include "trajectory_warden.h"
 #include "trajectory.h"
 
@@ -24,37 +22,7 @@ using namespace mediation_layer;
 
 using PVA_t = Eigen::Matrix<double, 6, 1>;
 
-namespace {
-  // Trajectory2D GenerateSmoothTrajectory(
-  //     const Eigen::Matrix<double, 8, 1>& start, 
-  //     const double time,
-  //     const double dt) {
-  //   const double e_dt = std::exp(-dt); 
-  //   const Eigen::Matrix<double, 6, 6> state_transition_matrix = 
-  //     (Eigen::Matrix<double, 6, 6>() << 
-  //      e_dt, 0, 0, 0, 0, 0,
-  //      0, e_dt, 0, 0, 0, 0,
-  //      0, 0, e_dt, 0, 0, 0,
-  //      0, 0, 0, e_dt, 0, 0,
-  //      0, 0, 0, 0, e_dt, 0,
-  //      0, 0, 0, 0, 0, e_dt
-  //      ).finished();
-
-  //   Trajectory2D trajectory;
-  //   trajectory.Append(start);
-  //   const int N = (int)(time / dt) + 1;
-  //   for(int idx = 0; idx < N-1; ++idx) {
-  //     const PVA_t current = trajectory.PVA(idx);
-  //     const PVA_t next = state_transition_matrix * current;
-  //     trajectory.Append((Eigen::Matrix<double, 8, 1>() << 
-  //           next,
-  //           trajectory.Yaw(idx),
-  //           trajectory.Time(idx) + dt
-  //           ).finished());
-  //   }
-  //   return trajectory;
-  // }
-  
+namespace { 
   void DummyFunction(const std_msgs::String::ConstPtr& msg) {
   
   }
@@ -124,6 +92,14 @@ int main(int argc, char** argv) {
   //   trajectory_publishers.push_back(pub);
   // }
 
+  // Initialize the TrajectoryWardens. The TrajectoryWarden enables safe,
+  // multi-threaded access to trajectory data. Internal components that require
+  // access to proposed and updated trajectories should request access through
+  // TrajectoryWarden.
+  auto trajectory_warden_in  = std::make_shared<TrajectoryWarden2D>();
+  auto trajectory_warden_out = std::make_shared<TrajectoryWarden2D>();
+
+
   // // Mediation layer thread. The mediation layer runs continuously, forward
   // // integrating the proposed state dynamics and modifying them so that the
   // // various agents will not crash into each other. Data is asynchonously read
@@ -162,27 +138,6 @@ int main(int argc, char** argv) {
   //       ros::shutdown();
   //     });
 
-
-  // // Send an example trajectory
-  // const std::string& key = "phoenix";
-  // // Trajectory2D proposed_trajectory = GenerateSmoothTrajectory(
-  // //     TimeStampedPVAY2D(
-  // //       PVAY2D(
-  // //         Vec2D(-0.3,-4),
-  // //         Vec2D(0,0),
-  // //         Vec2D(0,0),
-  // //         0),
-  // //       0),10,0.1);
-  // const Trajectory2D proposed_trajectory 
-  //   = GenerateSmoothTrajectory((Eigen::Matrix<double, 8, 1>() << 
-  //      0, 0, 0, 0, 0, 0, 0, 0).finished(), 
-  //     10, 
-  //     0.1
-  //     );
-
-  // updated_state->Add(key, proposed_trajectory); 
-  // proposed_state->Add(key, proposed_trajectory);
-
   // // Wait for thread termination
   // ros::spin();
   // kill_thread.join();
@@ -192,25 +147,3 @@ int main(int argc, char** argv) {
   return EXIT_SUCCESS;
 }
 
-
-    /*
-     * Views
-     */
-    // PolygonPotential::Options poly_options;
-    // poly_options.activation_dist = 0.8;
-    // poly_options.min_dist = 0.1;
-    // poly_options.scale = 0.1;
-
-    // std::vector<std::shared_ptr<Potential2D>> potentials;
-    // std::vector<std::shared_ptr<PotentialView>> potential_views;
-
-    // auto map_pot = std::make_shared<PolygonPotential>(this->map_.Boundary(), poly_options);
-    // potentials.push_back(map_pot);
-    // potential_views.push_back(std::make_shared<PolygonPotentialView>(map_pot));
-
-    // for(const Polygon& obstacle: this->map_.Obstacles()) {
-    //   const Polygon inverted_obstacle = obstacle.Invert();
-    //   auto potential = std::make_shared<PolygonPotential>(inverted_obstacle, poly_options);
-    //   potentials.push_back(potential);
-    //   potential_views.push_back(std::make_shared<PolygonPotentialView>(potential));
-    // }

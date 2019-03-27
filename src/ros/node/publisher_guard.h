@@ -8,7 +8,7 @@
 
 namespace mediation_layer {
   // Publisher guard is a wrapper around a publisher that ensures thread-safe,
-  // sychronized assess to a publisher. 
+  // sychronized access to a publisher. 
   template <class T>
   class PublisherGuard {
     private:
