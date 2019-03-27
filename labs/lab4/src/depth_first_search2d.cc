@@ -1,6 +1,6 @@
 // Author: Tucker Haydon
 
-#include <queue>
+#include <stack>
 
 #include "depth_first_search2d.h"
 
@@ -40,7 +40,7 @@ namespace mediation_layer {
     timer.Start();
 
     // Use these data structures
-    std::queue<NodeVisitorPtr> to_explore;
+    std::stack<NodeVisitorPtr> to_explore;
     std::vector<NodeVisitorPtr> explored;
 
     ///////////////////////////////////////////////////////////////////
