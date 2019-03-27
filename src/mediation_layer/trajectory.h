@@ -18,7 +18,7 @@ namespace mediation_layer {
     private:
       // Underlying data structure. Formatted as follows:
       //   [ pos(T), vel(T), acc(T), yaw(1), time(1)]
-      const std::vector<
+      std::vector<
         Eigen::Vector<double, 3*T + 2>, 
         Eigen::aligned_allocator<Eigen::Vector<double, 3*T + 2>>> data_;
   

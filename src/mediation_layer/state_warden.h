@@ -9,7 +9,7 @@
 #include <set>
 #include <condition_variable>
 
-#include "state.h"
+#include "quad_state.h"
 
 namespace mediation_layer {
   // StateWarden encapsulates state data and provides thread-safe read, write,
@@ -47,7 +47,7 @@ namespace mediation_layer {
       // Copy the latest QuadState associated with a key
       bool Read(const std::string& key, QuadState<T>& state);
 
-      // Await a change to the trajectory associated with the key
+      // Await a change to the state associated with the key
       bool Await(const std::string& key, QuadState<T>& state);
 
       // Getter

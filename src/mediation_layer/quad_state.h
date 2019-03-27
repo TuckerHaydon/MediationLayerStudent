@@ -12,13 +12,14 @@ namespace mediation_layer {
     private:
       // The structure of the state is:
       //   [pos(T), vel(T), q(4), e_dot(3)]
-      const Eigen::Vector<double, 2*T + 7> data_;
+      Eigen::Vector<double, 2*T + 7> data_;
 
     public:
       // Required by Eigen
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      QuadState(const Eigen::Vector<double, 2*T + 7>& data)
+      QuadState(const Eigen::Vector<double, 2*T + 7>& data 
+          = Eigen::Vector<double, 2*T + 7>())
         : data_(data) {}
 
       // Getters
@@ -32,22 +33,25 @@ namespace mediation_layer {
   //  * IMPLEMENTATION *
   //  ******************
   template <size_t T>
-  Eigen::Vector<double, T> QuadState::Position() const {
+  Eigen::Vector<double, T> QuadState<T>::Position() const {
     return data_.segment(0*T,T);
   }
 
   template <size_t T>
-  Eigen::Vector<double, T> QuadState::Velocity() const {
+  Eigen::Vector<double, T> QuadState<T>::Velocity() const {
     return data_.segment(1*T,T);
   }
 
   template <size_t T>
-  Eigen::Vector<double, T> QuadState::Orientation() const {
+  Eigen::Vector<double, 4> QuadState<T>::Orientation() const {
     return data_.segment(2*T,4);
   }
 
   template <size_t T>
-  Eigen::Vector<double, T> QuadState::Twist() const {
+  Eigen::Vector<double, 3> QuadState<T>::Twist() const {
     return data_.segment(2*T+4,3);
   }
+
+  using QuadState2D = QuadState<2>;
+  using QuadState3D = QuadState<3>;
 }

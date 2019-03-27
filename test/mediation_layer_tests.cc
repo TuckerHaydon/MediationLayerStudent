@@ -132,21 +132,51 @@ void test_Trajectory2D() {
     assert(0.2 == trajectory.Time(0));
     assert((Eigen::Vector<double, 6>(1,1,2,2,3,3)).isApprox(trajectory.PVA(0)));
     assert((Eigen::Vector<double, 8>(1,1,2,2,3,3,0.1,0.2)).isApprox(trajectory.PVAYT(0)));
-
   }
 }
 
-void test_State2D() {
+void test_QuadState2D() {
   { // Trivial
+    QuadState2D state(Eigen::Vector<double,11>(1,1,2,2,1,0,0,0,1,2,3));
+    assert((Eigen::Vector<double, 2>(1,1)).isApprox(state.Position()));
+    assert((Eigen::Vector<double, 2>(2,2)).isApprox(state.Velocity()));
+    assert((Eigen::Vector<double, 4>(1,0,0,0)).isApprox(state.Orientation()));
+    assert((Eigen::Vector<double, 3>(1,2,3)).isApprox(state.Twist()));
+  }
+}
 
+void test_StateWarden2D() {
+  { // Trivial
+    StateWarden2D warden;
+
+    QuadState2D dummy_state;
+    assert(0 == warden.Keys().size());
+    assert(false == warden.Read("", dummy_state));
+    assert(false == warden.Write("", dummy_state));
+    assert(false == warden.Await("", dummy_state));
   }
 
+  { // Test read/write
+    StateWarden2D warden;
+
+    QuadState2D state_write({Eigen::Vector<double, 11>(0,0,0,0,1,0,0,0,0,0,0)});
+    assert(true == warden.Register("test"));
+    assert(true == warden.Write("test", state_write));
+
+    QuadState2D state_read;
+    assert(true == warden.Read("test", state_read));
+    assert(state_read.Position().isApprox(state_write.Position()));
+    assert(state_read.Velocity().isApprox(state_write.Velocity()));
+    assert(state_read.Orientation().isApprox(state_write.Orientation()));
+    assert(state_read.Twist().isApprox(state_write.Twist()));
+  }
 }
 
 int main(int argc, char** argv) {
   test_Trajectory2D();
   test_TrajectoryWarden2D();
-  test_State2D();
+  test_QuadState2D();
+  test_StateWarden2D();
 //   test_State2D();
 //   test_Line2DPotential();
 //   test_Point2DPotential();
