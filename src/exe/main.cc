@@ -19,6 +19,7 @@
 #include "trajectory_warden.h"
 #include "trajectory.h"
 #include "trajectory_subscriber_node.h"
+#include "trajectory_publisher_node.h"
 
 #include "state_warden.h"
 #include "quad_state.h"
@@ -65,6 +66,12 @@ int main(int argc, char** argv) {
     std::exit(1);
   }
 
+  std::map<std::string, std::string> quad_state_topics;
+  if(false == nh.getParam("quad_state_topics", quad_state_topics)) {
+    std::cerr << "Required parameter not found on server: quad_state_topics" << std::endl;
+    std::exit(1);
+  }
+
   // Initialize the TrajectoryWardens. The TrajectoryWarden enables safe,
   // multi-threaded access to trajectory data. Internal components that require
   // access to proposed and updated trajectories should request access through
@@ -89,6 +96,15 @@ int main(int argc, char** argv) {
             trajectory_warden_in)));
   }
 
+  // For every quad, publish to its corresponding updated_trajectory topic
+  std::vector<std::shared_ptr<TrajectoryPublisherNode2D>> trajectory_publishers;
+  for(const auto& kv: updated_trajectory_topics) {
+    const std::string& quad_name = kv.first;  
+    const std::string& topic = kv.second;  
+    trajectory_publishers.push_back(
+        std::move(std::make_shared<TrajectoryPublisherNode2D>(topic)));
+  }
+
   // Initialize the StateWarden. The StateWarden enables safe, multi-threaded
   // access to quadcopter state data. Internal components that require access to
   // state data should request access through StateWarden.
@@ -103,7 +119,7 @@ int main(int argc, char** argv) {
   for(const auto& kv: quad_state_topics) {
     const std::string& quad_name = kv.first;  
     const std::string& topic = kv.second;  
-    statey_subscribers.push_back(
+    state_subscribers.push_back(
         std::move(std::make_shared<StateSubscriberNode2D>(
             topic, 
             quad_name, 

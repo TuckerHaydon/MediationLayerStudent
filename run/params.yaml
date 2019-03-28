@@ -2,6 +2,10 @@ team_assignments:
   "phoenix": "blue"
   "gryphon": "red"
 
+quad_state_topics:
+  "phoenix": "/phoenix/state"
+  "gryphon": "/gryphon/state"
+
 proposed_trajectory_topics:
   "phoenix": "/phoenix/proposed_trajectory"
   "gryphon": "/gryphon/proposed_trajectory"
