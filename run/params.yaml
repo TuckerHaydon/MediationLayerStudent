@@ -10,4 +10,4 @@ updated_trajectory_topics:
   "phoenix": "/phoenix/updated_trajectory"
   "gryphon": "/gryphon/updated_trajectory"
 
-map_file_path: "/home/aerial-robotics/Workspace/MediationLayer/data/arena.map"
+map_file_path: "/home/tuckerhaydon/Workspace/MediationLayer/data/maps/arena.map"

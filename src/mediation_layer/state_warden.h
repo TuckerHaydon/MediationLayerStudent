@@ -62,6 +62,7 @@ namespace mediation_layer {
   inline bool StateWarden<T>::Register(const std::string& key) {
     // If this key already exists, return false
     if(this->map_.end() != this->map_.find(key)) {
+      std::cerr << "StateWarden::Register -- Key already exists." << std::endl;
       return false;
     }
 
@@ -74,6 +75,7 @@ namespace mediation_layer {
   inline bool StateWarden<T>::Write(const std::string& key, const QuadState<T>& state) {
     // If key does not exist, return false
     if(this->map_.end() == this->map_.find(key)) {
+      std::cerr << "StateWarden::Write -- Key does not exist." << std::endl;
       return false;
     }
     std::shared_ptr<StateContainer>& container = this->map_[key];
@@ -95,6 +97,7 @@ namespace mediation_layer {
   inline bool StateWarden<T>::Read(const std::string& key, QuadState<T>& state) {
     // If key does not exist, return false
     if(this->map_.end() == this->map_.find(key)) {
+      std::cerr << "StateWarden::Read -- Key does not exist." << std::endl;
       return false;
     }
     std::shared_ptr<StateContainer>& container = this->map_[key];
@@ -109,6 +112,7 @@ namespace mediation_layer {
   template <size_t T>
   inline bool StateWarden<T>::Await(const std::string& key, QuadState<T>& state) {
     if(this->map_.end() == this->map_.find(key)) {
+      std::cerr << "StateWarden::Await -- Key does not exist." << std::endl;
       return false;
     }
     std::shared_ptr<StateContainer>& container = this->map_[key];

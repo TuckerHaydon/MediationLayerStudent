@@ -13,6 +13,7 @@ target_link_libraries(${TARGET}
   lib_environment
   lib_util
   lib_mediation_layer
+  lib_ros_node
   yaml-cpp
   ${catkin_LIBRARIES})
 

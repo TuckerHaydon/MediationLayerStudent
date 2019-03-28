@@ -63,6 +63,7 @@ namespace mediation_layer {
   inline bool TrajectoryWarden<T>::Register(const std::string& key) {
     // If this key already exists, return false
     if(this->map_.end() != this->map_.find(key)) {
+      std::cerr << "TrajectoryWarden::Register -- Key already exists." << std::endl;
       return false;
     }
 
@@ -75,6 +76,7 @@ namespace mediation_layer {
   inline bool TrajectoryWarden<T>::Write(const std::string& key, const Trajectory<T>& trajectory) {
     // If key does not exist, return false
     if(this->map_.end() == this->map_.find(key)) {
+      std::cerr << "TrajectoryWarden::Write -- Key does not exist." << std::endl;
       return false;
     }
     std::shared_ptr<TrajectoryContainer>& container = this->map_[key];
@@ -96,6 +98,7 @@ namespace mediation_layer {
   inline bool TrajectoryWarden<T>::Read(const std::string& key, Trajectory<T>& trajectory) {
     // If key does not exist, return false
     if(this->map_.end() == this->map_.find(key)) {
+      std::cerr << "TrajectoryWarden::Read -- Key does not exist." << std::endl;
       return false;
     }
     std::shared_ptr<TrajectoryContainer>& container = this->map_[key];
@@ -110,6 +113,7 @@ namespace mediation_layer {
   template <size_t T>
   inline bool TrajectoryWarden<T>::Await(const std::string& key, Trajectory<T>& trajectory) {
     if(this->map_.end() == this->map_.find(key)) {
+      std::cerr << "TrajectoryWarden::Await -- Key does not exist." << std::endl;
       return false;
     }
     std::shared_ptr<TrajectoryContainer>& container = this->map_[key];

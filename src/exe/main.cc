@@ -15,18 +15,19 @@
 
 #include "yaml-cpp/yaml.h"
 #include "map2d.h"
+
 #include "trajectory_warden.h"
 #include "trajectory.h"
+#include "trajectory_subscriber_node.h"
+
+#include "state_warden.h"
+#include "quad_state.h"
+#include "state_subscriber_node.h"
 
 using namespace mediation_layer;
 
-using PVA_t = Eigen::Matrix<double, 6, 1>;
-
 namespace { 
-  void DummyFunction(const std_msgs::String::ConstPtr& msg) {
-  
-  }
-
+  // Signal variable and handler
   volatile std::sig_atomic_t kill_program;
   void SigIntHandler(int sig) {
     kill_program = 1;
@@ -64,15 +65,50 @@ int main(int argc, char** argv) {
     std::exit(1);
   }
 
+  // Initialize the TrajectoryWardens. The TrajectoryWarden enables safe,
+  // multi-threaded access to trajectory data. Internal components that require
+  // access to proposed and updated trajectories should request access through
+  // TrajectoryWarden.
+  auto trajectory_warden_in  = std::make_shared<TrajectoryWarden2D>();
+  auto trajectory_warden_out = std::make_shared<TrajectoryWarden2D>();
+  for(const auto& kv: proposed_trajectory_topics) {
+    const std::string& quad_name = kv.first;  
+    trajectory_warden_in->Register(quad_name);
+    trajectory_warden_out->Register(quad_name);
+  }
+
   // For every quad, subscribe to its corresponding proposed_trajectory topic
-  // std::vector<std::shared_ptr<ros::Subscriber>> trajectory_subscribers;
-  // for(const auto& kv: proposed_trajectory_topics) {
-  //   const std::string& quad_name = kv.first;  
-  //   const std::string& topic = kv.second;  
-  //   auto sub = std::make_shared<ros::Subscriber>();
-  //   *sub = nh.subscribe(topic, 1, DummyFunction);
-  //   trajectory_subscribers.push_back(sub);
-  // }
+  std::vector<std::shared_ptr<TrajectorySubscriberNode2D>> trajectory_subscribers;
+  for(const auto& kv: proposed_trajectory_topics) {
+    const std::string& quad_name = kv.first;  
+    const std::string& topic = kv.second;  
+    trajectory_subscribers.push_back(
+        std::move(std::make_shared<TrajectorySubscriberNode2D>(
+            topic, 
+            quad_name, 
+            trajectory_warden_in)));
+  }
+
+  // Initialize the StateWarden. The StateWarden enables safe, multi-threaded
+  // access to quadcopter state data. Internal components that require access to
+  // state data should request access through StateWarden.
+  auto state_warden  = std::make_shared<StateWarden2D>();
+  for(const auto& kv: quad_state_topics) {
+    const std::string& quad_name = kv.first;  
+    state_warden->Register(quad_name);
+  }
+
+  // For every quad, subscribe to its corresponding state topic
+  std::vector<std::shared_ptr<StateSubscriberNode2D>> state_subscribers;
+  for(const auto& kv: quad_state_topics) {
+    const std::string& quad_name = kv.first;  
+    const std::string& topic = kv.second;  
+    statey_subscribers.push_back(
+        std::move(std::make_shared<StateSubscriberNode2D>(
+            topic, 
+            quad_name, 
+            state_warden)));
+  }
 
   // // Initialize publishers
   // // Load the publisher topics
@@ -91,13 +127,6 @@ int main(int argc, char** argv) {
   //   *pub = nh.advertise<std_msgs::String>(topic, 1);
   //   trajectory_publishers.push_back(pub);
   // }
-
-  // Initialize the TrajectoryWardens. The TrajectoryWarden enables safe,
-  // multi-threaded access to trajectory data. Internal components that require
-  // access to proposed and updated trajectories should request access through
-  // TrajectoryWarden.
-  auto trajectory_warden_in  = std::make_shared<TrajectoryWarden2D>();
-  auto trajectory_warden_out = std::make_shared<TrajectoryWarden2D>();
 
 
   // // Mediation layer thread. The mediation layer runs continuously, forward
@@ -121,26 +150,26 @@ int main(int argc, char** argv) {
   //       state_dispatcher.Run();
   //     });
 
-  // // Kill program thread. This thread sleeps for a second and then checks if the
-  // // 'kill_program' variable has been set. If it has, it shuts ros down and
-  // // sends stop signals to any other threads that might be running.
-  // std::thread kill_thread(
-  //     [&]() {
-  //       while(true) {
-  //         if(true == kill_program) {
-  //           break;
-  //         } else {
-  //           std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-  //         }
-  //       }
-  //       mediation_layer.Stop();
-  //       state_dispatcher.Stop();
-  //       ros::shutdown();
-  //     });
+  // Kill program thread. This thread sleeps for a second and then checks if the
+  // 'kill_program' variable has been set. If it has, it shuts ros down and
+  // sends stop signals to any other threads that might be running.
+  std::thread kill_thread(
+      [&]() {
+        while(true) {
+          if(true == kill_program) {
+            break;
+          } else {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+          }
+        }
+        // mediation_layer.Stop();
+        // state_dispatcher.Stop();
+        ros::shutdown();
+      });
 
-  // // Wait for thread termination
-  // ros::spin();
-  // kill_thread.join();
+  // Wait for thread termination
+  ros::spin();
+  kill_thread.join();
   // mediation_layer_thread.join();
   // state_dispatcher_thread.join();
 
