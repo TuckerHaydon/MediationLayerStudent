@@ -40,7 +40,7 @@ namespace mediation_layer {
       // Note that values are intentionally copied
       void Run(
           std::shared_ptr<TrajectoryWarden<T>> warden, 
-          const std::unordered_map<
+          std::unordered_map<
             std::string, 
             std::shared_ptr<TrajectoryPublisherNode<T>>> trajectory_publishers);
 
@@ -52,9 +52,9 @@ namespace mediation_layer {
   //  * IMPLEMENTATION *
   //  ******************
   template <size_t T>
-  void TrajectoryDispatcher<T>::Run(
-      std::shared_ptr<TrajectoryWarden<T>> warden
-      const std::unordered_map<
+  inline void TrajectoryDispatcher<T>::Run(
+      std::shared_ptr<TrajectoryWarden<T>> warden,
+      std::unordered_map<
         std::string, 
         std::shared_ptr<TrajectoryPublisherNode<T>>> trajectory_publishers) {
     // Local thread pool 
@@ -65,7 +65,11 @@ namespace mediation_layer {
 
     // Assign a thread to await changes in each trajectory
     for(const std::string& key: trajectory_keys) {
-      thread_pool.emplace_back(AwaitTrajectoryChange(key, warden, trajectory_publishers[key]));
+      thread_pool.push_back(
+          std::move(
+            std::thread([&](){
+              this->AwaitTrajectoryChange(key, warden, trajectory_publishers[key]);
+              })));
     }
 
     // Wait for this thread to receive a stop command
@@ -81,25 +85,28 @@ namespace mediation_layer {
         });
 
     // Wait for thread pool to terminate
-    for(const std::thread& t: thread_pool) {
+    for(std::thread& t: thread_pool) {
       t.join();
     } 
   }
 
   template <size_t T>
-  void TrajectoryDispatcher<T>::AwaitTrajectoryChange(
+  inline void TrajectoryDispatcher<T>::AwaitTrajectoryChange(
       const std::string key, 
       std::shared_ptr<TrajectoryWarden<T>> warden, 
       std::shared_ptr<TrajectoryPublisherNode<T>> publisher) {
     while(this->ok_) {
       Trajectory<T> trajectory;
-      warden.Await(key, trajectory);
-      publisher.Publish(trajectory);
+      warden->Await(key, trajectory);
+      publisher->Publish(trajectory);
     }
   }
 
   template <size_t T>
-  void TrajectoryDispather<T>::Stop() {
+  inline void TrajectoryDispatcher<T>::Stop() {
     this->ok_ = false;
   }
+
+  using TrajectoryDispatcher2D = TrajectoryDispatcher<2>;
+  using TrajectoryDispatcher3D = TrajectoryDispatcher<3>;
 }

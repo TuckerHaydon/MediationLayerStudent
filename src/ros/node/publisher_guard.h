@@ -4,6 +4,7 @@
 
 #include <memory>
 #include <mutex>
+#include <string>
 #include <ros/ros.h>
 
 namespace mediation_layer {
@@ -26,9 +27,9 @@ namespace mediation_layer {
   //  * IMPLEMENTATION *
   //  ******************
   template <class T>
-  PublisherGuard<T>::PublisherGuard(const std::string& topic) {
+  inline PublisherGuard<T>::PublisherGuard(const std::string& topic) {
     this->node_handle_ = ros::NodeHandle("~");
-    this->publisher_ = this->node_handle_.advertise<T>(topic, 1);
+    this->publisher_ = node_handle_.advertise<T>(topic, 1);
   }
 
   template <class T>

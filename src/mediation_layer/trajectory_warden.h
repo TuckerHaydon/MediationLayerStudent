@@ -53,7 +53,6 @@ namespace mediation_layer {
 
       // Getter
       const std::set<std::string>& Keys() const;
-
   };
 
   //  ******************
@@ -120,7 +119,7 @@ namespace mediation_layer {
 
     { // Lock mutex, wait cv, copy, set cv, release mutex
       std::unique_lock<std::mutex> lock(container->modified_mtx_);
-      container->modified_cv_.wait(lock, [container]{ return true == container->modified_; });
+      container->modified_cv_.wait(lock, [&]{ return (true == container->modified_); });
       { // Lock mutex for copy
         std::lock_guard<std::mutex> lock(container->access_mtx_);
         trajectory = container->trajectory_;

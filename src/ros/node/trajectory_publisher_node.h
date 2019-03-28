@@ -20,7 +20,7 @@ namespace mediation_layer {
     private:
       // A publisher guard ensures that the Publish() function may be called in
       // a thread-safe manner
-      PublisherGuard<std_msgs::String> publisher_guard_;
+      std::shared_ptr<PublisherGuard<std_msgs::String>> publisher_guard_;
       
     public:
       // Constructor.
@@ -34,19 +34,19 @@ namespace mediation_layer {
   //  * IMPLEMENTATION *
   //  ******************
   template <size_t T>
-  TrajectoryPublisherNode<T>::TrajectoryPublisherNode(
+  inline TrajectoryPublisherNode<T>::TrajectoryPublisherNode(
       const std::string& topic) {
-    this->publisher_guard_ = PublisherGuard<std_msgs::String>(topic);
+    this->publisher_guard_ = std::make_shared<PublisherGuard<std_msgs::String>>(topic);
   }
 
   template <size_t T>
-  void TrajectoryPublisherNode<T>::Publish(const Trajectory<T>& msg) {
+  inline void TrajectoryPublisherNode<T>::Publish(const Trajectory<T>& msg) {
     std_msgs::String m;
     m.data = "";
-    this->publisher_guard_.Publish(m);
+    this->publisher_guard_->Publish(m);
   }
 
-  using TrajectoryPublisher2D = TrajectoryPublisher<2>;
-  using TrajectoryPublisher3D = TrajectoryPublisher<3>;
+  using TrajectoryPublisherNode2D = TrajectoryPublisherNode<2>;
+  using TrajectoryPublisherNode3D = TrajectoryPublisherNode<3>;
 
 };
