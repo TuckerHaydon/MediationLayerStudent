@@ -43,11 +43,13 @@ int main(int argc, char** argv) {
     const double cost = edge.Cost();
 
     // Print relevant data
+    // Node2DPtr->Data() is an Eigen::Vector2d. If you want to use
+    // functions/accessors other than x() and y(), google Eigen::Vector2d
     std::cout 
       << "DirectedEdge2D from " 
-      << "[" << source_ptr->Data().transpose() << "]"
+      << "[" << source_ptr->Data().x() << ", " << source_ptr->Data().y() << "]"
       << " to "
-      << "[" << sink_ptr->Data().transpose() << "]"
+      << "[" << sink_ptr->Data().x() << ", " << sink_ptr->Data().y() << "]"
       << " with cost " 
       << cost
       << std::endl;
