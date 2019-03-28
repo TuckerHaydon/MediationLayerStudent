@@ -45,3 +45,9 @@ target_link_libraries(mediation_layer_tests PUBLIC
   lib_mediation_layer
   Eigen3::Eigen)
 
+set_target_properties( 
+  geometry_tests graph_tests environment_tests
+  path_planning_tests integration_tests mediation_layer_tests
+  PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin/test"
+)
