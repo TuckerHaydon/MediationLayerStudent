@@ -26,6 +26,7 @@
 #include "state_subscriber_node.h"
 
 #include "trajectory_dispatcher.h"
+#include "mediation_layer.h"
 
 using namespace mediation_layer;
 
@@ -147,29 +148,17 @@ int main(int argc, char** argv) {
       trajectory_dispatcher->Run(trajectory_warden_out, trajectory_publishers);
       });
 
-  // // Mediation layer thread. The mediation layer runs continuously, forward
-  // // integrating the proposed state dynamics and modifying them so that the
-  // // various agents will not crash into each other. Data is asynchonously read
-  // // and written from proposed_state and updated_state respectively.
-  // MediationLayer2D mediation_layer(map);
-  // std::thread mediation_layer_thread(
-  //     [&]() {
-  //       mediation_layer.Run(proposed_state, updated_state);
-  //     });
-
-  // Temporary pipe thread for testing
-  std::thread pipe_thread(
+  // Mediation layer thread. The mediation layer runs continuously, forward
+  // integrating the proposed trajectories and modifying them so that the
+  // various agents will not crash into each other. Data is asynchonously read
+  // and written from the TrajectoryWardens
+  auto mediation_layer = std::make_shared<MediationLayer2D>();
+  std::thread mediation_layer_thread(
       [&]() {
-        while(true) {
-          if(true == kill_program) {
-            break;
-          } else {
-            const std::string key = "phoenix";
-            Trajectory2D trajectory;
-            trajectory_warden_in->Await(key, trajectory);
-            trajectory_warden_out->Write(key, trajectory);
-          }
-        }
+        mediation_layer->Run(
+            trajectory_warden_in, 
+            trajectory_warden_out, 
+            state_warden);
       });
 
   // Kill program thread. This thread sleeps for a second and then checks if the
@@ -184,19 +173,20 @@ int main(int argc, char** argv) {
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
           }
         }
-        // mediation_layer.Stop();
+        mediation_layer->Stop();
         trajectory_dispatcher->Stop();
         ros::shutdown();
       });
 
-  // Wait for program termination via ctl-c
+  // Spin for ros subscribers
   ros::spin();
+
+  // Wait for program termination via ctl-c
   kill_thread.join();
-  pipe_thread.join();
 
   // Wait for other threads to die
   trajectory_dispatcher_thread.join();
-  // mediation_layer_thread.join();
+  mediation_layer_thread.join();
 
   return EXIT_SUCCESS;
 }

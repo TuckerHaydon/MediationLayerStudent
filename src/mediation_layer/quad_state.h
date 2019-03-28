@@ -33,22 +33,22 @@ namespace mediation_layer {
   //  * IMPLEMENTATION *
   //  ******************
   template <size_t T>
-  Eigen::Vector<double, T> QuadState<T>::Position() const {
+  inline Eigen::Vector<double, T> QuadState<T>::Position() const {
     return data_.segment(0*T,T);
   }
 
   template <size_t T>
-  Eigen::Vector<double, T> QuadState<T>::Velocity() const {
+  inline Eigen::Vector<double, T> QuadState<T>::Velocity() const {
     return data_.segment(1*T,T);
   }
 
   template <size_t T>
-  Eigen::Vector<double, 4> QuadState<T>::Orientation() const {
+  inline Eigen::Vector<double, 4> QuadState<T>::Orientation() const {
     return data_.segment(2*T,4);
   }
 
   template <size_t T>
-  Eigen::Vector<double, 3> QuadState<T>::Twist() const {
+  inline Eigen::Vector<double, 3> QuadState<T>::Twist() const {
     return data_.segment(2*T+4,3);
   }
 
