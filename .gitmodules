@@ -1,3 +1,6 @@
 [submodule "src/P4"]
 	path = src/P4
 	url = https://github.com/tuckerhaydon/P4.git
+[submodule "src/mg_msgs"]
+	path = src/mg_msgs
+	url = https://github.com/radionavlab/mg_msgs.git
