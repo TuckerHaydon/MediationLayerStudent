@@ -6,18 +6,28 @@
 #include <ros/ros.h>
 #include <visualization_msgs/Marker.h>
 
+#include "publisher_guard.h"
+
 namespace mediation_layer {
   class MarkerPublisherNode {
     private:
-      std::shared_ptr<ros::NodeHandle> nh_;
-      std::shared_ptr<ros::Publisher> marker_pub_;
+      std::shared_ptr<PublisherGuard<visualization_msgs::Marker>> publisher_guard_;
 
     public:
-      MarkerPublisherNode(const int queue_size=100);
+      MarkerPublisherNode(const std::string& topic);
 
-      // Intentional pass-by-value. Funtion could be called by another thread
-      // and need to ensure data does not expire on this thread
-      bool Publish(const visualization_msgs::Marker marker);
+      void Publish(const visualization_msgs::Marker& msg);
   };
 
+  //  ******************
+  //  * IMPLEMENTATION *
+  //  ******************
+  inline MarkerPublisherNode::MarkerPublisherNode(const std::string& topic) {
+    this->publisher_guard_ 
+      = std::make_shared<PublisherGuard<visualization_msgs::Marker>>(topic);
+  }
+
+  inline void MarkerPublisherNode::Publish(const visualization_msgs::Marker& msg) {
+    this->publisher_guard_->Publish(msg);
+  }
 }

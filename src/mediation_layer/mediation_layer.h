@@ -45,7 +45,7 @@ namespace mediation_layer {
 
     while(this->ok_) {
       const std::string key = "phoenix";
-      Trajectory2D trajectory;
+      Trajectory<T> trajectory;
       trajectory_warden_in->Await(key, trajectory);
       trajectory_warden_out->Write(key, trajectory);
     }

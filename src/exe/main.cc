@@ -14,7 +14,7 @@
 #include <std_msgs/String.h>
 
 #include "yaml-cpp/yaml.h"
-#include "map2d.h"
+#include "map3d.h"
 
 #include "trajectory_warden.h"
 #include "trajectory.h"
@@ -27,6 +27,8 @@
 
 #include "trajectory_dispatcher.h"
 #include "mediation_layer.h"
+
+#include "marker_publisher_node.h"
 
 using namespace mediation_layer;
 
@@ -55,11 +57,11 @@ int main(int argc, char** argv) {
   }
 
   const YAML::Node node = YAML::LoadFile(map_file_path);
-  const Map2D map = node["map"].as<Map2D>();
+  const Map3D map = node["map"].as<Map3D>();
 
   // Mediation layer state
-  auto proposed_trajectory_warden = std::make_shared<TrajectoryWarden<2>>();
-  auto updated_trajectory_warden = std::make_shared<TrajectoryWarden<2>>();
+  auto proposed_trajectory_warden = std::make_shared<TrajectoryWarden3D>();
+  auto updated_trajectory_warden = std::make_shared<TrajectoryWarden3D>();
 
   // Initialize subscribers
   // Load the subscriber topics
@@ -79,8 +81,8 @@ int main(int argc, char** argv) {
   // multi-threaded access to trajectory data. Internal components that require
   // access to proposed and updated trajectories should request access through
   // TrajectoryWarden.
-  auto trajectory_warden_in  = std::make_shared<TrajectoryWarden2D>();
-  auto trajectory_warden_out = std::make_shared<TrajectoryWarden2D>();
+  auto trajectory_warden_in  = std::make_shared<TrajectoryWarden3D>();
+  auto trajectory_warden_out = std::make_shared<TrajectoryWarden3D>();
   for(const auto& kv: proposed_trajectory_topics) {
     const std::string& quad_name = kv.first;  
     trajectory_warden_in->Register(quad_name);
@@ -88,12 +90,12 @@ int main(int argc, char** argv) {
   }
 
   // For every quad, subscribe to its corresponding proposed_trajectory topic
-  std::unordered_map<std::string, std::shared_ptr<TrajectorySubscriberNode2D>> trajectory_subscribers;
+  std::unordered_map<std::string, std::shared_ptr<TrajectorySubscriberNode3D>> trajectory_subscribers;
   for(const auto& kv: proposed_trajectory_topics) {
     const std::string& quad_name = kv.first;  
     const std::string& topic = kv.second;  
     trajectory_subscribers[quad_name] = 
-        std::move(std::make_shared<TrajectorySubscriberNode2D>(
+        std::move(std::make_shared<TrajectorySubscriberNode3D>(
             topic, 
             quad_name, 
             trajectory_warden_in));
@@ -108,31 +110,31 @@ int main(int argc, char** argv) {
   }
 
   // For every quad, publish to its corresponding updated_trajectory topic
-  std::unordered_map<std::string, std::shared_ptr<TrajectoryPublisherNode2D>> trajectory_publishers;
+  std::unordered_map<std::string, std::shared_ptr<TrajectoryPublisherNode3D>> trajectory_publishers;
   for(const auto& kv: updated_trajectory_topics) {
     const std::string& quad_name = kv.first;  
     const std::string& topic = kv.second;  
     trajectory_publishers[quad_name] = 
-      std::move(std::make_shared<TrajectoryPublisherNode2D>(
+      std::move(std::make_shared<TrajectoryPublisherNode3D>(
             topic));
   }
 
   // Initialize the StateWarden. The StateWarden enables safe, multi-threaded
   // access to quadcopter state data. Internal components that require access to
   // state data should request access through StateWarden.
-  auto state_warden  = std::make_shared<StateWarden2D>();
+  auto state_warden  = std::make_shared<StateWarden3D>();
   for(const auto& kv: quad_state_topics) {
     const std::string& quad_name = kv.first;  
     state_warden->Register(quad_name);
   }
 
   // For every quad, subscribe to its corresponding state topic
-  std::vector<std::shared_ptr<StateSubscriberNode2D>> state_subscribers;
+  std::vector<std::shared_ptr<StateSubscriberNode3D>> state_subscribers;
   for(const auto& kv: quad_state_topics) {
     const std::string& quad_name = kv.first;  
     const std::string& topic = kv.second;  
     state_subscribers.push_back(
-        std::move(std::make_shared<StateSubscriberNode2D>(
+        std::move(std::make_shared<StateSubscriberNode3D>(
             topic, 
             quad_name, 
             state_warden)));
@@ -143,7 +145,7 @@ int main(int argc, char** argv) {
   // separate thread and maintains a thread pool. Each thread in the pool is
   // assigned a particular trajectory and blocks until that trajectory is modified.
   // Once modified, it moves the data into the corresponding publisher queue.
-  auto trajectory_dispatcher = std::make_shared<TrajectoryDispatcher2D>();
+  auto trajectory_dispatcher = std::make_shared<TrajectoryDispatcher3D>();
   std::thread trajectory_dispatcher_thread([&](){
       trajectory_dispatcher->Run(trajectory_warden_out, trajectory_publishers);
       });
@@ -152,7 +154,7 @@ int main(int argc, char** argv) {
   // integrating the proposed trajectories and modifying them so that the
   // various agents will not crash into each other. Data is asynchonously read
   // and written from the TrajectoryWardens
-  auto mediation_layer = std::make_shared<MediationLayer2D>();
+  auto mediation_layer = std::make_shared<MediationLayer3D>();
   std::thread mediation_layer_thread(
       [&]() {
         mediation_layer->Run(
@@ -177,6 +179,8 @@ int main(int argc, char** argv) {
         trajectory_dispatcher->Stop();
         ros::shutdown();
       });
+
+  auto environment_publisher = std::make_shared<MarkerPublisherNode>("environment");
 
   // Spin for ros subscribers
   ros::spin();
