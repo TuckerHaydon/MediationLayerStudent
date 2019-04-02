@@ -5,6 +5,7 @@
 #include <vector>
 #include <cstdlib>
 #include <iostream>
+#include <limits>
 
 #include "polyhedron.h"
 #include "yaml-cpp/yaml.h"
@@ -31,6 +32,12 @@ namespace mediation_layer {
 
       Polyhedron Extents() const;
 
+      // Returns the plane with the smallest average z-coordinate
+      Plane3D Ground() const;
+
+      // Returns the list of planes minus the ground plane
+      std::vector<Plane3D> Walls() const;
+
       // Inflates a map by a set distance. Map boundaries are shrunk and
       // obstacles are expanded. Shrinking and expanding affects both x and y
       // directions equally, therefore object aspect ratios are not guaranteed
@@ -51,6 +58,48 @@ namespace mediation_layer {
 
   inline bool Map3D::Contains(const Point3D& point) const {
     return this->boundary_.Contains(point);
+  }
+
+  inline Plane3D Map3D::Ground() const {
+    size_t min_idx;
+    double min_z = std::numeric_limits<double>::max();
+    const std::vector<Plane3D>& faces = this->boundary_.Faces();
+    for(size_t idx = 0; idx < faces.size(); ++idx) {
+      double z = 0;
+      for(const Line3D edge: faces[idx].Edges()) {
+        z+=edge.Start().z();
+      }
+      z /= faces[idx].Edges().size();
+
+      if(z < min_z) {
+        min_idx = idx;
+        min_z = z;
+      } 
+    }
+
+    return faces[min_idx];
+  }
+
+  inline std::vector<Plane3D> Map3D::Walls() const {
+    size_t min_idx;
+    double min_z = std::numeric_limits<double>::max();
+    std::vector<Plane3D> faces = this->boundary_.Faces();
+    for(size_t idx = 0; idx < faces.size(); ++idx) {
+      double z = 0;
+      for(const Line3D edge: faces[idx].Edges()) {
+        z+=edge.Start().z();
+      }
+      z /= faces[idx].Edges().size();
+
+      if(z < min_z) {
+        min_idx = idx;
+        min_z = z;
+      } 
+    }
+
+    faces.erase(faces.begin() + min_idx);
+    return faces;
+
   }
 
   inline bool Map3D::IsFreeSpace(const Point3D& point) const {

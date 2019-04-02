@@ -171,13 +171,19 @@ int main(int argc, char** argv) {
   ground_view_options.g = 1.0f;
   ground_view_options.b = 0.0f;
   ground_view_options.a = 1.0f;
+  Plane3DView ground_view(ground_view_options, map.Ground());
 
-  Plane3DView ground_view(ground_view_options, map.Boundary().Faces()[0]);
-  // PlaneView view1(PlaneView::Options(), map.Boundary().Faces()[0]);
-  // PlaneView view1(PlaneView::Options(), map.Boundary().Faces()[0]);
-  // PlaneView view1(PlaneView::Options(), map.Boundary().Faces()[0]);
-  // PlaneView view1(PlaneView::Options(), map.Boundary().Faces()[0]);
-  // PlaneView view1(PlaneView::Options(), map.Boundary().Faces()[0]);
+  Plane3DView::Options wall_view_options;
+  wall_view_options.r = 0.0f;
+  wall_view_options.g = 0.0f;
+  wall_view_options.b = 0.0f;
+  wall_view_options.a = 0.1f;
+
+  std::vector<Plane3DView> wall_views;
+  for(const Plane3D& wall: map.Walls()) {  
+    wall_views.emplace_back(wall_view_options, wall);
+  }
+
   auto environment_publisher = std::make_shared<MarkerPublisherNode>("environment");
   std::thread marker_thread(
       [&]() {
@@ -185,9 +191,15 @@ int main(int argc, char** argv) {
           if(true == kill_program) {
             break;
           } else {
-            std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             for(const visualization_msgs::Marker& marker: ground_view.Markers()) {
               environment_publisher->Publish(marker);
+            }
+
+            for(const Plane3DView& wall_view: wall_views) {
+              for(const visualization_msgs::Marker& marker: wall_view.Markers()) {
+                environment_publisher->Publish(marker);
+              }
             }
           }
         }
