@@ -184,6 +184,16 @@ int main(int argc, char** argv) {
     wall_views.emplace_back(wall_view_options, wall);
   }
 
+  PolyhedronView::Options obstacle_view_options;
+  obstacle_view_options.r = 1.0f;
+  obstacle_view_options.g = 1.0f;
+  obstacle_view_options.b = 1.0f;
+  obstacle_view_options.a = 1.0f;
+  std::vector<PolyhedronView> obstacle_views;
+  for(const Polyhedron& obstacle: map.Obstacles()) {
+    obstacle_views.emplace_back(obstacle_view_options, obstacle);
+  }
+
   auto environment_publisher = std::make_shared<MarkerPublisherNode>("environment");
   std::thread marker_thread(
       [&]() {
@@ -198,6 +208,12 @@ int main(int argc, char** argv) {
 
             for(const Plane3DView& wall_view: wall_views) {
               for(const visualization_msgs::Marker& marker: wall_view.Markers()) {
+                environment_publisher->Publish(marker);
+              }
+            }
+
+            for(const PolyhedronView& obstacle_view: obstacle_views) {
+              for(const visualization_msgs::Marker& marker: obstacle_view.Markers()) {
                 environment_publisher->Publish(marker);
               }
             }
