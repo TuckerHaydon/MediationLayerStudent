@@ -14,6 +14,7 @@ target_link_libraries(${TARGET}
   lib_util
   lib_mediation_layer
   lib_ros_node
+  lib_ros_view
   yaml-cpp
   ${catkin_LIBRARIES})
 

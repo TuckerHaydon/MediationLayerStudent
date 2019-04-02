@@ -29,6 +29,8 @@
 #include "mediation_layer.h"
 
 #include "marker_publisher_node.h"
+#include "polyhedron_view.h"
+#include "plane3d_view.h"
 
 using namespace mediation_layer;
 
@@ -163,6 +165,36 @@ int main(int argc, char** argv) {
             state_warden);
       });
 
+  // TODO: WIP
+  Plane3DView::Options ground_view_options;
+  ground_view_options.r = 0.0f;
+  ground_view_options.g = 1.0f;
+  ground_view_options.b = 0.0f;
+  ground_view_options.a = 1.0f;
+
+  Plane3DView ground_view(ground_view_options, map.Boundary().Faces()[0]);
+  // PlaneView view1(PlaneView::Options(), map.Boundary().Faces()[0]);
+  // PlaneView view1(PlaneView::Options(), map.Boundary().Faces()[0]);
+  // PlaneView view1(PlaneView::Options(), map.Boundary().Faces()[0]);
+  // PlaneView view1(PlaneView::Options(), map.Boundary().Faces()[0]);
+  // PlaneView view1(PlaneView::Options(), map.Boundary().Faces()[0]);
+  auto environment_publisher = std::make_shared<MarkerPublisherNode>("environment");
+  std::thread marker_thread(
+      [&]() {
+        while(true) {
+          if(true == kill_program) {
+            break;
+          } else {
+            std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+            for(const visualization_msgs::Marker& marker: ground_view.Markers()) {
+              environment_publisher->Publish(marker);
+            }
+          }
+        }
+      });
+
+  // TODO: END WIP
+
   // Kill program thread. This thread sleeps for a second and then checks if the
   // 'kill_program' variable has been set. If it has, it shuts ros down and
   // sends stop signals to any other threads that might be running.
@@ -180,8 +212,6 @@ int main(int argc, char** argv) {
         ros::shutdown();
       });
 
-  auto environment_publisher = std::make_shared<MarkerPublisherNode>("environment");
-
   // Spin for ros subscribers
   ros::spin();
 
@@ -191,6 +221,7 @@ int main(int argc, char** argv) {
   // Wait for other threads to die
   trajectory_dispatcher_thread.join();
   mediation_layer_thread.join();
+  marker_thread.join();
 
   return EXIT_SUCCESS;
 }
