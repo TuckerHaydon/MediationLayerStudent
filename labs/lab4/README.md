@@ -85,9 +85,9 @@ path_planning executable in the appendix.
 
 **Question: Q2**
 > Depth-First Search is not guaranteed to find the shortest path. Construct an
-> example grid where DFS does not find the longest path. Report the example
+> example grid where DFS does not find the shortest path. Report the example
 > grid, the path that DFS found, the length of the found path, and the optimal
-> length of the path. Hint: use a small grid with a trivial solution.
+> length of the path. Hint: you may be able to use one of the provided grids.
 
 
 ### Dijkstra's Algorithm (15 Points)
