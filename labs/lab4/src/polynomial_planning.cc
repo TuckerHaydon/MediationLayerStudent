@@ -104,6 +104,8 @@ void Example() {
       gp << "plot '-' using 1:2 with lines title 'Trajectory'" << std::endl;
       gp.send1d(boost::make_tuple(x_hist, y_hist));
       gp << "set grid" << std::endl;
+      gp << "set xlabel 'X'" << std::endl;
+      gp << "set ylabel 'Y'" << std::endl;
       gp << "replot" << std::endl;
     }
     {
@@ -111,6 +113,8 @@ void Example() {
       gp << "plot '-' using 1:2 with lines title 'X-Profile'" << std::endl;
       gp.send1d(boost::make_tuple(t_hist, x_hist));
       gp << "set grid" << std::endl;
+      gp << "set xlabel 'Time (s)'" << std::endl;
+      gp << "set ylabel 'X-Profile'" << std::endl;
       gp << "replot" << std::endl;
     }
     {
@@ -118,6 +122,8 @@ void Example() {
       gp << "plot '-' using 1:2 with lines title 'Y-Profile'" << std::endl;
       gp.send1d(boost::make_tuple(t_hist, y_hist));
       gp << "set grid" << std::endl;
+      gp << "set xlabel 'Time (s)'" << std::endl;
+      gp << "set ylabel 'Y-Profile'" << std::endl;
       gp << "replot" << std::endl;
     }
   }
@@ -179,6 +185,8 @@ void DerivativeExperiments() {
       gp << "plot '-' using 1:2 with lines title 'Trajectory'" << std::endl;
       gp.send1d(boost::make_tuple(x_hist, y_hist));
       gp << "set grid" << std::endl;
+      gp << "set xlabel 'X'" << std::endl;
+      gp << "set ylabel 'Y'" << std::endl;
       gp << "replot" << std::endl;
     }
     {
@@ -186,6 +194,8 @@ void DerivativeExperiments() {
       gp << "plot '-' using 1:2 with lines title 'X-Profile'" << std::endl;
       gp.send1d(boost::make_tuple(t_hist, x_hist));
       gp << "set grid" << std::endl;
+      gp << "set xlabel 'Time (s)'" << std::endl;
+      gp << "set ylabel 'X-Profile'" << std::endl;
       gp << "replot" << std::endl;
     }
     {
@@ -193,6 +203,8 @@ void DerivativeExperiments() {
       gp << "plot '-' using 1:2 with lines title 'Y-Profile'" << std::endl;
       gp.send1d(boost::make_tuple(t_hist, y_hist));
       gp << "set grid" << std::endl;
+      gp << "set xlabel 'Time (s)'" << std::endl;
+      gp << "set ylabel 'Y-Profile'" << std::endl;
       gp << "replot" << std::endl;
     }
   }
@@ -254,6 +266,8 @@ void ArrivalTimeExperiments() {
       gp << "plot '-' using 1:2 with lines title 'Trajectory'" << std::endl;
       gp.send1d(boost::make_tuple(x_hist, y_hist));
       gp << "set grid" << std::endl;
+      gp << "set xlabel 'X'" << std::endl;
+      gp << "set ylabel 'Y'" << std::endl;
       gp << "replot" << std::endl;
     }
     {
@@ -261,6 +275,8 @@ void ArrivalTimeExperiments() {
       gp << "plot '-' using 1:2 with lines title 'X-Profile'" << std::endl;
       gp.send1d(boost::make_tuple(t_hist, x_hist));
       gp << "set grid" << std::endl;
+      gp << "set xlabel 'Time (s)'" << std::endl;
+      gp << "set ylabel 'X-Profile'" << std::endl;
       gp << "replot" << std::endl;
     }
     {
@@ -268,6 +284,8 @@ void ArrivalTimeExperiments() {
       gp << "plot '-' using 1:2 with lines title 'Y-Profile'" << std::endl;
       gp.send1d(boost::make_tuple(t_hist, y_hist));
       gp << "set grid" << std::endl;
+      gp << "set xlabel 'Time (s)'" << std::endl;
+      gp << "set ylabel 'Y-Profile'" << std::endl;
       gp << "replot" << std::endl;
     }
   }
@@ -329,6 +347,8 @@ void NumWaypointExperiments() {
       gp << "plot '-' using 1:2 with lines title 'Trajectory'" << std::endl;
       gp.send1d(boost::make_tuple(x_hist, y_hist));
       gp << "set grid" << std::endl;
+      gp << "set xlabel 'X'" << std::endl;
+      gp << "set ylabel 'Y'" << std::endl;
       gp << "replot" << std::endl;
     }
     {
@@ -336,6 +356,8 @@ void NumWaypointExperiments() {
       gp << "plot '-' using 1:2 with lines title 'X-Profile'" << std::endl;
       gp.send1d(boost::make_tuple(t_hist, x_hist));
       gp << "set grid" << std::endl;
+      gp << "set xlabel 'Time (s)'" << std::endl;
+      gp << "set ylabel 'X-Profile'" << std::endl;
       gp << "replot" << std::endl;
     }
     {
@@ -343,6 +365,8 @@ void NumWaypointExperiments() {
       gp << "plot '-' using 1:2 with lines title 'Y-Profile'" << std::endl;
       gp.send1d(boost::make_tuple(t_hist, y_hist));
       gp << "set grid" << std::endl;
+      gp << "set xlabel 'Time (s)'" << std::endl;
+      gp << "set ylabel 'Y-Profile'" << std::endl;
       gp << "replot" << std::endl;
     }
   }
