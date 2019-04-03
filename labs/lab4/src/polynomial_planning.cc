@@ -99,11 +99,27 @@ void Example() {
 
     // gnu-iostream plotting library
     // Utilizes gnuplot commands with a nice stream interface
-    Gnuplot gp;
-    gp << "plot '-' using 1:2 with lines title 'Trajectory'" << std::endl;
-    gp.send1d(boost::make_tuple(x_hist, y_hist));
-    gp << "set grid" << std::endl;
-    gp << "replot" << std::endl;
+    {
+      Gnuplot gp;
+      gp << "plot '-' using 1:2 with lines title 'Trajectory'" << std::endl;
+      gp.send1d(boost::make_tuple(x_hist, y_hist));
+      gp << "set grid" << std::endl;
+      gp << "replot" << std::endl;
+    }
+    {
+      Gnuplot gp;
+      gp << "plot '-' using 1:2 with lines title 'X-Profile'" << std::endl;
+      gp.send1d(boost::make_tuple(t_hist, x_hist));
+      gp << "set grid" << std::endl;
+      gp << "replot" << std::endl;
+    }
+    {
+      Gnuplot gp;
+      gp << "plot '-' using 1:2 with lines title 'Y-Profile'" << std::endl;
+      gp.send1d(boost::make_tuple(t_hist, y_hist));
+      gp << "set grid" << std::endl;
+      gp << "replot" << std::endl;
+    }
   }
 }
 
@@ -158,11 +174,27 @@ void DerivativeExperiments() {
 
     // gnu-iostream plotting library
     // Utilizes gnuplot commands with a nice stream interface
-    Gnuplot gp;
-    gp << "plot '-' using 1:2 with lines title 'Trajectory'" << std::endl;
-    gp.send1d(boost::make_tuple(x_hist, y_hist));
-    gp << "set grid" << std::endl;
-    gp << "replot" << std::endl;
+    {
+      Gnuplot gp;
+      gp << "plot '-' using 1:2 with lines title 'Trajectory'" << std::endl;
+      gp.send1d(boost::make_tuple(x_hist, y_hist));
+      gp << "set grid" << std::endl;
+      gp << "replot" << std::endl;
+    }
+    {
+      Gnuplot gp;
+      gp << "plot '-' using 1:2 with lines title 'X-Profile'" << std::endl;
+      gp.send1d(boost::make_tuple(t_hist, x_hist));
+      gp << "set grid" << std::endl;
+      gp << "replot" << std::endl;
+    }
+    {
+      Gnuplot gp;
+      gp << "plot '-' using 1:2 with lines title 'Y-Profile'" << std::endl;
+      gp.send1d(boost::make_tuple(t_hist, y_hist));
+      gp << "set grid" << std::endl;
+      gp << "replot" << std::endl;
+    }
   }
 }
 
@@ -217,11 +249,27 @@ void ArrivalTimeExperiments() {
 
     // gnu-iostream plotting library
     // Utilizes gnuplot commands with a nice stream interface
-    Gnuplot gp;
-    gp << "plot '-' using 1:2 with lines title 'Trajectory'" << std::endl;
-    gp.send1d(boost::make_tuple(x_hist, y_hist));
-    gp << "set grid" << std::endl;
-    gp << "replot" << std::endl;
+    {
+      Gnuplot gp;
+      gp << "plot '-' using 1:2 with lines title 'Trajectory'" << std::endl;
+      gp.send1d(boost::make_tuple(x_hist, y_hist));
+      gp << "set grid" << std::endl;
+      gp << "replot" << std::endl;
+    }
+    {
+      Gnuplot gp;
+      gp << "plot '-' using 1:2 with lines title 'X-Profile'" << std::endl;
+      gp.send1d(boost::make_tuple(t_hist, x_hist));
+      gp << "set grid" << std::endl;
+      gp << "replot" << std::endl;
+    }
+    {
+      Gnuplot gp;
+      gp << "plot '-' using 1:2 with lines title 'Y-Profile'" << std::endl;
+      gp.send1d(boost::make_tuple(t_hist, y_hist));
+      gp << "set grid" << std::endl;
+      gp << "replot" << std::endl;
+    }
   }
 }
 
@@ -276,11 +324,26 @@ void NumWaypointExperiments() {
 
     // gnu-iostream plotting library
     // Utilizes gnuplot commands with a nice stream interface
-    Gnuplot gp;
-    gp << "plot '-' using 1:2 with lines title 'Trajectory'" << std::endl;
-    gp.send1d(boost::make_tuple(x_hist, y_hist));
-    gp << "set grid" << std::endl;
-    gp << "replot" << std::endl;
+    {
+      Gnuplot gp;
+      gp << "plot '-' using 1:2 with lines title 'Trajectory'" << std::endl;
+      gp.send1d(boost::make_tuple(x_hist, y_hist));
+      gp << "set grid" << std::endl;
+      gp << "replot" << std::endl;
+    }
+    {
+      Gnuplot gp;
+      gp << "plot '-' using 1:2 with lines title 'X-Profile'" << std::endl;
+      gp.send1d(boost::make_tuple(t_hist, x_hist));
+      gp << "set grid" << std::endl;
+      gp << "replot" << std::endl;
+    }
+    {
+      Gnuplot gp;
+      gp << "plot '-' using 1:2 with lines title 'Y-Profile'" << std::endl;
+      gp.send1d(boost::make_tuple(t_hist, y_hist));
+      gp << "set grid" << std::endl;
+      gp << "replot" << std::endl;
+    }
   }
-
 }
