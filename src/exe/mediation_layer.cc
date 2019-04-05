@@ -120,8 +120,7 @@ int main(int argc, char** argv) {
     const std::string& quad_name = kv.first;  
     const std::string& topic = kv.second;  
     trajectory_publishers[quad_name] = 
-      std::move(std::make_shared<TrajectoryPublisherNode3D>(
-            topic));
+      std::move(std::make_shared<TrajectoryPublisherNode3D>(topic));
   }
 
   // Initialize the StateWarden. The StateWarden enables safe, multi-threaded
@@ -235,7 +234,6 @@ int main(int argc, char** argv) {
           }
         }
       });
-
   // TODO: END WIP
 
   // Kill program thread. This thread sleeps for a second and then checks if the

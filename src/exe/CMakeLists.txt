@@ -1,14 +1,12 @@
 cmake_minimum_required(VERSION 2.8.3)
 
-set(TARGET mediation_layer)
-
 find_package(catkin REQUIRED COMPONENTS
   roscpp
 )
 
-add_executable(${TARGET} main.cc)
-target_include_directories(${TARGET} PUBLIC ${catkin_INCLUDE_DIRS})
-target_link_libraries(${TARGET} 
+add_executable(mediation_layer mediation_layer.cc)
+target_include_directories(mediation_layer PUBLIC ${catkin_INCLUDE_DIRS})
+target_link_libraries(mediation_layer
   lib_geometry
   lib_environment
   lib_util
@@ -18,7 +16,25 @@ target_link_libraries(${TARGET}
   yaml-cpp
   ${catkin_LIBRARIES})
 
-set_target_properties( ${TARGET}
+set_target_properties(mediation_layer
+  PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin/exe"
+)
+
+add_executable(ap_test ap_test.cc)
+target_include_directories(ap_test PUBLIC ${catkin_INCLUDE_DIRS})
+target_link_libraries(ap_test
+  lib_geometry
+  lib_environment
+  lib_util
+  lib_mediation_layer
+  lib_ros_node
+  lib_ros_view
+  lib_automation_protocol
+  yaml-cpp
+  ${catkin_LIBRARIES})
+
+set_target_properties(ap_test
   PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin/exe"
 )
