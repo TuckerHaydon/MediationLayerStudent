@@ -11,7 +11,6 @@
 
 #include <Eigen/Dense>
 #include <ros/ros.h>
-#include <std_msgs/String.h>
 
 #include "yaml-cpp/yaml.h"
 #include "map3d.h"

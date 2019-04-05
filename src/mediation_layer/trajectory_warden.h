@@ -7,6 +7,7 @@
 #include <mutex>
 #include <memory>
 #include <set>
+#include <iostream>
 #include <condition_variable>
 
 #include "trajectory.h"

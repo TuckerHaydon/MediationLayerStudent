@@ -21,9 +21,9 @@ set_target_properties(mediation_layer
   RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin/exe"
 )
 
-add_executable(ap_test ap_test.cc)
-target_include_directories(ap_test PUBLIC ${catkin_INCLUDE_DIRS})
-target_link_libraries(ap_test
+add_executable(ap_blue ap_blue.cc)
+target_include_directories(ap_blue PUBLIC ${catkin_INCLUDE_DIRS})
+target_link_libraries(ap_blue
   lib_geometry
   lib_environment
   lib_util
@@ -34,7 +34,7 @@ target_link_libraries(ap_test
   yaml-cpp
   ${catkin_LIBRARIES})
 
-set_target_properties(ap_test
+set_target_properties(ap_blue
   PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin/exe"
 )

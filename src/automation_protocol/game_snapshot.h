@@ -5,6 +5,9 @@
 #include <vector>
 #include <string>
 
+#include "trajectory_warden.h"
+#include "trajectory.h"
+
 namespace mediation_layer {
   // A GameSnapshot is a particular view of the game that is presented to the
   // automation protocol. Typically, a team has full knowledge of the pose of
@@ -56,7 +59,7 @@ namespace mediation_layer {
       // If the quadcopter is friendly, the acceleration returned is accurate.
       // If the quadcopter is enemy, return false --- no access to enemy
       // acceleration.
-      bool Acceleration(const std::string& quad_name, Eigen::Vector<double, T>);
+      bool Acceleration(const std::string& quad_name, Eigen::Vector<double, T>& acceleration);
 
 
     private:
@@ -69,7 +72,8 @@ namespace mediation_layer {
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  inline bool GameSnapshot::Position(
+  template <size_t T>
+  inline bool GameSnapshot<T>::Position(
       const std::string& quad_name, 
       Eigen::Vector<double, T>& position) {
     const bool is_friend = (std::find(
@@ -101,7 +105,8 @@ namespace mediation_layer {
     return true;
   }
 
-  inline bool GameSnapshot::Yaw(
+  template <size_t T>
+  inline bool GameSnapshot<T>::Yaw(
       const std::string& quad_name, 
       Eigen::Vector<double, 1>& yaw) {
     const bool is_friend = (std::find(
@@ -133,7 +138,8 @@ namespace mediation_layer {
     return true;
   }
 
-  inline bool GameSnapshot::Velocity(
+  template <size_t T>
+  inline bool GameSnapshot<T>::Velocity(
       const std::string& quad_name, 
       Eigen::Vector<double, T>& velocity) {
     const bool is_friend = (std::find(
@@ -161,7 +167,8 @@ namespace mediation_layer {
     return true;
   }
 
-  inline bool GameSnapshot::Acceleration(
+  template <size_t T>
+  inline bool GameSnapshot<T>::Acceleration(
       const std::string& quad_name, 
       Eigen::Vector<double, T>& acceleration) {
     const bool is_friend = (std::find(

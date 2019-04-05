@@ -8,7 +8,18 @@ namespace mediation_layer {
   class TestAP : public AutomationProtocol3D {
     private:
 
-    public:   
+    public:
+      TestAP(
+          const std::vector<std::string>& friendly_names,
+          const std::vector<std::string>& enemy_names,
+          const std::shared_ptr<GameSnapshot3D> snapshot,
+          const std::shared_ptr<TrajectoryWarden3D> trajectory_warden_out)
+        : AutomationProtocol(
+            friendly_names,
+            enemy_names,
+            snapshot,
+            trajectory_warden_out) {}
+
       std::unordered_map<std::string, Trajectory3D> UpdateTrajectories(
           std::shared_ptr<GameSnapshot3D> snapshot,
           const std::vector<std::string>& friendly_names,
@@ -18,7 +29,7 @@ namespace mediation_layer {
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  std::unordered_map<std::string, Trajectory3D> UpdateTrajectories(
+  std::unordered_map<std::string, Trajectory3D> TestAP::UpdateTrajectories(
       std::shared_ptr<GameSnapshot3D> snapshot,
       const std::vector<std::string>& friendly_names,
       const std::vector<std::string>& enemy_names) {

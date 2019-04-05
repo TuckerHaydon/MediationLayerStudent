@@ -17,6 +17,8 @@ namespace mediation_layer {
   // The AutomationProtocol interfaces with the GameSimulator and enables an
   // actor to read limited information from the GameSimulator and report
   // intended future actions for specific quadcopters.
+  //
+  // The AutomationProtocol should be run as its own thread.
   template <size_t T>
   class AutomationProtocol {
     protected:
@@ -37,9 +39,18 @@ namespace mediation_layer {
           snapshot_(snapshot),
           trajectory_warden_out_(trajectory_warden_out) {}
 
-      void Stop() final;
-      void Run() final;
-      std::unordered_map<std::string, Trajectory<T>> UpdateTrajectories(
+      virtual ~AutomationProtocol(){}
+
+      // Stop this thread from running
+      void Stop();
+
+      // Main loop for this thread
+      void Run();
+
+      // Virtual function to be implemented as by an actor. Input is a snapshot
+      // of the system, output is an intended trajectory for each of the
+      // friendly quads.
+      virtual std::unordered_map<std::string, Trajectory<T>> UpdateTrajectories(
           std::shared_ptr<GameSnapshot<T>> snapshot,
           const std::vector<std::string>& friendly_names,
           const std::vector<std::string>& enemy_names) = 0;
@@ -49,16 +60,20 @@ namespace mediation_layer {
   //  * IMPLEMENTATION *
   //  ******************
   template <size_t T>
-  void Run() final {
+  void AutomationProtocol<T>::Run() {
     while(this->ok_) {
 
+      // Request trajectory updates from the virtual function
       const std::unordered_map<std::string, Trajectory<T>> trajectories = 
         this->UpdateTrajectories(this->snapshot_, this->friendly_names_, this->enemy_names_);
 
+
+      // For every friendly quad, push the intended trajectory to the trajectory
+      // warden
       for(const std::string& quad_name: this->friendly_names_) {
         try {
           const Trajectory<T> trajectory = trajectories.at(quad_name);
-          this->trajectory_warden_out_.Write(quad_name, trajectory);
+          this->trajectory_warden_out_->Write(quad_name, trajectory);
         } catch(const std::out_of_range& e) {
           continue;
         }
@@ -71,7 +86,7 @@ namespace mediation_layer {
   }
 
   template <size_t T>
-  void Stop() final {
+  void AutomationProtocol<T>::Stop() {
     this->ok_ = false;
   }
 
