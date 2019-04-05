@@ -66,6 +66,8 @@ namespace mediation_layer {
     // Game Plan: Fill triangles for the base. Create a copy plane at a set distance
     //            along the normal. Fill another base. Fill triangles between
     //            the two
+    const double offset_dist = this->potential_->options_.activation_dist;
+    const Vec3D offset_vec = offset_dist * this->potential_->plane_.NormalVector();
 
     { // Fill base
       const Point3D interior_point = this->potential_->plane_.Edges()[0].Start();
@@ -92,8 +94,6 @@ namespace mediation_layer {
     }
 
     { // Fill top
-      const double offset_dist = this->potential_->options_.activation_dist;
-      const Vec3D offset_vec = offset_dist * this->potential_->plane_.NormalVector();
       const Point3D interior_point 
         = this->potential_->plane_.Edges()[0].Start() + offset_vec;
       for(const Line3D& edge: this->potential_->plane_.Edges()) {
@@ -115,6 +115,52 @@ namespace mediation_layer {
         marker.points.push_back(p1);
         marker.points.push_back(p2);
         marker.points.push_back(p3);
+      }
+    }
+
+    { // Fill sides
+      for(const Line3D& edge: this->potential_->plane_.Edges()) {
+        { // 1st triangle
+          geometry_msgs::Point p1;
+          p1.x = edge.Start().x();
+          p1.y = edge.Start().y();
+          p1.z = edge.Start().z();
+
+          geometry_msgs::Point p2;
+          p2.x = edge.End().x();
+          p2.y = edge.End().y();
+          p2.z = edge.End().z();
+
+          geometry_msgs::Point p3;
+          p3.x = edge.End().x() + offset_vec.x();
+          p3.y = edge.End().y() + offset_vec.y();
+          p3.z = edge.End().z() + offset_vec.z();
+
+          marker.points.push_back(p1);
+          marker.points.push_back(p2);
+          marker.points.push_back(p3);
+        }
+        
+        { // 2nd triangle
+          geometry_msgs::Point p1;
+          p1.x = edge.Start().x() + offset_vec.x();
+          p1.y = edge.Start().y() + offset_vec.y();
+          p1.z = edge.Start().z() + offset_vec.z();
+
+          geometry_msgs::Point p2;
+          p2.x = edge.Start().x();
+          p2.y = edge.Start().y();
+          p2.z = edge.Start().z();
+
+          geometry_msgs::Point p3;
+          p3.x = edge.End().x() + offset_vec.x();
+          p3.y = edge.End().y() + offset_vec.y();
+          p3.z = edge.End().z() + offset_vec.z();
+
+          marker.points.push_back(p1);
+          marker.points.push_back(p2);
+          marker.points.push_back(p3);
+        }
       }
     }
      
