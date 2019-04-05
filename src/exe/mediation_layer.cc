@@ -20,9 +20,9 @@
 #include "trajectory_subscriber_node.h"
 #include "trajectory_publisher_node.h"
 
-#include "state_warden.h"
+#include "quad_state_warden.h"
 #include "quad_state.h"
-#include "state_subscriber_node.h"
+#include "quad_state_subscriber_node.h"
 
 #include "trajectory_dispatcher.h"
 #include "mediation_layer.h"
@@ -33,6 +33,9 @@
 
 #include "plane3d_potential.h"
 #include "plane3d_potential_view.h"
+
+#include "quad_view.h"
+#include "quad_state_guard.h"
 
 using namespace mediation_layer;
 
@@ -122,22 +125,22 @@ int main(int argc, char** argv) {
       std::move(std::make_shared<TrajectoryPublisherNode3D>(topic));
   }
 
-  // Initialize the StateWarden. The StateWarden enables safe, multi-threaded
+  // Initialize the QuadStateWarden. The QuadStateWarden enables safe, multi-threaded
   // access to quadcopter state data. Internal components that require access to
-  // state data should request access through StateWarden.
-  auto state_warden  = std::make_shared<StateWarden3D>();
+  // state data should request access through QuadStateWarden.
+  auto state_warden  = std::make_shared<QuadStateWarden3D>();
   for(const auto& kv: quad_state_topics) {
     const std::string& quad_name = kv.first;  
     state_warden->Register(quad_name);
   }
 
   // For every quad, subscribe to its corresponding state topic
-  std::vector<std::shared_ptr<StateSubscriberNode3D>> state_subscribers;
+  std::vector<std::shared_ptr<QuadStateSubscriberNode3D>> state_subscribers;
   for(const auto& kv: quad_state_topics) {
     const std::string& quad_name = kv.first;  
     const std::string& topic = kv.second;  
     state_subscribers.push_back(
-        std::move(std::make_shared<StateSubscriberNode3D>(
+        std::move(std::make_shared<QuadStateSubscriberNode3D>(
             topic, 
             quad_name, 
             state_warden)));
@@ -167,6 +170,12 @@ int main(int argc, char** argv) {
       });
 
   // TODO: WIP
+  std::string quad_mesh_file_path;
+  if(false == nh.getParam("quad_mesh_file_path", quad_mesh_file_path)) {
+    std::cerr << "Required parameter not found on server: quad_mesh_file_path" << std::endl;
+    std::exit(1);
+  }
+
   Plane3DView::Options ground_view_options;
   ground_view_options.r = 0.0f;
   ground_view_options.g = 1.0f;
@@ -200,8 +209,19 @@ int main(int argc, char** argv) {
     }
   }
 
+  auto quad_guard = std::make_shared<QuadStateGuard3D>();
+
+  QuadView3D::Options quad_view_options;
+  quad_view_options.mesh_resource = quad_mesh_file_path;
+  quad_view_options.r = 1.0f;
+  quad_view_options.g = 0.0f;
+  quad_view_options.b = 0.0f;
+  std::vector<QuadView3D> quad_views;
+  quad_views.emplace_back(quad_guard, quad_view_options);
+
   auto environment_publisher = std::make_shared<MarkerPublisherNode>("environment");
   auto potentials_publisher = std::make_shared<MarkerPublisherNode>("potentials");
+  auto quads_publisher = std::make_shared<MarkerPublisherNode>("quads");
   std::thread marker_thread(
       [&]() {
         while(true) {
@@ -228,6 +248,12 @@ int main(int argc, char** argv) {
             for(const auto& view: plane_potential_views) {
               for(const visualization_msgs::Marker& marker: view.Markers()) {
                 potentials_publisher->Publish(marker);
+              }
+            }
+
+            for(const auto& view: quad_views) {
+              for(const visualization_msgs::Marker& marker: view.Markers()) {
+                quads_publisher->Publish(marker);
               }
             }
           }

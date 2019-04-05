@@ -11,7 +11,7 @@
 #include "trajectory.h"
 #include "trajectory_warden.h"
 #include "quad_state.h"
-#include "state_warden.h"
+#include "quad_state_warden.h"
 
 #include "point3d_potential.h"
 #include "line2d_potential.h"
@@ -140,9 +140,9 @@ void test_QuadState2D() {
   }
 }
 
-void test_StateWarden2D() {
+void test_QuadStateWarden2D() {
   { // Trivial
-    StateWarden2D warden;
+    QuadStateWarden2D warden;
 
     QuadState2D dummy_state;
     assert(0 == warden.Keys().size());
@@ -152,7 +152,7 @@ void test_StateWarden2D() {
   }
 
   { // Test read/write
-    StateWarden2D warden;
+    QuadStateWarden2D warden;
 
     QuadState2D state_write({Eigen::Vector<double, 11>(0,0,0,0,1,0,0,0,0,0,0)});
     assert(true == warden.Register("test"));
@@ -233,7 +233,7 @@ int main(int argc, char** argv) {
   test_Trajectory2D();
   test_TrajectoryWarden2D();
   test_QuadState2D();
-  test_StateWarden2D();
+  test_QuadStateWarden2D();
   test_Point3DPotential();
   test_Line2DPotential();
   test_Point2DPotential();

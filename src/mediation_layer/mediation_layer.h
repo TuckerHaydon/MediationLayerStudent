@@ -5,7 +5,7 @@
 #include <atomic>
 
 #include "trajectory_warden.h"
-#include "state_warden.h"
+#include "quad_state_warden.h"
 
 namespace mediation_layer { 
   // The mediation layer is a software layer that mediates user input to ensure
@@ -28,7 +28,7 @@ namespace mediation_layer {
       void Run(
           std::shared_ptr<TrajectoryWarden<T>> trajectory_warden_in,
           std::shared_ptr<TrajectoryWarden<T>> trajectory_warden_out,
-          std::shared_ptr<StateWarden<T>> state_warden);
+          std::shared_ptr<QuadStateWarden<T>> state_warden);
 
       void Stop();
 
@@ -41,7 +41,7 @@ namespace mediation_layer {
   inline void MediationLayer<T>::Run(
       std::shared_ptr<TrajectoryWarden<T>> trajectory_warden_in,
       std::shared_ptr<TrajectoryWarden<T>> trajectory_warden_out,
-      std::shared_ptr<StateWarden<T>> state_warden) {
+      std::shared_ptr<QuadStateWarden<T>> state_warden) {
 
     while(this->ok_) {
       const std::string key = "phoenix";

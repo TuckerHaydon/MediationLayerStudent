@@ -15,3 +15,7 @@ updated_trajectory_topics:
   "gryphon": "/gryphon/updated_trajectory"
 
 map_file_path: "/home/tuckerhaydon/Workspace/MediationLayer/data/maps/arena.map"
+
+quad_mesh_file_path: "file:///home/tuckerhaydon/Workspace/MediationLayer/resources/meshes/quad.stl"
+
+balloon_mesh_file_path: "file:///home/tuckerhaydon/Workspace/MediationLayer/resources/meshes/balloon.stl"
