@@ -32,6 +32,9 @@
 #include "polyhedron_view.h"
 #include "plane3d_view.h"
 
+#include "plane3d_potential.h"
+#include "plane3d_potential_view.h"
+
 using namespace mediation_layer;
 
 namespace { 
@@ -171,7 +174,7 @@ int main(int argc, char** argv) {
   ground_view_options.g = 1.0f;
   ground_view_options.b = 0.0f;
   ground_view_options.a = 1.0f;
-  Plane3DView ground_view(ground_view_options, map.Ground());
+  Plane3DView ground_view(map.Ground(), ground_view_options);
 
   Plane3DView::Options wall_view_options;
   wall_view_options.r = 0.0f;
@@ -181,7 +184,7 @@ int main(int argc, char** argv) {
 
   std::vector<Plane3DView> wall_views;
   for(const Plane3D& wall: map.Walls()) {  
-    wall_views.emplace_back(wall_view_options, wall);
+    wall_views.emplace_back(wall, wall_view_options);
   }
 
   PolyhedronView::Options obstacle_view_options;
@@ -190,11 +193,17 @@ int main(int argc, char** argv) {
   obstacle_view_options.b = 1.0f;
   obstacle_view_options.a = 1.0f;
   std::vector<PolyhedronView> obstacle_views;
+  std::vector<Plane3DPotentialView> plane_potential_views;
   for(const Polyhedron& obstacle: map.Obstacles()) {
-    obstacle_views.emplace_back(obstacle_view_options, obstacle);
+    obstacle_views.emplace_back(obstacle, obstacle_view_options);
+    for(const Plane3D face: obstacle.Faces()) {
+      const auto potential = std::make_shared<Plane3DPotential>(face, Plane3DPotential::Options());
+      plane_potential_views.emplace_back(potential, Plane3DPotentialView::Options());
+    }
   }
 
   auto environment_publisher = std::make_shared<MarkerPublisherNode>("environment");
+  auto potentials_publisher = std::make_shared<MarkerPublisherNode>("potentials");
   std::thread marker_thread(
       [&]() {
         while(true) {
@@ -215,6 +224,12 @@ int main(int argc, char** argv) {
             for(const PolyhedronView& obstacle_view: obstacle_views) {
               for(const visualization_msgs::Marker& marker: obstacle_view.Markers()) {
                 environment_publisher->Publish(marker);
+              }
+            }
+
+            for(const auto& view: plane_potential_views) {
+              for(const visualization_msgs::Marker& marker: view.Markers()) {
+                potentials_publisher->Publish(marker);
               }
             }
           }

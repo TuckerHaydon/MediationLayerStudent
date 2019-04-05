@@ -4,11 +4,11 @@
 
 #include <algorithm>
 
-#include "potential2d.h"
+#include "potential3d.h"
 
 namespace mediation_layer {
 
-  class Point2DPotential : public Potential2D {
+  class Point3DPotential : public Potential3D {
     public:
       struct Options {
         double activation_dist = 1.0;
@@ -16,24 +16,24 @@ namespace mediation_layer {
         double scale = 0.1;
       };
 
-      Point2DPotential(const Point2D& point, 
+      Point3DPotential(const Point3D& point, 
                        const Options& options)
         : point_(point),
           options_(options) {}
 
-      Vec2D Resolve(const Point2D& point) const override;
+      Vec3D Resolve(const Point3D& point) const override;
 
     private:
-      Point2D point_;
+      Point3D point_;
       Options options_;
-      friend class Point2DPotentialView;
+      friend class Point3DPotentialView;
   };
 
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  Vec2D Point2DPotential::Resolve(const Point2D& point) const {
-    const Vec2D unit = (point - this->point_).normalized();
+  inline Vec3D Point3DPotential::Resolve(const Point3D& point) const {
+    const Vec3D unit = (point - this->point_).normalized();
     const double dist = (point - this->point_).norm();
 
     return this->options_.scale * std::max

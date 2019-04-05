@@ -37,11 +37,9 @@ target_link_libraries(integration_tests PUBLIC
 
 add_executable(mediation_layer_tests mediation_layer_tests.cc)
 target_include_directories(mediation_layer_tests PUBLIC 
-  ../src/mediation_layer
-  ../src/mediation_layer/potential
-  ../src/geometry
 )
 target_link_libraries(mediation_layer_tests PUBLIC 
+  lib_geometry
   lib_mediation_layer
   Eigen3::Eigen)
 

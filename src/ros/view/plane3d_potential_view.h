@@ -5,20 +5,19 @@
 #include <visualization_msgs/Marker.h>
 #include <geometry_msgs/Point.h>
 #include <vector>
-#include <mutex>
+#include <memory>
 
 #include "marker_view.h"
-#include "polyhedron.h"
+#include "plane3d_potential.h"
 
 namespace mediation_layer {
-  // Ros view object for a polyhedron
-  class PolyhedronView : public MarkerView {
+  class Plane3DPotentialView : public MarkerView {
     public:
       struct Options {
         // ROS frame
         std::string frame_id = "world";
         // RGB red value [0,1]
-        float r = 0.0f;
+        float r = 1.0f;
         // RGB green value [0,1]
         float g = 0.0f;
         // RGB blue value [0,1]
@@ -29,17 +28,17 @@ namespace mediation_layer {
         Options() {}
       };
 
-      PolyhedronView(
-          const Polyhedron& polyhedron = Polyhedron(),
+      Plane3DPotentialView(
+          const std::shared_ptr<Plane3DPotential> potential = nullptr,
           const Options& options = Options())
-        : polyhedron_(polyhedron),
+        : potential_(potential),
           options_(options),
           unique_id_(GenerateUniqueId()) {}
 
       std::vector<visualization_msgs::Marker> Markers() const override;
 
     private: 
-      Polyhedron polyhedron_;
+      std::shared_ptr<Plane3DPotential> potential_;
       Options options_;
       uint32_t unique_id_;
 
@@ -49,11 +48,11 @@ namespace mediation_layer {
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  std::vector<visualization_msgs::Marker> PolyhedronView::Markers() const {
+  std::vector<visualization_msgs::Marker> Plane3DPotentialView::Markers() const {
     visualization_msgs::Marker marker;
     marker.header.frame_id = this->options_.frame_id;
+    marker.ns = "Plane3dPotential";
     marker.id = this->unique_id_;
-    marker.ns = "Polyhedron";
     marker.type = visualization_msgs::Marker::TRIANGLE_LIST;
     marker.action = visualization_msgs::Marker::ADD;
     marker.scale.x = 1.0f;
@@ -64,12 +63,13 @@ namespace mediation_layer {
     marker.color.b = this->options_.b;
     marker.color.a = this->options_.a;
 
-    // Iterate through all of the faces on the polyhedron and draw triangles
-    // between the vertices and some point on the interior of the face. The
-    // interior point is arbitrarily selected as the first vertex.
-    for(const Plane3D& face: this->polyhedron_.Faces()) { 
-      const Point3D interior_point = face.Edges()[0].Start();
-      for(const Line3D& edge: face.Edges()) {
+    // Game Plan: Fill triangles for the base. Create a copy plane at a set distance
+    //            along the normal. Fill another base. Fill triangles between
+    //            the two
+
+    { // Fill base
+      const Point3D interior_point = this->potential_->plane_.Edges()[0].Start();
+      for(const Line3D& edge: this->potential_->plane_.Edges()) {
         geometry_msgs::Point p1;
         p1.x = interior_point.x();
         p1.y = interior_point.y();
@@ -90,11 +90,38 @@ namespace mediation_layer {
         marker.points.push_back(p3);
       }
     }
+
+    { // Fill top
+      const double offset_dist = this->potential_->options_.activation_dist;
+      const Vec3D offset_vec = offset_dist * this->potential_->plane_.NormalVector();
+      const Point3D interior_point 
+        = this->potential_->plane_.Edges()[0].Start() + offset_vec;
+      for(const Line3D& edge: this->potential_->plane_.Edges()) {
+        geometry_msgs::Point p1;
+        p1.x = interior_point.x();
+        p1.y = interior_point.y();
+        p1.z = interior_point.z();
+
+        geometry_msgs::Point p2;
+        p2.x = edge.Start().x() + offset_vec.x();
+        p2.y = edge.Start().y() + offset_vec.y();
+        p2.z = edge.Start().z() + offset_vec.z();
+
+        geometry_msgs::Point p3;
+        p3.x = edge.End().x() + offset_vec.x();
+        p3.y = edge.End().y() + offset_vec.y();
+        p3.z = edge.End().z() + offset_vec.z();
+
+        marker.points.push_back(p1);
+        marker.points.push_back(p2);
+        marker.points.push_back(p3);
+      }
+    }
      
     return {marker};
   }
 
-  inline uint32_t PolyhedronView::GenerateUniqueId() {
+  inline uint32_t Plane3DPotentialView::GenerateUniqueId() {
     static std::mutex mtx;
     static uint32_t id = 0;
 

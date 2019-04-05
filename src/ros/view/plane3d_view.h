@@ -29,10 +29,10 @@ namespace mediation_layer {
       };
 
       Plane3DView(
-          const Options& options = Options(),
-          const Plane3D& plane = Plane3D())
-        : options_(options),
-          plane_(plane),
+          const Plane3D& plane = Plane3D(),
+          const Options& options = Options())
+        : plane_(plane),
+          options_(options),
           unique_id_(GenerateUniqueId()) {}
 
       std::vector<visualization_msgs::Marker> Markers() const override;
