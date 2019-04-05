@@ -232,7 +232,7 @@ Run the full_stack_planning executable. You must specify an occupancy grid as
 well as the start and end positions.
 ```bash
 cd ~/Workspace/MediationLayerStudent/build
-./labs/lab4/src/full_stack_path_planning ../labs/lab4/data/grid row1 col1 row2 col2
+./labs/lab4/src/full_stack_planning ../labs/lab4/data/grid row1 col1 row2 col2
 ```
 
 ### Create your own data
