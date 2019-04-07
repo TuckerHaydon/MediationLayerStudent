@@ -84,6 +84,8 @@ namespace mediation_layer {
           }
         });
 
+    kill_thread.join();
+
     // Wait for thread pool to terminate
     for(std::thread& t: thread_pool) {
       t.join();
@@ -97,8 +99,9 @@ namespace mediation_layer {
       std::shared_ptr<TrajectoryPublisherNode<T>> publisher) {
     while(this->ok_) {
       Trajectory<T> trajectory;
-      warden->Await(key, trajectory);
-      publisher->Publish(trajectory);
+      if(true == warden->Await(key, trajectory)) {
+        publisher->Publish(trajectory);
+      }
     }
   }
 

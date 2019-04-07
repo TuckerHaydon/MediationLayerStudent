@@ -9,6 +9,7 @@
 #include <set>
 #include <iostream>
 #include <condition_variable>
+#include <atomic>
 
 #include "trajectory.h"
 
@@ -35,6 +36,7 @@ namespace mediation_layer {
 
       std::unordered_map<std::string, std::shared_ptr<TrajectoryContainer>> map_;
       std::set<std::string> keys_;
+      volatile std::atomic<bool> ok_{true};
 
     public:
       // Constructor
@@ -54,6 +56,8 @@ namespace mediation_layer {
 
       // Getter
       const std::set<std::string>& Keys() const;
+
+      void Stop();
   };
 
   //  ******************
@@ -120,8 +124,14 @@ namespace mediation_layer {
 
     { // Lock mutex, wait cv, copy, set cv, release mutex
       std::unique_lock<std::mutex> lock(container->modified_mtx_);
-      container->modified_cv_.wait(lock, [&]{ return (true == container->modified_); });
+      container->modified_cv_.wait(lock, [&]{  
+          return (true == container->modified_) || (false == this->ok_); });
       { // Lock mutex for copy
+        // Termination
+        if(false == this->ok_) {
+          return false;
+        }
+
         std::lock_guard<std::mutex> lock(container->access_mtx_);
         trajectory = container->trajectory_;
       }
@@ -134,6 +144,17 @@ namespace mediation_layer {
   template <size_t T>
   inline const std::set<std::string>& TrajectoryWarden<T>::Keys() const {
     return this->keys_;
+  }
+
+  template <size_t T>
+  inline void TrajectoryWarden<T>::Stop() {
+    this->ok_ = false;
+
+    // Notify all CV to check conditions
+    for(const auto& kv: this->map_) {
+      std::lock_guard<std::mutex> lock(kv.second->modified_mtx_);
+      kv.second->modified_cv_.notify_all();
+    }
   }
 
   using TrajectoryWarden2D = TrajectoryWarden<2>;

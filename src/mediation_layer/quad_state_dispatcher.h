@@ -81,6 +81,8 @@ namespace mediation_layer {
           }
         });
 
+    kill_thread.join();
+
     // Wait for thread pool to terminate
     for(std::thread& t: thread_pool) {
       t.join();
@@ -94,8 +96,9 @@ namespace mediation_layer {
       std::shared_ptr<QuadStateGuard<T>> guard) {
     while(this->ok_) {
       QuadState<T> state;
-      warden->Await(key, state);
-      guard->Write(state);
+      if(true == warden->Await(key, state)) {
+        guard->Write(state);
+      }
     }
   }
 

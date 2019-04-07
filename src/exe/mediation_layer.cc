@@ -61,10 +61,6 @@ int main(int argc, char** argv) {
   const YAML::Node node = YAML::LoadFile(map_file_path);
   const Map3D map = node["map"].as<Map3D>();
 
-  // Mediation layer state
-  auto proposed_trajectory_warden = std::make_shared<TrajectoryWarden3D>();
-  auto updated_trajectory_warden = std::make_shared<TrajectoryWarden3D>();
-
   // Initialize subscribers
   // Load the subscriber topics
   std::map<std::string, std::string> proposed_trajectory_topics;
@@ -165,11 +161,11 @@ int main(int argc, char** argv) {
       });
 
   // TODO: WIP
-  //     for(const Plane3D face: obstacle.Faces()) {
-  //       const auto potential = std::make_shared<Plane3DPotential>(
-  //           face, 
-  //           environment_view_options.plane3d_potential_options);
-  //     }
+  //    for(const Plane3D face: obstacle.Faces()) {
+  //      const auto potential = std::make_shared<Plane3DPotential>(
+  //          face, 
+  //          environment_view_options.plane3d_potential_options);
+  //    }
   std::string quad_mesh_file_path;
   if(false == nh.getParam("quad_mesh_file_path", quad_mesh_file_path)) {
     std::cerr << "Required parameter not found on server: quad_mesh_file_path" << std::endl;
@@ -217,10 +213,15 @@ int main(int argc, char** argv) {
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
           }
         }
-        mediation_layer->Stop();
-        trajectory_dispatcher->Stop();
-        view_manager->Stop();
         ros::shutdown();
+
+        mediation_layer->Stop();
+        view_manager->Stop();
+        trajectory_dispatcher->Stop();
+
+        trajectory_warden_in->Stop();
+        trajectory_warden_out->Stop();
+        state_warden->Stop();
       });
 
   // Spin for ros subscribers
