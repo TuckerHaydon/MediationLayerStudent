@@ -8,6 +8,7 @@
 #include <memory>
 #include <thread>
 #include <csignal>
+#include <utility>
 
 #include <Eigen/Dense>
 #include <ros/ros.h>
@@ -27,15 +28,9 @@
 #include "trajectory_dispatcher.h"
 #include "mediation_layer.h"
 
-#include "marker_publisher_node.h"
-#include "polyhedron_view.h"
-#include "plane3d_view.h"
-
-#include "plane3d_potential.h"
-#include "plane3d_potential_view.h"
-
-#include "quad_view.h"
 #include "quad_state_guard.h"
+
+#include "view_manager.h"
 
 using namespace mediation_layer;
 
@@ -60,7 +55,7 @@ int main(int argc, char** argv) {
   std::string map_file_path;
   if(false == nh.getParam("map_file_path", map_file_path)) {
     std::cerr << "Required parameter not found on server: map_file_path" << std::endl;
-    std::exit(1);
+    std::exit(EXIT_FAILURE);
   }
 
   const YAML::Node node = YAML::LoadFile(map_file_path);
@@ -75,13 +70,13 @@ int main(int argc, char** argv) {
   std::map<std::string, std::string> proposed_trajectory_topics;
   if(false == nh.getParam("proposed_trajectory_topics", proposed_trajectory_topics)) {
     std::cerr << "Required parameter not found on server: proposed_trajectory_topics" << std::endl;
-    std::exit(1);
+    std::exit(EXIT_FAILURE);
   }
 
   std::map<std::string, std::string> quad_state_topics;
   if(false == nh.getParam("quad_state_topics", quad_state_topics)) {
     std::cerr << "Required parameter not found on server: quad_state_topics" << std::endl;
-    std::exit(1);
+    std::exit(EXIT_FAILURE);
   }
 
   // Initialize the TrajectoryWardens. The TrajectoryWarden enables safe,
@@ -113,7 +108,7 @@ int main(int argc, char** argv) {
   std::map<std::string, std::string> updated_trajectory_topics;
   if(false == nh.getParam("updated_trajectory_topics", updated_trajectory_topics)) {
     std::cerr << "Required parameter not found on server: updated_trajectory_topics" << std::endl;
-    std::exit(1);
+    std::exit(EXIT_FAILURE);
   }
 
   // For every quad, publish to its corresponding updated_trajectory topic
@@ -170,94 +165,43 @@ int main(int argc, char** argv) {
       });
 
   // TODO: WIP
+  //     for(const Plane3D face: obstacle.Faces()) {
+  //       const auto potential = std::make_shared<Plane3DPotential>(
+  //           face, 
+  //           environment_view_options.plane3d_potential_options);
+  //     }
   std::string quad_mesh_file_path;
   if(false == nh.getParam("quad_mesh_file_path", quad_mesh_file_path)) {
     std::cerr << "Required parameter not found on server: quad_mesh_file_path" << std::endl;
-    std::exit(1);
-  }
-
-  Plane3DView::Options ground_view_options;
-  ground_view_options.r = 0.0f;
-  ground_view_options.g = 1.0f;
-  ground_view_options.b = 0.0f;
-  ground_view_options.a = 1.0f;
-  Plane3DView ground_view(map.Ground(), ground_view_options);
-
-  Plane3DView::Options wall_view_options;
-  wall_view_options.r = 0.0f;
-  wall_view_options.g = 0.0f;
-  wall_view_options.b = 0.0f;
-  wall_view_options.a = 0.1f;
-
-  std::vector<Plane3DView> wall_views;
-  for(const Plane3D& wall: map.Walls()) {  
-    wall_views.emplace_back(wall, wall_view_options);
-  }
-
-  PolyhedronView::Options obstacle_view_options;
-  obstacle_view_options.r = 1.0f;
-  obstacle_view_options.g = 1.0f;
-  obstacle_view_options.b = 1.0f;
-  obstacle_view_options.a = 1.0f;
-  std::vector<PolyhedronView> obstacle_views;
-  std::vector<Plane3DPotentialView> plane_potential_views;
-  for(const Polyhedron& obstacle: map.Obstacles()) {
-    obstacle_views.emplace_back(obstacle, obstacle_view_options);
-    for(const Plane3D face: obstacle.Faces()) {
-      const auto potential = std::make_shared<Plane3DPotential>(face, Plane3DPotential::Options());
-      plane_potential_views.emplace_back(potential, Plane3DPotentialView::Options());
-    }
+    std::exit(EXIT_FAILURE);
   }
 
   auto quad_guard = std::make_shared<QuadStateGuard3D>();
+  std::vector<std::shared_ptr<Potential3D>> potentials;
 
-  QuadView3D::Options quad_view_options;
-  quad_view_options.mesh_resource = quad_mesh_file_path;
-  quad_view_options.r = 1.0f;
-  quad_view_options.g = 0.0f;
-  quad_view_options.b = 0.0f;
-  std::vector<QuadView3D> quad_views;
-  quad_views.emplace_back(quad_guard, quad_view_options);
+  for(const Polyhedron& obstacle: map.Obstacles()) {
+    for(const Plane3D face: obstacle.Faces()) {
+      potentials.push_back(
+          std::make_shared<Plane3DPotential>(
+            face, 
+            Plane3DPotential::Options()));
+    }
+  }
 
-  auto environment_publisher = std::make_shared<MarkerPublisherNode>("environment");
-  auto potentials_publisher = std::make_shared<MarkerPublisherNode>("potentials");
-  auto quads_publisher = std::make_shared<MarkerPublisherNode>("quads");
-  std::thread marker_thread(
+  ViewManager3D::QuadViewOptions quad_view_options;
+  quad_view_options.quad_mesh_file_path = quad_mesh_file_path;
+  quad_view_options.quads.push_back(std::make_pair<>("blue", quad_guard));
+
+  ViewManager3D::EnvironmentViewOptions environment_view_options;
+  environment_view_options.map = map;
+  environment_view_options.potentials = potentials;
+
+  auto view_manager = std::make_shared<ViewManager3D>();
+  std::thread view_manager_thread(
       [&]() {
-        while(true) {
-          if(true == kill_program) {
-            break;
-          } else {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-            for(const visualization_msgs::Marker& marker: ground_view.Markers()) {
-              environment_publisher->Publish(marker);
-            }
-
-            for(const Plane3DView& wall_view: wall_views) {
-              for(const visualization_msgs::Marker& marker: wall_view.Markers()) {
-                environment_publisher->Publish(marker);
-              }
-            }
-
-            for(const PolyhedronView& obstacle_view: obstacle_views) {
-              for(const visualization_msgs::Marker& marker: obstacle_view.Markers()) {
-                environment_publisher->Publish(marker);
-              }
-            }
-
-            for(const auto& view: plane_potential_views) {
-              for(const visualization_msgs::Marker& marker: view.Markers()) {
-                potentials_publisher->Publish(marker);
-              }
-            }
-
-            for(const auto& view: quad_views) {
-              for(const visualization_msgs::Marker& marker: view.Markers()) {
-                quads_publisher->Publish(marker);
-              }
-            }
-          }
-        }
+        view_manager->Run(
+            quad_view_options,
+            environment_view_options);
       });
   // TODO: END WIP
 
@@ -275,6 +219,7 @@ int main(int argc, char** argv) {
         }
         mediation_layer->Stop();
         trajectory_dispatcher->Stop();
+        view_manager->Stop();
         ros::shutdown();
       });
 
@@ -287,7 +232,7 @@ int main(int argc, char** argv) {
   // Wait for other threads to die
   trajectory_dispatcher_thread.join();
   mediation_layer_thread.join();
-  marker_thread.join();
+  view_manager_thread.join();
 
   return EXIT_SUCCESS;
 }

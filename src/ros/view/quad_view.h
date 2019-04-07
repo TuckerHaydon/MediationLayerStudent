@@ -16,19 +16,33 @@ namespace mediation_layer {
     public:
       struct Options {
         // ROS frame
-        std::string frame_id = "world";
+        std::string frame_id;
         // Mesh resource file
-        std::string mesh_resource = "";
+        std::string mesh_resource;
         // RGB red value [0,1]
-        float r = 1.0f;
+        float r;
         // RGB green value [0,1]
-        float g = 1.0f;
+        float g;
         // RGB blue value [0,1]
-        float b = 1.0f;
+        float b;
         // RGB alpha value [0,1]
-        float a = 1.0f;
+        float a;
 
-        Options() {}
+        Options(
+            const std::string& frame_id_ = "world",
+            const std::string& mesh_resource_ = "",
+            const float r_ = 1.0f,
+            const float g_ = 1.0f,
+            const float b_ = 1.0f,
+            const float a_ = 1.0f
+            ) 
+        : frame_id(frame_id_),
+          mesh_resource(mesh_resource_),
+          r(r_),
+          g(g_),
+          b(b_),
+          a(a_)
+        {}
       };
 
       QuadView(

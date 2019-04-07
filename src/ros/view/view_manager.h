@@ -7,12 +7,14 @@
 #include <thread>
 #include <vector>
 
-#include "visualization_msgs/"
-
-#include "plane3d_view.h"
-#include "polyhedron_view.h"
-
 #include "marker_publisher_node.h"
+#include "polyhedron_view.h"
+#include "plane3d_view.h"
+
+#include "plane3d_potential.h"
+#include "plane3d_potential_view.h"
+
+#include "quad_view.h"
 
 namespace mediation_layer {
   // The ViewManager is a convenience object that encapsulates all of the code
@@ -22,79 +24,145 @@ namespace mediation_layer {
   template<size_t T>
   class ViewManager {
     public:
-      struct Options {
-        Plane3DView::Options ground_view_options;
-        Plane3DView::Options wall_view_options;
-        PolyhedronView::Options obstacle_view_options;
+      struct QuadViewOptions {
+        std::string quad_mesh_file_path;
+        std::vector<std::pair<std::string, std::shared_ptr<QuadStateGuard<T>>>> quads;
 
-        Options() {}
+        QuadViewOptions() {}
       };
 
-      ViewManager(
-          const Options& options = Options())
-        : options_(options){}
+      struct EnvironmentViewOptions { 
+        Plane3DView::Options ground_view_options{
+          "world", 0.0f, 1.0f, 0.0f, 1.0f};
+        Plane3DView::Options wall_view_options{
+            "world", 0.0f, 0.0f, 0.0f, 0.1f};
+        PolyhedronView::Options obstacle_view_options{
+            "world", 1.0f, 1.0f, 1.0f, 1.0f};
+        Plane3DPotentialView::Options plane3d_potential_view_options{
+            "world", 1.0f, 0.0f, 0.0f, 0.1f};
 
-      void Run();
+        std::vector<std::shared_ptr<Potential3D>> potentials;
+        Map3D map;
+
+        EnvironmentViewOptions() {}
+      };
+
+      ViewManager() {};
+
+      void Run(
+          const QuadViewOptions quad_view_options,
+          const EnvironmentViewOptions environment_view_options);
+
       void Stop();
 
     private:
-      void RunEnvironmentPublisher();
-      void RunPotentialPublisher();
-      void RunQuadPublisher();
+      void RunQuadPublisher(
+          const QuadViewOptions quad_view_options);
+      void RunEnvironmentPublisher(
+          const EnvironmentViewOptions environment_view_options);
 
-      std::atomic<bool> ok_{true;}
-      Options options_;
+      std::atomic<bool> ok_{true};
   };
 
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
   template <size_t T>
-  void ViewManager<T>::Run() {
-    std::thread environment_publisher_thread(
-        [&]() {
-          RunEnvironmentPublisher();
-        });
-
-    std::thread potential_publisher_thread(
-        [&]() {
-          RunPotentialPublisher();
-        });
+  inline void ViewManager<T>::Run(
+      const QuadViewOptions quad_view_options,
+      const EnvironmentViewOptions environment_view_options) {
 
     std::thread quad_publisher_thread(
         [&]() {
-          RunQuadPublisher();
+          RunQuadPublisher(quad_view_options);
         });
 
-    environment_publisher_thread.join();
-    potential_publisher_thread.join();
+    std::thread environment_publisher_thread(
+        [&]() {
+          RunEnvironmentPublisher(environment_view_options);
+        });
+
     quad_publisher_thread.join();
+    environment_publisher_thread.join();
   }
 
   template <size_t T>
-  void ViewManager<T>::RunEnvironmentPublisher() {
+  inline void ViewManager<T>::RunQuadPublisher(
+      const QuadViewOptions quad_view_options) {
+
+    // Setup
+    std::vector<QuadView3D> quad_views;
+
+    for(const auto p: quad_view_options.quads) {
+      if(p.first == "red") {
+        QuadView3D::Options view_options;
+        view_options.mesh_resource = quad_view_options.quad_mesh_file_path;
+        view_options.r = 1.0f;
+        view_options.g = 0.0f;
+        view_options.b = 0.0f;
+        quad_views.emplace_back(p.second, view_options);
+      }
+      else if(p.first == "blue") {
+        QuadView3D::Options view_options;
+        view_options.mesh_resource = quad_view_options.quad_mesh_file_path;
+        view_options.r = 0.0f;
+        view_options.g = 0.0f;
+        view_options.b = 1.0f;
+        quad_views.emplace_back(p.second, view_options);
+      }
+    }
+
+    auto quads_publisher = std::make_shared<MarkerPublisherNode>("quads");
+
+    // Main loop
+    // 50 Hz. The quads move quickly and update often
+    while(this->ok_) {
+      for(const auto& view: quad_views) {
+        for(const visualization_msgs::Marker& marker: view.Markers()) {
+          quads_publisher->Publish(marker);
+        }
+      }
+      std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    }
+  }
+
+  template <size_t T>
+  inline void ViewManager<T>::RunEnvironmentPublisher(
+      const EnvironmentViewOptions environment_view_options) {
+
     // Setup
     std::vector<Plane3DView> plane_views;
-    for(const Plane3D& wall: map.Walls()) {  
-      plane_views.emplace_back(wall, wall_view_options);
+    for(const Plane3D& wall: environment_view_options.map.Walls()) {  
+      plane_views.emplace_back(
+          wall, 
+          environment_view_options.wall_view_options);
     }
-    plane_views.emplace_back(map.Ground(), ground_view_options);
+    plane_views.emplace_back(
+        environment_view_options.map.Ground(), 
+        environment_view_options.ground_view_options);
 
     std::vector<PolyhedronView> obstacle_views;
-    for(const Polyhedron& obstacle: map.Obstacles()) {
-      obstacle_views.emplace_back(obstacle, obstacle_view_options);
+    std::vector<Plane3DPotentialView> plane_potential_views;
+    for(const Polyhedron& obstacle: environment_view_options.map.Obstacles()) {
+      obstacle_views.emplace_back(
+          obstacle, 
+          environment_view_options.obstacle_view_options);
+    }
+
+    for(std::shared_ptr<Potential3D> potential: environment_view_options.potentials) {
+      plane_potential_views.emplace_back(
+          std::dynamic_pointer_cast<Plane3DPotential>(potential), 
+          environment_view_options.plane3d_potential_view_options);
     }
 
     auto environment_publisher = std::make_shared<MarkerPublisherNode>("environment");
+    auto potentials_publisher = std::make_shared<MarkerPublisherNode>("potentials");
 
     // Main loop
+    // 2 Hz. Environment does not change often
     while(this->ok_) {
-      for(const visualization_msgs::Marker& marker: ground_view.Markers()) {
-        environment_publisher->Publish(marker);
-      }
-
-      for(const Plane3DView& wall_view: wall_views) {
-        for(const visualization_msgs::Marker& marker: wall_view.Markers()) {
+      for(const Plane3DView& view: plane_views) {
+        for(const visualization_msgs::Marker& marker: view.Markers()) {
           environment_publisher->Publish(marker);
         }
       }
@@ -104,12 +172,14 @@ namespace mediation_layer {
           environment_publisher->Publish(marker);
         }
       }
-      std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+      for(const auto& view: plane_potential_views) {
+        for(const visualization_msgs::Marker& marker: view.Markers()) {
+          potentials_publisher->Publish(marker);
+        }
+      } 
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
-  }
-
-  void ViewManager<T>::RunPotentialPublisher() {
-
   }
 
 

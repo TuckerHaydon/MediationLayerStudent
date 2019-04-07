@@ -15,17 +15,29 @@ namespace mediation_layer {
     public:
       struct Options {
         // ROS frame
-        std::string frame_id = "world";
+        std::string frame_id;
         // RGB red value [0,1]
-        float r = 0.0f;
+        float r;
         // RGB green value [0,1]
-        float g = 0.0f;
+        float g;
         // RGB blue value [0,1]
-        float b = 0.0f;
+        float b;
         // RGB alpha value [0,1]
-        float a = 0.2f;
+        float a;
 
-        Options() {}
+        Options(
+            const std::string& frame_id_ = "world",
+            const float r_ = 0.0f,
+            const float g_ = 0.0f,
+            const float b_ = 0.0f,
+            const float a_ = 0.2f
+            ) 
+        : frame_id(frame_id_),
+          r(r_),
+          g(g_),
+          b(b_),
+          a(a_)
+        {}
       };
 
       Plane3DView(
