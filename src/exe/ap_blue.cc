@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
       trajectory_warden_in,
       GameSnapshot3D::Options());
 
-  std::shared_ptr<AutomationProtocol3D> automation_protocol = std::make_shared<TestAP>(
+  std::shared_ptr<AutonomyProtocol3D> automation_protocol = std::make_shared<TestAP>(
       blue_quad_names, 
       red_quad_names,
       game_snapshot,

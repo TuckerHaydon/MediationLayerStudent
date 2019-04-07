@@ -30,7 +30,7 @@ target_link_libraries(ap_blue
   lib_mediation_layer
   lib_ros_node
   lib_ros_view
-  lib_automation_protocol
+  lib_autonomy_protocol
   yaml-cpp
   ${catkin_LIBRARIES})
 

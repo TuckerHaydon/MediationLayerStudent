@@ -16,7 +16,7 @@ add_subdirectory(graph)
 add_subdirectory(environment)
 add_subdirectory(ros)
 add_subdirectory(mediation_layer)
-add_subdirectory(automation_protocol)
+add_subdirectory(autonomy_protocol)
 
 # Build the final executables
 add_subdirectory(exe)

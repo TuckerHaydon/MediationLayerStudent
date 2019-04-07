@@ -2,10 +2,10 @@
 
 #pragma once
 
-#include "automation_protocol.h"
+#include "autonomy_protocol.h"
 
 namespace mediation_layer {
-  class TestAP : public AutomationProtocol3D {
+  class TestAP : public AutonomyProtocol3D {
     private:
 
     public:
@@ -14,7 +14,7 @@ namespace mediation_layer {
           const std::vector<std::string>& enemy_names,
           const std::shared_ptr<GameSnapshot3D> snapshot,
           const std::shared_ptr<TrajectoryWarden3D> trajectory_warden_out)
-        : AutomationProtocol(
+        : AutonomyProtocol(
             friendly_names,
             enemy_names,
             snapshot,

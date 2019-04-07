@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 
-set(TARGET lib_automation_protocol)
+set(TARGET lib_autonomy_protocol)
 
 find_package (Eigen3 3.3 NO_MODULE)
 

@@ -14,13 +14,13 @@
 #include "game_snapshot.h"
 
 namespace mediation_layer {
-  // The AutomationProtocol interfaces with the GameSimulator and enables an
+  // The AutonomyProtocol interfaces with the GameSimulator and enables an
   // actor to read limited information from the GameSimulator and report
   // intended future actions for specific quadcopters.
   //
-  // The AutomationProtocol should be run as its own thread.
+  // The AutonomyProtocol should be run as its own thread.
   template <size_t T>
-  class AutomationProtocol {
+  class AutonomyProtocol {
     protected:
       std::vector<std::string> friendly_names_;
       std::vector<std::string> enemy_names_;
@@ -29,7 +29,7 @@ namespace mediation_layer {
       std::atomic<bool> ok_{true};
 
     public:
-      AutomationProtocol(
+      AutonomyProtocol(
           const std::vector<std::string>& friendly_names,
           const std::vector<std::string>& enemy_names,
           const std::shared_ptr<GameSnapshot<T>> snapshot,
@@ -39,7 +39,7 @@ namespace mediation_layer {
           snapshot_(snapshot),
           trajectory_warden_out_(trajectory_warden_out) {}
 
-      virtual ~AutomationProtocol(){}
+      virtual ~AutonomyProtocol(){}
 
       // Stop this thread from running
       void Stop();
@@ -60,7 +60,7 @@ namespace mediation_layer {
   //  * IMPLEMENTATION *
   //  ******************
   template <size_t T>
-  void AutomationProtocol<T>::Run() {
+  void AutonomyProtocol<T>::Run() {
     while(this->ok_) {
 
       // Request trajectory updates from the virtual function
@@ -86,10 +86,10 @@ namespace mediation_layer {
   }
 
   template <size_t T>
-  void AutomationProtocol<T>::Stop() {
+  void AutonomyProtocol<T>::Stop() {
     this->ok_ = false;
   }
 
-  using AutomationProtocol2D = AutomationProtocol<2>;
-  using AutomationProtocol3D = AutomationProtocol<3>;
+  using AutonomyProtocol2D = AutonomyProtocol<2>;
+  using AutonomyProtocol3D = AutonomyProtocol<3>;
 }
