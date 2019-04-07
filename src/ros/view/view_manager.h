@@ -61,7 +61,7 @@ namespace mediation_layer {
       void RunEnvironmentPublisher(
           const EnvironmentViewOptions environment_view_options);
 
-      std::atomic<bool> ok_{true};
+      volatile std::atomic<bool> ok_{true};
   };
 
   //  ******************

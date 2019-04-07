@@ -26,7 +26,7 @@ namespace mediation_layer {
       std::vector<std::string> enemy_names_;
       std::shared_ptr<GameSnapshot<T>> snapshot_;
       std::shared_ptr<TrajectoryWarden<T>> trajectory_warden_out_;
-      std::atomic<bool> ok_{true};
+      volatile std::atomic<bool> ok_{true};
 
     public:
       AutonomyProtocol(
