@@ -93,10 +93,10 @@ int main(int argc, char** argv) {
     const std::string& quad_name = kv.first;  
     const std::string& topic = kv.second;  
     trajectory_subscribers[quad_name] = 
-        std::move(std::make_shared<TrajectorySubscriberNode3D>(
+        std::make_shared<TrajectorySubscriberNode3D>(
             topic, 
             quad_name, 
-            trajectory_warden_in));
+            trajectory_warden_in);
   }
 
   // Initialize publishers
@@ -113,7 +113,7 @@ int main(int argc, char** argv) {
     const std::string& quad_name = kv.first;  
     const std::string& topic = kv.second;  
     trajectory_publishers[quad_name] = 
-      std::move(std::make_shared<TrajectoryPublisherNode3D>(topic));
+      std::make_shared<TrajectoryPublisherNode3D>(topic);
   }
 
   // Initialize the QuadStateWarden. The QuadStateWarden enables safe, multi-threaded
@@ -131,10 +131,10 @@ int main(int argc, char** argv) {
     const std::string& quad_name = kv.first;  
     const std::string& topic = kv.second;  
     state_subscribers.push_back(
-        std::move(std::make_shared<QuadStateSubscriberNode3D>(
+        std::make_shared<QuadStateSubscriberNode3D>(
             topic, 
             quad_name, 
-            state_warden)));
+            state_warden));
   }
 
   // TrajectoryDispatcher thread. TrajectoryDispatcher pipes data from

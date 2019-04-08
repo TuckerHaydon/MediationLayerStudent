@@ -8,6 +8,9 @@
 #include "trajectory_warden.h"
 #include "trajectory.h"
 
+#include "quad_state_warden.h"
+#include "quad_state.h"
+
 namespace mediation_layer {
   // A GameSnapshot is a particular view of the game that is presented to the
   // automation protocol. Typically, a team has full knowledge of the pose of
@@ -24,11 +27,11 @@ namespace mediation_layer {
       GameSnapshot(
           const std::vector<std::string> friendly_names,
           const std::vector<std::string> enemy_names,
-          const std::shared_ptr<TrajectoryWarden<T>> trajectory_warden_in,
+          const std::shared_ptr<QuadStateWarden<T>> quad_state_warden,
           const Options& options)
         : friendly_names_(friendly_names),
           enemy_names_(enemy_names),
-          trajectory_warden_in_(trajectory_warden_in),
+          quad_state_warden_(quad_state_warden),
           options_(options) {}
 
       // Returns the yaw of the quadcopter. If quad_name is invalid, returns
@@ -38,12 +41,13 @@ namespace mediation_layer {
       // If the quadcopter is enemy, the position returned is corrupted by noise.
       bool Position(const std::string& quad_name, Eigen::Vector<double, T>& position);
 
-      // Returns the yaw of the quadcopter. If quad_name is invalid, returns
-      // false, else returns true. Stores the data in 'yaw'.
+      // Returns the orientation of the quadcopter. If quad_name is invalid, returns
+      // false, else returns true. Stores the data in 'orientation'. Orientation
+      // is represented as a quaternion [w,x,y,z]
       //
       // If the quadcopter is friendly, the yaw returned is accurate.
       // If the quadcopter is enemy, the yaw returned is corrupted by noise.
-      bool Yaw(const std::string& quad_name, Eigen::Vector<double, 1>& yaw);
+      bool Orientation(const std::string& quad_name, Eigen::Vector<double, 4>& orientation);
 
       // Returns the velocity of a quadcopter. If quad_name is invalid, returns
       // false, else returns true. Stores the data in 'velocity'.
@@ -53,20 +57,12 @@ namespace mediation_layer {
       // velocity.
       bool Velocity(const std::string& quad_name, Eigen::Vector<double, T>& velocity);
 
-      // Returns the acceleration of a quadcopter. If quad_name is invalid, returns
-      // false, else returns true. Stores the data in 'acceleration'.
-      //
-      // If the quadcopter is friendly, the acceleration returned is accurate.
-      // If the quadcopter is enemy, return false --- no access to enemy
-      // acceleration.
-      bool Acceleration(const std::string& quad_name, Eigen::Vector<double, T>& acceleration);
-
 
     private:
       Options options_;
       std::vector<std::string> friendly_names_;
       std::vector<std::string> enemy_names_;
-      const std::shared_ptr<TrajectoryWarden<T>> trajectory_warden_in_;
+      const std::shared_ptr<QuadStateWarden<T>> quad_state_warden_;
   };
 
   //  ******************
@@ -92,11 +88,11 @@ namespace mediation_layer {
     }
 
     // Read from the warden
-    Trajectory<T> trajectory;
-    this->trajectory_warden_in_.Read(quad_name, trajectory);
+    QuadState<T> state;
+    this->quad_state_warden_.Read(quad_name, state);
 
     // Copy the position
-    position = trajectory.Position(0);
+    position = state.Position();
 
     if(true == is_enemy) {
       // TODO: Corrupt position with noise
@@ -106,9 +102,9 @@ namespace mediation_layer {
   }
 
   template <size_t T>
-  inline bool GameSnapshot<T>::Yaw(
+  inline bool GameSnapshot<T>::Orientation(
       const std::string& quad_name, 
-      Eigen::Vector<double, 1>& yaw) {
+      Eigen::Vector<double, 4>& orientation) {
     const bool is_friend = (std::find(
           this->friendly_names_.begin(), 
           this->friendly_names_.end(), 
@@ -125,11 +121,11 @@ namespace mediation_layer {
     }
 
     // Read from the warden
-    Trajectory<T> trajectory;
-    this->trajectory_warden_in_.Read(quad_name, trajectory);
+    QuadState<T> state;
+    this->quad_state_warden_.Read(quad_name, state);
 
     // Copy the yaw
-    yaw = Eigen::Vector<double, 1>(trajectory.Yaw(0));
+    orientation = Eigen::Vector<double, 4>(state.Orientation());
 
     if(true == is_enemy) {
       // TODO: Corrupt position with noise
@@ -158,40 +154,11 @@ namespace mediation_layer {
     }
 
     // Read from the warden
-    Trajectory<T> trajectory;
-    this->trajectory_warden_in_.Read(quad_name, trajectory);
+    QuadState<T> state;
+    this->quad_state_warden_.Read(quad_name, state);
 
     // Copy the velocity
-    velocity = trajectory.Velocity(0);
-
-    return true;
-  }
-
-  template <size_t T>
-  inline bool GameSnapshot<T>::Acceleration(
-      const std::string& quad_name, 
-      Eigen::Vector<double, T>& acceleration) {
-    const bool is_friend = (std::find(
-          this->friendly_names_.begin(), 
-          this->friendly_names_.end(), 
-          quad_name) != this->friendly_names_.end());
-
-    const bool is_enemy = (std::find(
-          this->enemy_names_.begin(), 
-          this->enemy_names_.end(), 
-          quad_name) != this->enemy_names_.end());
-
-    // Invalid quad name or not friend
-    if(false == is_friend) {
-      return false;
-    }
-
-    // Read from the warden
-    Trajectory<T> trajectory;
-    this->trajectory_warden_in_.Read(quad_name, trajectory);
-
-    // Copy the velocity
-    acceleration = trajectory.Acceleration(0);
+    velocity = state.Velocity();
 
     return true;
   }
