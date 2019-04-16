@@ -19,7 +19,7 @@ namespace mediation_layer {
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
       QuadState(const Eigen::Vector<double, 2*T + 7>& data 
-          = Eigen::Vector<double, 2*T + 7>())
+          = Eigen::Vector<double, 2*T + 7>::Zero())
         : data_(data) {}
 
       // Getters

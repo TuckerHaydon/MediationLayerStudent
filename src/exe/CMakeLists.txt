@@ -15,7 +15,6 @@ target_link_libraries(mediation_layer
   lib_ros_view
   yaml-cpp
   ${catkin_LIBRARIES})
-
 set_target_properties(mediation_layer
   PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin/exe"
@@ -33,8 +32,40 @@ target_link_libraries(ap_blue
   lib_autonomy_protocol
   yaml-cpp
   ${catkin_LIBRARIES})
-
 set_target_properties(ap_blue
+  PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin/exe"
+)
+
+add_executable(physics_simulator physics_simulator.cc)
+target_include_directories(physics_simulator PUBLIC ${catkin_INCLUDE_DIRS})
+target_link_libraries(physics_simulator
+  lib_geometry
+  lib_environment
+  lib_util
+  lib_mediation_layer
+  lib_ros_node
+  lib_ros_view
+  lib_autonomy_protocol
+  yaml-cpp
+  ${catkin_LIBRARIES})
+set_target_properties(physics_simulator
+  PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin/exe"
+)
+
+add_executable(mock_state_reporter mock_state_reporter.cc)
+target_include_directories(mock_state_reporter PUBLIC ${catkin_INCLUDE_DIRS})
+target_link_libraries(mock_state_reporter
+  lib_geometry
+  lib_environment
+  lib_util
+  lib_mediation_layer
+  lib_ros_node
+  lib_ros_view
+  yaml-cpp
+  ${catkin_LIBRARIES})
+set_target_properties(mock_state_reporter
   PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin/exe"
 )

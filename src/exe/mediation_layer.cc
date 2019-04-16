@@ -24,6 +24,7 @@
 #include "quad_state_warden.h"
 #include "quad_state.h"
 #include "quad_state_subscriber_node.h"
+#include "quad_state_dispatcher.h"
 
 #include "trajectory_dispatcher.h"
 #include "mediation_layer.h"
@@ -69,12 +70,6 @@ int main(int argc, char** argv) {
     std::exit(EXIT_FAILURE);
   }
 
-  std::map<std::string, std::string> quad_state_topics;
-  if(false == nh.getParam("quad_state_topics", quad_state_topics)) {
-    std::cerr << "Required parameter not found on server: quad_state_topics" << std::endl;
-    std::exit(EXIT_FAILURE);
-  }
-
   // Initialize the TrajectoryWardens. The TrajectoryWarden enables safe,
   // multi-threaded access to trajectory data. Internal components that require
   // access to proposed and updated trajectories should request access through
@@ -116,13 +111,30 @@ int main(int argc, char** argv) {
       std::make_shared<TrajectoryPublisherNode3D>(topic);
   }
 
+  // TrajectoryDispatcher thread. TrajectoryDispatcher pipes data from
+  // TrajectoryWarden to its corresponding trajectory publisher. Runs as a
+  // separate thread and maintains a thread pool. Each thread in the pool is
+  // assigned a particular trajectory and blocks until that trajectory is modified.
+  // Once modified, it moves the data into the corresponding publisher queue.
+  auto trajectory_dispatcher = std::make_shared<TrajectoryDispatcher3D>();
+  std::thread trajectory_dispatcher_thread([&](){
+      trajectory_dispatcher->Run(trajectory_warden_out, trajectory_publishers);
+      });
+
+
+  std::map<std::string, std::string> quad_state_topics;
+  if(false == nh.getParam("quad_state_topics", quad_state_topics)) {
+    std::cerr << "Required parameter not found on server: quad_state_topics" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+
   // Initialize the QuadStateWarden. The QuadStateWarden enables safe, multi-threaded
   // access to quadcopter state data. Internal components that require access to
   // state data should request access through QuadStateWarden.
-  auto state_warden  = std::make_shared<QuadStateWarden3D>();
+  auto quad_state_warden = std::make_shared<QuadStateWarden3D>();
   for(const auto& kv: quad_state_topics) {
     const std::string& quad_name = kv.first;  
-    state_warden->Register(quad_name);
+    quad_state_warden->Register(quad_name);
   }
 
   // For every quad, subscribe to its corresponding state topic
@@ -134,17 +146,21 @@ int main(int argc, char** argv) {
         std::make_shared<QuadStateSubscriberNode3D>(
             topic, 
             quad_name, 
-            state_warden));
+            quad_state_warden));
   }
 
-  // TrajectoryDispatcher thread. TrajectoryDispatcher pipes data from
-  // TrajectoryWarden to its corresponding trajectory publisher. Runs as a
-  // separate thread and maintains a thread pool. Each thread in the pool is
-  // assigned a particular trajectory and blocks until that trajectory is modified.
-  // Once modified, it moves the data into the corresponding publisher queue.
-  auto trajectory_dispatcher = std::make_shared<TrajectoryDispatcher3D>();
-  std::thread trajectory_dispatcher_thread([&](){
-      trajectory_dispatcher->Run(trajectory_warden_out, trajectory_publishers);
+  // Create quad state guards that will be accessed by the mediation layer
+  std::unordered_map<std::string, std::shared_ptr<QuadStateGuard3D>> quad_state_guards;
+  for(const auto& kv: quad_state_topics) {
+    const std::string& quad_name = kv.first;
+    quad_state_guards[quad_name] = std::make_shared<QuadStateGuard3D>();
+  }
+
+  // The quad state dispatcher pipes data from the state warden to any state
+  // quards
+  auto quad_state_dispatcher = std::make_shared<QuadStateDispatcher3D>();
+  std::thread quad_state_dispatcher_thread([&](){
+      quad_state_dispatcher->Run(quad_state_warden, quad_state_guards);
       });
 
   // Mediation layer thread. The mediation layer runs continuously, forward
@@ -157,7 +173,7 @@ int main(int argc, char** argv) {
         mediation_layer->Run(
             trajectory_warden_in, 
             trajectory_warden_out, 
-            state_warden);
+            quad_state_warden);
       });
 
   // TODO: WIP
@@ -172,7 +188,6 @@ int main(int argc, char** argv) {
     std::exit(EXIT_FAILURE);
   }
 
-  auto quad_guard = std::make_shared<QuadStateGuard3D>();
   std::vector<std::shared_ptr<Potential3D>> potentials;
 
   for(const Polyhedron& obstacle: map.Obstacles()) {
@@ -184,9 +199,19 @@ int main(int argc, char** argv) {
     }
   }
 
+  std::map<std::string, std::string> team_assignments;
+  if(false == nh.getParam("team_assignments", team_assignments)) {
+    std::cerr << "Required parameter not found on server: team_assignments" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+
   ViewManager3D::QuadViewOptions quad_view_options;
   quad_view_options.quad_mesh_file_path = quad_mesh_file_path;
-  quad_view_options.quads.push_back(std::make_pair<>("blue", quad_guard));
+  for(const auto& kv: team_assignments) {
+    const std::string& color = kv.second;
+    const std::string& quad_name = kv.first;
+    quad_view_options.quads.push_back(std::make_pair<>(color, quad_state_guards[quad_name]));
+  }
 
   ViewManager3D::EnvironmentViewOptions environment_view_options;
   environment_view_options.map = map;
@@ -218,10 +243,11 @@ int main(int argc, char** argv) {
         mediation_layer->Stop();
         view_manager->Stop();
         trajectory_dispatcher->Stop();
+        quad_state_dispatcher->Stop();
 
         trajectory_warden_in->Stop();
         trajectory_warden_out->Stop();
-        state_warden->Stop();
+        quad_state_warden->Stop();
       });
 
   // Spin for ros subscribers
@@ -232,6 +258,7 @@ int main(int argc, char** argv) {
 
   // Wait for other threads to die
   trajectory_dispatcher_thread.join();
+  quad_state_dispatcher_thread.join();
   mediation_layer_thread.join();
   view_manager_thread.join();
 

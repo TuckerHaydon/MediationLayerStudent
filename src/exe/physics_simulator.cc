@@ -34,6 +34,10 @@
 
 using namespace mediation_layer;
 
+// NOTES
+// The physics simulator maps a mediated trajectory to a state some time in the
+// future.
+
 namespace { 
   // Signal variable and handler
   volatile std::sig_atomic_t kill_program;
@@ -47,8 +51,8 @@ int main(int argc, char** argv) {
   std::signal(SIGINT, SigIntHandler);
 
   // Start ROS
-  ros::init(argc, argv, "mediation_layer", ros::init_options::NoSigintHandler);
-  ros::NodeHandle nh("~");
+  ros::init(argc, argv, "physics_simulator", ros::init_options::NoSigintHandler);
+  ros::NodeHandle nh("/mediation_layer/");
 
   std::map<std::string, std::string> updated_trajectory_topics;
   if(false == nh.getParam("updated_trajectory_topics", updated_trajectory_topics)) {
@@ -69,7 +73,7 @@ int main(int argc, char** argv) {
   }
 
   std::unordered_map<std::string, std::shared_ptr<TrajectorySubscriberNode3D>> trajectory_subscribers;
-  for(const auto& kv: proposed_trajectory_topics) {
+  for(const auto& kv: updated_trajectory_topics) {
     const std::string& quad_name = kv.first;  
     const std::string& topic = kv.second;  
     trajectory_subscribers[quad_name] = 
@@ -79,11 +83,11 @@ int main(int argc, char** argv) {
             trajectory_warden_in);
   }
 
-  // auto state_warden = std::make_shared<QuadStateWarden3D>();
-  // for(const auto& kv: quad_state_topics) {
-  //   const std::string& quad_name = kv.first;  
-  //   state_warden->Register(quad_name);
-  // }
+  auto state_warden = std::make_shared<QuadStateWarden3D>();
+  for(const auto& kv: quad_state_topics) {
+    const std::string& quad_name = kv.first;  
+    state_warden->Register(quad_name);
+  }
 
   // std::vector<std::shared_ptr<QuadStateSubscriberNode3D>> state_subscribers;
   // for(const auto& kv: quad_state_topics) {

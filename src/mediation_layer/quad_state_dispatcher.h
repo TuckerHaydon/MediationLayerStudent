@@ -7,7 +7,7 @@
 #include <vector>
 #include <memory>
 #include <string>
-#include <map>
+#include <unordered_map>
 
 #include "quad_state_warden.h"
 #include "quad_state_guard.h"
@@ -37,9 +37,7 @@ namespace mediation_layer {
       // Note that values are intentionally copied
       void Run(
           std::shared_ptr<QuadStateWarden<T>> warden, 
-          std::unordered_map<
-            std::string, 
-            std::shared_ptr<std::unordered_map<std::string, std::shared_ptr<QuadStateGuard<T>>>> state_guards);
+          std::unordered_map<std::string, std::shared_ptr<QuadStateGuard<T>>> state_guards);
 
       // Stop this thread and all the sub-threads
       void Stop();
@@ -51,9 +49,7 @@ namespace mediation_layer {
   template <size_t T>
   inline void QuadStateDispatcher<T>::Run(
       std::shared_ptr<QuadStateWarden<T>> warden, 
-      std::unordered_map<
-        std::string, 
-        std::shared_ptr<std::unordered_map<std::string, std::shared_ptr<QuadStateGuard<T>>>> state_guards);
+      std::unordered_map<std::string, std::shared_ptr<QuadStateGuard<T>>> state_guards) {
     // Local thread pool 
     std::vector<std::thread> thread_pool;
 
@@ -65,7 +61,7 @@ namespace mediation_layer {
       thread_pool.push_back(
           std::move(
             std::thread([&](){
-              this->AwaitStateChange(key, warden, guards[key]);
+              this->AwaitStateChange(key, warden, state_guards[key]);
               })));
     }
 
