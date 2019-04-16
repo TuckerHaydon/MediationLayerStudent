@@ -15,20 +15,19 @@
 namespace mediation_layer {
   // QuadStateWarden encapsulates state data and provides thread-safe read, write,
   // and await-modification access.
-  template <size_t T>
   class QuadStateWarden {
     private:
       // Wraps a QuadState with local mutexes and condition variables that
       // ensure thread-safe access
       struct StateContainer {
-        QuadState<T> state_;
+        QuadState state_;
         std::mutex access_mtx_;
 
         std::mutex modified_mtx_;
         bool modified_{false};
         std::condition_variable modified_cv_;
 
-        StateContainer(const QuadState<T>& state)
+        StateContainer(const QuadState& state)
           : state_(state) {}
       };
 
@@ -44,13 +43,13 @@ namespace mediation_layer {
       bool Register(const std::string& key);
 
       // Write a QuadState
-      bool Write(const std::string& key,  const QuadState<T>& state);
+      bool Write(const std::string& key,  const QuadState& state);
 
       // Copy the latest QuadState associated with a key
-      bool Read(const std::string& key, QuadState<T>& state);
+      bool Read(const std::string& key, QuadState& state);
 
       // Await a change to the state associated with the key
-      bool Await(const std::string& key, QuadState<T>& state);
+      bool Await(const std::string& key, QuadState& state);
 
       // Getter
       const std::set<std::string>& Keys() const;
@@ -62,21 +61,19 @@ namespace mediation_layer {
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  template <size_t T>
-  inline bool QuadStateWarden<T>::Register(const std::string& key) {
+  inline bool QuadStateWarden::Register(const std::string& key) {
     // If this key already exists, return false
     if(this->map_.end() != this->map_.find(key)) {
       std::cerr << "QuadStateWarden::Register -- Key already exists." << std::endl;
       return false;
     }
 
-    this->map_[key] = std::make_shared<StateContainer>(QuadState<T>()); 
+    this->map_[key] = std::make_shared<StateContainer>(QuadState()); 
     keys_.insert(key);
     return true;
   }
 
-  template <size_t T>
-  inline bool QuadStateWarden<T>::Write(const std::string& key, const QuadState<T>& state) {
+  inline bool QuadStateWarden::Write(const std::string& key, const QuadState& state) {
     // If key does not exist, return false
     if(this->map_.end() == this->map_.find(key)) {
       std::cerr << "QuadStateWarden::Write -- Key does not exist." << std::endl;
@@ -97,8 +94,7 @@ namespace mediation_layer {
     return true;
   }
 
-  template <size_t T>
-  inline bool QuadStateWarden<T>::Read(const std::string& key, QuadState<T>& state) {
+  inline bool QuadStateWarden::Read(const std::string& key, QuadState& state) {
     // If key does not exist, return false
     if(this->map_.end() == this->map_.find(key)) {
       std::cerr << "QuadStateWarden::Read -- Key does not exist." << std::endl;
@@ -113,8 +109,7 @@ namespace mediation_layer {
     return true;
   }
   
-  template <size_t T>
-  inline bool QuadStateWarden<T>::Await(const std::string& key, QuadState<T>& state) {
+  inline bool QuadStateWarden::Await(const std::string& key, QuadState& state) {
     if(this->map_.end() == this->map_.find(key)) {
       std::cerr << "QuadStateWarden::Await -- Key does not exist." << std::endl;
       return false;
@@ -138,13 +133,11 @@ namespace mediation_layer {
     return true;
   }
   
-  template <size_t T>
-  inline const std::set<std::string>& QuadStateWarden<T>::Keys() const {
+  inline const std::set<std::string>& QuadStateWarden::Keys() const {
     return this->keys_;
   }
 
-  template <size_t T>
-  inline void QuadStateWarden<T>::Stop() {
+  inline void QuadStateWarden::Stop() {
     this->ok_ = false;
 
     // Notify all CV to check conditions
@@ -153,7 +146,4 @@ namespace mediation_layer {
       kv.second->modified_cv_.notify_all();
     }
   }
-
-  using QuadStateWarden2D = QuadStateWarden<2>;
-  using QuadStateWarden3D = QuadStateWarden<3>;
 }

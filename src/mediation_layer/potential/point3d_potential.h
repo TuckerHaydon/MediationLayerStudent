@@ -4,11 +4,11 @@
 
 #include <algorithm>
 
-#include "potential3d.h"
+#include "potential.h"
 
 namespace mediation_layer {
 
-  class Point3DPotential : public Potential3D {
+  class Point3DPotential : public Potential {
     public:
       struct Options {
         double activation_dist = 1.0;

@@ -48,12 +48,12 @@ int main(int argc, char** argv) {
     std::exit(EXIT_FAILURE);
   }
 
-  std::vector<std::shared_ptr<QuadStatePublisherNode3D>> quad_state_publishers;
+  std::vector<std::shared_ptr<QuadStatePublisherNode>> quad_state_publishers;
   for(const auto& kv: quad_state_topics) {
     const std::string& quad_name = kv.first;  
     const std::string& topic = kv.second;  
     quad_state_publishers.push_back(
-        std::make_shared<QuadStatePublisherNode3D>(topic));
+        std::make_shared<QuadStatePublisherNode>(topic));
   }
 
   // Kill program thread. This thread sleeps for a second and then checks if the

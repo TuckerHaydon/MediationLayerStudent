@@ -74,8 +74,8 @@ int main(int argc, char** argv) {
   // multi-threaded access to trajectory data. Internal components that require
   // access to proposed and updated trajectories should request access through
   // TrajectoryWarden.
-  auto trajectory_warden_in  = std::make_shared<TrajectoryWarden3D>();
-  auto trajectory_warden_out = std::make_shared<TrajectoryWarden3D>();
+  auto trajectory_warden_in  = std::make_shared<TrajectoryWarden>();
+  auto trajectory_warden_out = std::make_shared<TrajectoryWarden>();
   for(const auto& kv: proposed_trajectory_topics) {
     const std::string& quad_name = kv.first;  
     trajectory_warden_in->Register(quad_name);
@@ -83,12 +83,12 @@ int main(int argc, char** argv) {
   }
 
   // For every quad, subscribe to its corresponding proposed_trajectory topic
-  std::unordered_map<std::string, std::shared_ptr<TrajectorySubscriberNode3D>> trajectory_subscribers;
+  std::unordered_map<std::string, std::shared_ptr<TrajectorySubscriberNode>> trajectory_subscribers;
   for(const auto& kv: proposed_trajectory_topics) {
     const std::string& quad_name = kv.first;  
     const std::string& topic = kv.second;  
     trajectory_subscribers[quad_name] = 
-        std::make_shared<TrajectorySubscriberNode3D>(
+        std::make_shared<TrajectorySubscriberNode>(
             topic, 
             quad_name, 
             trajectory_warden_in);
@@ -103,12 +103,12 @@ int main(int argc, char** argv) {
   }
 
   // For every quad, publish to its corresponding updated_trajectory topic
-  std::unordered_map<std::string, std::shared_ptr<TrajectoryPublisherNode3D>> trajectory_publishers;
+  std::unordered_map<std::string, std::shared_ptr<TrajectoryPublisherNode>> trajectory_publishers;
   for(const auto& kv: updated_trajectory_topics) {
     const std::string& quad_name = kv.first;  
     const std::string& topic = kv.second;  
     trajectory_publishers[quad_name] = 
-      std::make_shared<TrajectoryPublisherNode3D>(topic);
+      std::make_shared<TrajectoryPublisherNode>(topic);
   }
 
   // TrajectoryDispatcher thread. TrajectoryDispatcher pipes data from
@@ -116,7 +116,7 @@ int main(int argc, char** argv) {
   // separate thread and maintains a thread pool. Each thread in the pool is
   // assigned a particular trajectory and blocks until that trajectory is modified.
   // Once modified, it moves the data into the corresponding publisher queue.
-  auto trajectory_dispatcher = std::make_shared<TrajectoryDispatcher3D>();
+  auto trajectory_dispatcher = std::make_shared<TrajectoryDispatcher>();
   std::thread trajectory_dispatcher_thread([&](){
       trajectory_dispatcher->Run(trajectory_warden_out, trajectory_publishers);
       });
@@ -131,34 +131,34 @@ int main(int argc, char** argv) {
   // Initialize the QuadStateWarden. The QuadStateWarden enables safe, multi-threaded
   // access to quadcopter state data. Internal components that require access to
   // state data should request access through QuadStateWarden.
-  auto quad_state_warden = std::make_shared<QuadStateWarden3D>();
+  auto quad_state_warden = std::make_shared<QuadStateWarden>();
   for(const auto& kv: quad_state_topics) {
     const std::string& quad_name = kv.first;  
     quad_state_warden->Register(quad_name);
   }
 
   // For every quad, subscribe to its corresponding state topic
-  std::vector<std::shared_ptr<QuadStateSubscriberNode3D>> state_subscribers;
+  std::vector<std::shared_ptr<QuadStateSubscriberNode>> state_subscribers;
   for(const auto& kv: quad_state_topics) {
     const std::string& quad_name = kv.first;  
     const std::string& topic = kv.second;  
     state_subscribers.push_back(
-        std::make_shared<QuadStateSubscriberNode3D>(
+        std::make_shared<QuadStateSubscriberNode>(
             topic, 
             quad_name, 
             quad_state_warden));
   }
 
   // Create quad state guards that will be accessed by the mediation layer
-  std::unordered_map<std::string, std::shared_ptr<QuadStateGuard3D>> quad_state_guards;
+  std::unordered_map<std::string, std::shared_ptr<QuadStateGuard>> quad_state_guards;
   for(const auto& kv: quad_state_topics) {
     const std::string& quad_name = kv.first;
-    quad_state_guards[quad_name] = std::make_shared<QuadStateGuard3D>();
+    quad_state_guards[quad_name] = std::make_shared<QuadStateGuard>();
   }
 
   // The quad state dispatcher pipes data from the state warden to any state
   // quards
-  auto quad_state_dispatcher = std::make_shared<QuadStateDispatcher3D>();
+  auto quad_state_dispatcher = std::make_shared<QuadStateDispatcher>();
   std::thread quad_state_dispatcher_thread([&](){
       quad_state_dispatcher->Run(quad_state_warden, quad_state_guards);
       });
@@ -167,7 +167,7 @@ int main(int argc, char** argv) {
   // integrating the proposed trajectories and modifying them so that the
   // various agents will not crash into each other. Data is asynchonously read
   // and written from the TrajectoryWardens
-  auto mediation_layer = std::make_shared<MediationLayer3D>();
+  auto mediation_layer = std::make_shared<MediationLayer>();
   std::thread mediation_layer_thread(
       [&]() {
         mediation_layer->Run(
@@ -188,7 +188,7 @@ int main(int argc, char** argv) {
     std::exit(EXIT_FAILURE);
   }
 
-  std::vector<std::shared_ptr<Potential3D>> potentials;
+  std::vector<std::shared_ptr<Potential>> potentials;
 
   for(const Polyhedron& obstacle: map.Obstacles()) {
     for(const Plane3D face: obstacle.Faces()) {
@@ -205,7 +205,7 @@ int main(int argc, char** argv) {
     std::exit(EXIT_FAILURE);
   }
 
-  ViewManager3D::QuadViewOptions quad_view_options;
+  ViewManager::QuadViewOptions quad_view_options;
   quad_view_options.quad_mesh_file_path = quad_mesh_file_path;
   for(const auto& kv: team_assignments) {
     const std::string& color = kv.second;
@@ -213,11 +213,11 @@ int main(int argc, char** argv) {
     quad_view_options.quads.push_back(std::make_pair<>(color, quad_state_guards[quad_name]));
   }
 
-  ViewManager3D::EnvironmentViewOptions environment_view_options;
+  ViewManager::EnvironmentViewOptions environment_view_options;
   environment_view_options.map = map;
   environment_view_options.potentials = potentials;
 
-  auto view_manager = std::make_shared<ViewManager3D>();
+  auto view_manager = std::make_shared<ViewManager>();
   std::thread view_manager_thread(
       [&]() {
         view_manager->Run(

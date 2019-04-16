@@ -5,23 +5,23 @@
 #include "autonomy_protocol.h"
 
 namespace mediation_layer {
-  class TestAP : public AutonomyProtocol3D {
+  class TestAP : public AutonomyProtocol {
     private:
 
     public:
       TestAP(
           const std::vector<std::string>& friendly_names,
           const std::vector<std::string>& enemy_names,
-          const std::shared_ptr<GameSnapshot3D> snapshot,
-          const std::shared_ptr<TrajectoryWarden3D> trajectory_warden_out)
+          const std::shared_ptr<GameSnapshot> snapshot,
+          const std::shared_ptr<TrajectoryWarden> trajectory_warden_out)
         : AutonomyProtocol(
             friendly_names,
             enemy_names,
             snapshot,
             trajectory_warden_out) {}
 
-      std::unordered_map<std::string, Trajectory3D> UpdateTrajectories(
-          std::shared_ptr<GameSnapshot3D> snapshot,
+      std::unordered_map<std::string, Trajectory> UpdateTrajectories(
+          std::shared_ptr<GameSnapshot> snapshot,
           const std::vector<std::string>& friendly_names,
           const std::vector<std::string>& enemy_names) override;
   };
@@ -29,11 +29,11 @@ namespace mediation_layer {
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  std::unordered_map<std::string, Trajectory3D> TestAP::UpdateTrajectories(
-      std::shared_ptr<GameSnapshot3D> snapshot,
+  std::unordered_map<std::string, Trajectory> TestAP::UpdateTrajectories(
+      std::shared_ptr<GameSnapshot> snapshot,
       const std::vector<std::string>& friendly_names,
       const std::vector<std::string>& enemy_names) {
-    std::unordered_map<std::string, Trajectory3D> m;
+    std::unordered_map<std::string, Trajectory> m;
     return m;
   }
 }

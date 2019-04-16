@@ -7,24 +7,23 @@
 namespace mediation_layer {
   // Abstract class encapsulating the current state of an element in the
   // mediation layer
-  template <size_t T>
   class QuadState {
     private:
       // The structure of the state is:
-      //   [pos(T), vel(T), q(4), e_dot(3)]
-      Eigen::Vector<double, 2*T + 7> data_;
+      //   [pos(3), vel(3), q(4), e_dot(3)]
+      Eigen::Vector<double, 13> data_;
 
     public:
       // Required by Eigen
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      QuadState(const Eigen::Vector<double, 2*T + 7>& data 
-          = Eigen::Vector<double, 2*T + 7>::Zero())
+      QuadState(const Eigen::Vector<double, 13>& data 
+          = Eigen::Vector<double, 13>::Zero())
         : data_(data) {}
 
       // Getters
-      Eigen::Vector<double, T> Position() const;
-      Eigen::Vector<double, T> Velocity() const;
+      Eigen::Vector<double, 3> Position() const;
+      Eigen::Vector<double, 3> Velocity() const;
       Eigen::Vector<double, 4> Orientation() const;
       Eigen::Vector<double, 3> Twist() const;
   };
@@ -32,26 +31,19 @@ namespace mediation_layer {
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  template <size_t T>
-  inline Eigen::Vector<double, T> QuadState<T>::Position() const {
-    return data_.segment(0*T,T);
+  inline Eigen::Vector<double, 3> QuadState::Position() const {
+    return data_.segment(0,3);
   }
 
-  template <size_t T>
-  inline Eigen::Vector<double, T> QuadState<T>::Velocity() const {
-    return data_.segment(1*T,T);
+  inline Eigen::Vector<double, 3> QuadState::Velocity() const {
+    return data_.segment(3,3);
   }
 
-  template <size_t T>
-  inline Eigen::Vector<double, 4> QuadState<T>::Orientation() const {
-    return data_.segment(2*T,4);
+  inline Eigen::Vector<double, 4> QuadState::Orientation() const {
+    return data_.segment(6,4);
   }
 
-  template <size_t T>
-  inline Eigen::Vector<double, 3> QuadState<T>::Twist() const {
-    return data_.segment(2*T+4,3);
+  inline Eigen::Vector<double, 3> QuadState::Twist() const {
+    return data_.segment(10,3);
   }
-
-  using QuadState2D = QuadState<2>;
-  using QuadState3D = QuadState<3>;
 }

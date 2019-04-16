@@ -66,35 +66,35 @@ int main(int argc, char** argv) {
     std::exit(EXIT_FAILURE);
   }
 
-  auto trajectory_warden_in  = std::make_shared<TrajectoryWarden3D>();
+  auto trajectory_warden_in  = std::make_shared<TrajectoryWarden>();
   for(const auto& kv: updated_trajectory_topics) {
     const std::string& quad_name = kv.first;  
     trajectory_warden_in->Register(quad_name);
   }
 
-  std::unordered_map<std::string, std::shared_ptr<TrajectorySubscriberNode3D>> trajectory_subscribers;
+  std::unordered_map<std::string, std::shared_ptr<TrajectorySubscriberNode>> trajectory_subscribers;
   for(const auto& kv: updated_trajectory_topics) {
     const std::string& quad_name = kv.first;  
     const std::string& topic = kv.second;  
     trajectory_subscribers[quad_name] = 
-        std::make_shared<TrajectorySubscriberNode3D>(
+        std::make_shared<TrajectorySubscriberNode>(
             topic, 
             quad_name, 
             trajectory_warden_in);
   }
 
-  auto state_warden = std::make_shared<QuadStateWarden3D>();
+  auto state_warden = std::make_shared<QuadStateWarden>();
   for(const auto& kv: quad_state_topics) {
     const std::string& quad_name = kv.first;  
     state_warden->Register(quad_name);
   }
 
-  // std::vector<std::shared_ptr<QuadStateSubscriberNode3D>> state_subscribers;
+  // std::vector<std::shared_ptr<QuadStateSubscriberNode>> state_subscribers;
   // for(const auto& kv: quad_state_topics) {
   //   const std::string& quad_name = kv.first;  
   //   const std::string& topic = kv.second;  
   //   state_subscribers.push_back(
-  //       std::make_shared<QuadStateSubscriberNode3D>(
+  //       std::make_shared<QuadStateSubscriberNode>(
   //           topic, 
   //           quad_name, 
   //           state_warden));

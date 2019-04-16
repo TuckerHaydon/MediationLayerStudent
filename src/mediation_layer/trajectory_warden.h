@@ -17,20 +17,19 @@ namespace mediation_layer {
   // TrajectoryWarden is a thread-safe abstraction around an unordered map
   // [trajectory_name -> trajectory]. TrajectoryWarden provides thread-safe access,
   // modification, and await-modification of the underlying trajectory.
-  template <size_t T>
   class TrajectoryWarden {
     private:
       // Wraps a Trajectory with local mutexes and condition variables that
       // ensure thread-safe access
       struct TrajectoryContainer {
-        Trajectory<T> trajectory_;
+        Trajectory trajectory_;
         std::mutex access_mtx_;
 
         std::mutex modified_mtx_;
         bool modified_{false};
         std::condition_variable modified_cv_;
 
-        TrajectoryContainer(const Trajectory<T>& trajectory)
+        TrajectoryContainer(const Trajectory& trajectory)
           : trajectory_(trajectory) {}
       };
 
@@ -46,13 +45,13 @@ namespace mediation_layer {
       bool Register(const std::string& key);
 
       // Write a new trajectory
-      bool Write(const std::string& key,  const Trajectory<T>& trajectory);
+      bool Write(const std::string& key,  const Trajectory& trajectory);
 
       // Copy the latest trajectory associated with a key
-      bool Read(const std::string& key, Trajectory<T>& trajectory);
+      bool Read(const std::string& key, Trajectory& trajectory);
 
       // Await a change to the trajectory associated with the key
-      bool Await(const std::string& key, Trajectory<T>& trajectory);
+      bool Await(const std::string& key, Trajectory& trajectory);
 
       // Getter
       const std::set<std::string>& Keys() const;
@@ -63,21 +62,19 @@ namespace mediation_layer {
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  template <size_t T>
-  inline bool TrajectoryWarden<T>::Register(const std::string& key) {
+  inline bool TrajectoryWarden::Register(const std::string& key) {
     // If this key already exists, return false
     if(this->map_.end() != this->map_.find(key)) {
       std::cerr << "TrajectoryWarden::Register -- Key already exists." << std::endl;
       return false;
     }
 
-    this->map_[key] = std::make_shared<TrajectoryContainer>(Trajectory<T>()); 
+    this->map_[key] = std::make_shared<TrajectoryContainer>(Trajectory()); 
     keys_.insert(key);
     return true;
   }
 
-  template <size_t T>
-  inline bool TrajectoryWarden<T>::Write(const std::string& key, const Trajectory<T>& trajectory) {
+  inline bool TrajectoryWarden::Write(const std::string& key, const Trajectory& trajectory) {
     // If key does not exist, return false
     if(this->map_.end() == this->map_.find(key)) {
       std::cerr << "TrajectoryWarden::Write -- Key does not exist." << std::endl;
@@ -98,8 +95,7 @@ namespace mediation_layer {
     return true;
   }
 
-  template <size_t T>
-  inline bool TrajectoryWarden<T>::Read(const std::string& key, Trajectory<T>& trajectory) {
+  inline bool TrajectoryWarden::Read(const std::string& key, Trajectory& trajectory) {
     // If key does not exist, return false
     if(this->map_.end() == this->map_.find(key)) {
       std::cerr << "TrajectoryWarden::Read -- Key does not exist." << std::endl;
@@ -114,8 +110,7 @@ namespace mediation_layer {
     return true;
   }
   
-  template <size_t T>
-  inline bool TrajectoryWarden<T>::Await(const std::string& key, Trajectory<T>& trajectory) {
+  inline bool TrajectoryWarden::Await(const std::string& key, Trajectory& trajectory) {
     if(this->map_.end() == this->map_.find(key)) {
       std::cerr << "TrajectoryWarden::Await -- Key does not exist." << std::endl;
       return false;
@@ -141,13 +136,11 @@ namespace mediation_layer {
     return true;
   }
   
-  template <size_t T>
-  inline const std::set<std::string>& TrajectoryWarden<T>::Keys() const {
+  inline const std::set<std::string>& TrajectoryWarden::Keys() const {
     return this->keys_;
   }
 
-  template <size_t T>
-  inline void TrajectoryWarden<T>::Stop() {
+  inline void TrajectoryWarden::Stop() {
     this->ok_ = false;
 
     // Notify all CV to check conditions
@@ -156,9 +149,5 @@ namespace mediation_layer {
       kv.second->modified_cv_.notify_all();
     }
   }
-
-  using TrajectoryWarden2D = TrajectoryWarden<2>;
-  using TrajectoryWarden3D = TrajectoryWarden<3>;
-
 };
 

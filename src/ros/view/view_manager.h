@@ -21,12 +21,11 @@ namespace mediation_layer {
   // used to publish views to RViz. 
   //
   // The ViewManager should run as its own thread.
-  template<size_t T>
   class ViewManager {
     public:
       struct QuadViewOptions {
         std::string quad_mesh_file_path;
-        std::vector<std::pair<std::string, std::shared_ptr<QuadStateGuard<T>>>> quads;
+        std::vector<std::pair<std::string, std::shared_ptr<QuadStateGuard>>> quads;
 
         QuadViewOptions() {}
       };
@@ -41,7 +40,7 @@ namespace mediation_layer {
         Plane3DPotentialView::Options plane3d_potential_view_options{
             "world", 1.0f, 0.0f, 0.0f, 0.1f};
 
-        std::vector<std::shared_ptr<Potential3D>> potentials;
+        std::vector<std::shared_ptr<Potential>> potentials;
         Map3D map;
 
         EnvironmentViewOptions() {}
@@ -67,8 +66,7 @@ namespace mediation_layer {
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  template <size_t T>
-  inline void ViewManager<T>::Run(
+  inline void ViewManager::Run(
       const QuadViewOptions quad_view_options,
       const EnvironmentViewOptions environment_view_options) {
 
@@ -86,16 +84,15 @@ namespace mediation_layer {
     environment_publisher_thread.join();
   }
 
-  template <size_t T>
-  inline void ViewManager<T>::RunQuadPublisher(
+  inline void ViewManager::RunQuadPublisher(
       const QuadViewOptions quad_view_options) {
 
     // Setup
-    std::vector<QuadView3D> quad_views;
+    std::vector<QuadView> quad_views;
 
     for(const auto p: quad_view_options.quads) {
       if(p.first == "red") {
-        QuadView3D::Options view_options;
+        QuadView::Options view_options;
         view_options.mesh_resource = quad_view_options.quad_mesh_file_path;
         view_options.r = 1.0f;
         view_options.g = 0.0f;
@@ -103,7 +100,7 @@ namespace mediation_layer {
         quad_views.emplace_back(p.second, view_options);
       }
       else if(p.first == "blue") {
-        QuadView3D::Options view_options;
+        QuadView::Options view_options;
         view_options.mesh_resource = quad_view_options.quad_mesh_file_path;
         view_options.r = 0.0f;
         view_options.g = 0.0f;
@@ -126,8 +123,7 @@ namespace mediation_layer {
     }
   }
 
-  template <size_t T>
-  inline void ViewManager<T>::RunEnvironmentPublisher(
+  inline void ViewManager::RunEnvironmentPublisher(
       const EnvironmentViewOptions environment_view_options) {
 
     // Setup
@@ -149,7 +145,7 @@ namespace mediation_layer {
           environment_view_options.obstacle_view_options);
     }
 
-    for(std::shared_ptr<Potential3D> potential: environment_view_options.potentials) {
+    for(std::shared_ptr<Potential> potential: environment_view_options.potentials) {
       plane_potential_views.emplace_back(
           std::dynamic_pointer_cast<Plane3DPotential>(potential), 
           environment_view_options.plane3d_potential_view_options);
@@ -183,11 +179,7 @@ namespace mediation_layer {
   }
 
 
-  template <size_t T>
-  void ViewManager<T>::Stop() {
+  void ViewManager::Stop() {
     this->ok_ = false;
   }
-
-  using ViewManager2D = ViewManager<2>;
-  using ViewManager3D = ViewManager<3>;
 }

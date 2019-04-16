@@ -19,21 +19,20 @@ namespace mediation_layer {
   // intended future actions for specific quadcopters.
   //
   // The AutonomyProtocol should be run as its own thread.
-  template <size_t T>
   class AutonomyProtocol {
     protected:
       std::vector<std::string> friendly_names_;
       std::vector<std::string> enemy_names_;
-      std::shared_ptr<GameSnapshot<T>> snapshot_;
-      std::shared_ptr<TrajectoryWarden<T>> trajectory_warden_out_;
+      std::shared_ptr<GameSnapshot> snapshot_;
+      std::shared_ptr<TrajectoryWarden> trajectory_warden_out_;
       volatile std::atomic<bool> ok_{true};
 
     public:
       AutonomyProtocol(
           const std::vector<std::string>& friendly_names,
           const std::vector<std::string>& enemy_names,
-          const std::shared_ptr<GameSnapshot<T>> snapshot,
-          const std::shared_ptr<TrajectoryWarden<T>> trajectory_warden_out)
+          const std::shared_ptr<GameSnapshot> snapshot,
+          const std::shared_ptr<TrajectoryWarden> trajectory_warden_out)
         : friendly_names_(friendly_names),
           enemy_names_(enemy_names),
           snapshot_(snapshot),
@@ -50,8 +49,8 @@ namespace mediation_layer {
       // Virtual function to be implemented as by an actor. Input is a snapshot
       // of the system, output is an intended trajectory for each of the
       // friendly quads.
-      virtual std::unordered_map<std::string, Trajectory<T>> UpdateTrajectories(
-          std::shared_ptr<GameSnapshot<T>> snapshot,
+      virtual std::unordered_map<std::string, Trajectory> UpdateTrajectories(
+          std::shared_ptr<GameSnapshot> snapshot,
           const std::vector<std::string>& friendly_names,
           const std::vector<std::string>& enemy_names) = 0;
   };
@@ -59,12 +58,11 @@ namespace mediation_layer {
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  template <size_t T>
-  void AutonomyProtocol<T>::Run() {
+  void AutonomyProtocol::Run() {
     while(this->ok_) {
 
       // Request trajectory updates from the virtual function
-      const std::unordered_map<std::string, Trajectory<T>> trajectories = 
+      const std::unordered_map<std::string, Trajectory> trajectories = 
         this->UpdateTrajectories(this->snapshot_, this->friendly_names_, this->enemy_names_);
 
 
@@ -72,7 +70,7 @@ namespace mediation_layer {
       // warden
       for(const std::string& quad_name: this->friendly_names_) {
         try {
-          const Trajectory<T> trajectory = trajectories.at(quad_name);
+          const Trajectory trajectory = trajectories.at(quad_name);
           this->trajectory_warden_out_->Write(quad_name, trajectory);
         } catch(const std::out_of_range& e) {
           continue;
@@ -85,11 +83,7 @@ namespace mediation_layer {
     }
   }
 
-  template <size_t T>
-  void AutonomyProtocol<T>::Stop() {
+  void AutonomyProtocol::Stop() {
     this->ok_ = false;
   }
-
-  using AutonomyProtocol2D = AutonomyProtocol<2>;
-  using AutonomyProtocol3D = AutonomyProtocol<3>;
 }

@@ -15,7 +15,6 @@
 
 namespace mediation_layer {
   // Class that manages data transfer between a state warden and state guards
-  template <size_t T>
   class QuadStateDispatcher {
     private:
       volatile std::atomic_bool ok_{true};
@@ -25,8 +24,8 @@ namespace mediation_layer {
       // Note that values are intentionally copied
       void AwaitStateChange(
           const std::string key, 
-          std::shared_ptr<QuadStateWarden<T>> warden, 
-          std::shared_ptr<QuadStateGuard<T>> guard);
+          std::shared_ptr<QuadStateWarden> warden, 
+          std::shared_ptr<QuadStateGuard> guard);
 
     public:
       // Start all the threads in the pool and wait for them to finish. This
@@ -36,8 +35,8 @@ namespace mediation_layer {
       //
       // Note that values are intentionally copied
       void Run(
-          std::shared_ptr<QuadStateWarden<T>> warden, 
-          std::unordered_map<std::string, std::shared_ptr<QuadStateGuard<T>>> state_guards);
+          std::shared_ptr<QuadStateWarden> warden, 
+          std::unordered_map<std::string, std::shared_ptr<QuadStateGuard>> state_guards);
 
       // Stop this thread and all the sub-threads
       void Stop();
@@ -46,10 +45,9 @@ namespace mediation_layer {
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  template <size_t T>
-  inline void QuadStateDispatcher<T>::Run(
-      std::shared_ptr<QuadStateWarden<T>> warden, 
-      std::unordered_map<std::string, std::shared_ptr<QuadStateGuard<T>>> state_guards) {
+  inline void QuadStateDispatcher::Run(
+      std::shared_ptr<QuadStateWarden> warden, 
+      std::unordered_map<std::string, std::shared_ptr<QuadStateGuard>> state_guards) {
     // Local thread pool 
     std::vector<std::thread> thread_pool;
 
@@ -85,24 +83,19 @@ namespace mediation_layer {
     } 
   }
 
-  template <size_t T>
-  inline void QuadStateDispatcher<T>::AwaitStateChange(
+  inline void QuadStateDispatcher::AwaitStateChange(
       const std::string key, 
-      std::shared_ptr<QuadStateWarden<T>> warden, 
-      std::shared_ptr<QuadStateGuard<T>> guard) {
+      std::shared_ptr<QuadStateWarden> warden, 
+      std::shared_ptr<QuadStateGuard> guard) {
     while(this->ok_) {
-      QuadState<T> state;
+      QuadState state;
       if(true == warden->Await(key, state)) {
         guard->Write(state);
       }
     }
   }
 
-  template <size_t T>
-  inline void QuadStateDispatcher<T>::Stop() {
+  inline void QuadStateDispatcher::Stop() {
     this->ok_ = false;
   }
-
-  using QuadStateDispatcher2D = QuadStateDispatcher<2>;
-  using QuadStateDispatcher3D = QuadStateDispatcher<3>;
 }

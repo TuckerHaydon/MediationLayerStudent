@@ -28,6 +28,7 @@ namespace mediation_layer {
   //  ******************
   template <class T>
   inline PublisherGuard<T>::PublisherGuard(const std::string& topic) {
+    // TODO: Should this be '~'?
     this->node_handle_ = ros::NodeHandle("~");
     this->publisher_ = node_handle_.advertise<T>(topic, 1);
   }

@@ -15,7 +15,6 @@ namespace mediation_layer {
   // QuadStatePublisherNode acts as an adapter between the ROS ecosystem and the
   // internal mediation layer ecosystem. Transforms internal QuadState into a
   // ROS quad_state and publishes it.
-  template <size_t T>
   class QuadStatePublisherNode {
     private:
       // A publisher guard ensures that the Publish() function may be called in
@@ -27,25 +26,20 @@ namespace mediation_layer {
       QuadStatePublisherNode(const std::string& topic);
 
       // Publishes the message
-      void Publish(const QuadState<T>& quad_state);
+      void Publish(const QuadState& quad_state);
   };
 
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  template <size_t T>
-  inline QuadStatePublisherNode<T>::QuadStatePublisherNode(
+  inline QuadStatePublisherNode::QuadStatePublisherNode(
       const std::string& topic) {
     this->publisher_guard_ 
       = std::make_shared<PublisherGuard<nav_msgs::Odometry>>(topic);
   }
 
-  template <size_t T>
-  inline void QuadStatePublisherNode<T>::Publish(const QuadState<T>& quad_state) {
+  inline void QuadStatePublisherNode::Publish(const QuadState& quad_state) {
     nav_msgs::Odometry msg;
     this->publisher_guard_->Publish(msg);
   }
-
-  using QuadStatePublisherNode2D = QuadStatePublisherNode<2>;
-  using QuadStatePublisherNode3D = QuadStatePublisherNode<3>;
 }

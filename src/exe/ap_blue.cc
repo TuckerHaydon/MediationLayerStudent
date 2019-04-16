@@ -77,51 +77,51 @@ int main(int argc, char** argv) {
   }
 
   // Initialize the QuadStateWarden
-  auto quad_state_warden  = std::make_shared<QuadStateWarden3D>();
+  auto quad_state_warden  = std::make_shared<QuadStateWarden>();
   for(const auto& kv: quad_state_topics) {
     const std::string& quad_name = kv.first;  
     quad_state_warden->Register(quad_name);
   }
 
   // Pipe ROS data into the QuadStateWarden
-  std::vector<std::shared_ptr<QuadStateSubscriberNode3D>> quad_state_subscribers;
+  std::vector<std::shared_ptr<QuadStateSubscriberNode>> quad_state_subscribers;
   for(const auto& kv: quad_state_topics) {
     const std::string& quad_name = kv.first;  
     const std::string& topic = kv.second;  
     quad_state_subscribers.push_back(
-        std::make_shared<QuadStateSubscriberNode3D>(
+        std::make_shared<QuadStateSubscriberNode>(
             topic, 
             quad_name, 
             quad_state_warden));
   }
 
   // Initialize the GameSnapshot
-  auto game_snapshot = std::make_shared<GameSnapshot3D>(
+  auto game_snapshot = std::make_shared<GameSnapshot>(
       blue_quad_names,
       red_quad_names,
       quad_state_warden,
-      GameSnapshot3D::Options());
+      GameSnapshot::Options());
 
   // Initialize the TrajectoryPublishers
-  std::unordered_map<std::string, std::shared_ptr<TrajectoryPublisherNode3D>> proposed_trajectory_publishers;
+  std::unordered_map<std::string, std::shared_ptr<TrajectoryPublisherNode>> proposed_trajectory_publishers;
   for(const auto& kv: proposed_trajectory_topics) {
     const std::string& quad_name = kv.first;  
     const std::string& topic = kv.second;  
     proposed_trajectory_publishers[quad_name] = 
-      std::make_shared<TrajectoryPublisherNode3D>(topic);
+      std::make_shared<TrajectoryPublisherNode>(topic);
   }
 
   // Initialize the TrajectoryWarden
-  auto trajectory_warden_out = std::make_shared<TrajectoryWarden3D>();
+  auto trajectory_warden_out = std::make_shared<TrajectoryWarden>();
 
   // Pipe the TrajectoryWarden to the TrajectoryPublishers
-  auto trajectory_dispatcher = std::make_shared<TrajectoryDispatcher3D>();
+  auto trajectory_dispatcher = std::make_shared<TrajectoryDispatcher>();
   std::thread trajectory_dispatcher_thread([&](){
       trajectory_dispatcher->Run(trajectory_warden_out, proposed_trajectory_publishers);
       });
 
   // The AutonomyProtocol
-  std::shared_ptr<AutonomyProtocol3D> autonomy_protocol = std::make_shared<TestAP>(
+  std::shared_ptr<AutonomyProtocol> autonomy_protocol = std::make_shared<TestAP>(
       blue_quad_names, 
       red_quad_names,
       game_snapshot,

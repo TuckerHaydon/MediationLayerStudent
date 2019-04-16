@@ -11,7 +11,6 @@
 #include "quad_state_guard.h"
 
 namespace mediation_layer {
-  template <size_t T>
   class QuadView : public MarkerView {
     public:
       struct Options {
@@ -46,7 +45,7 @@ namespace mediation_layer {
       };
 
       QuadView(
-          std::shared_ptr<QuadStateGuard<T>> quad_state_guard = nullptr,
+          std::shared_ptr<QuadStateGuard> quad_state_guard = nullptr,
           const Options& options = Options())
         : quad_state_guard_(quad_state_guard),
           options_(options),
@@ -56,7 +55,7 @@ namespace mediation_layer {
 
     private: 
       Options options_;
-      std::shared_ptr<QuadStateGuard<T>> quad_state_guard_;
+      std::shared_ptr<QuadStateGuard> quad_state_guard_;
       uint32_t unique_id_;
 
       static uint32_t GenerateUniqueId();
@@ -65,12 +64,11 @@ namespace mediation_layer {
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  template <size_t T>
-  inline std::vector<visualization_msgs::Marker> QuadView<T>::Markers() const {
-    QuadState<T> quad_state;
+  inline std::vector<visualization_msgs::Marker> QuadView::Markers() const {
+    QuadState quad_state;
     this->quad_state_guard_->Read(quad_state);
 
-    const Eigen::Vector<double, T> quad_position = quad_state.Position();
+    const Eigen::Vector<double, 3> quad_position = quad_state.Position();
 
     visualization_msgs::Marker marker;
     marker.header.frame_id = this->options_.frame_id;
@@ -83,7 +81,7 @@ namespace mediation_layer {
     marker.scale.z = 1.0f;
     marker.pose.position.x = quad_position.x();
     marker.pose.position.y = quad_position.y();
-    marker.pose.position.z = (T == 2 ? 0 : quad_position(2));
+    marker.pose.position.z = quad_position.z();
     marker.color.r = this->options_.r;
     marker.color.g = this->options_.g;
     marker.color.b = this->options_.b;
@@ -94,8 +92,7 @@ namespace mediation_layer {
     return {marker};
   }
 
-  template <size_t T>
-  inline uint32_t QuadView<T>::GenerateUniqueId() {
+  inline uint32_t QuadView::GenerateUniqueId() {
     static std::mutex mtx;
     static uint32_t id = 0;
 
@@ -103,7 +100,4 @@ namespace mediation_layer {
     id++;
     return id;
   }
-
-  using QuadView2D = QuadView<2>;
-  using QuadView3D = QuadView<3>;
 }

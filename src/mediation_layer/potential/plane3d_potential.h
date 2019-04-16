@@ -5,12 +5,12 @@
 #include <memory>
 #include <vector>
 
-#include "potential3d.h"
+#include "potential.h"
 #include "plane3d.h"
 #include "point3d_potential.h"
 
 namespace mediation_layer {
-  class Plane3DPotential : public Potential3D {
+  class Plane3DPotential : public Potential {
     public:
       struct Options {
         double activation_dist = 1.0;

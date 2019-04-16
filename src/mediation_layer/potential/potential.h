@@ -5,9 +5,9 @@
 #include "types.h"
 
 namespace mediation_layer {
-  class Potential3D {
+  class Potential {
     public:
-      virtual ~Potential3D() = default;
+      virtual ~Potential() = default;
       virtual Vec3D Resolve(const Point3D& point) const = 0;
   }; 
 }

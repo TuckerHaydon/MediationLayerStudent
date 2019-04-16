@@ -14,7 +14,6 @@ namespace mediation_layer {
   // quadcopters. The user-provided trajectories may not be safe --- the
   // trajetories might cause quads to fly into each other, walls, or other
   // obstacles in the environment. The Mediation
-  template <size_t T>
   class MediationLayer {
     private:
       volatile std::atomic_bool ok_{true};
@@ -26,9 +25,9 @@ namespace mediation_layer {
       //
       // Note: These values are intentionally copied
       void Run(
-          std::shared_ptr<TrajectoryWarden<T>> trajectory_warden_in,
-          std::shared_ptr<TrajectoryWarden<T>> trajectory_warden_out,
-          std::shared_ptr<QuadStateWarden<T>> state_warden);
+          std::shared_ptr<TrajectoryWarden> trajectory_warden_in,
+          std::shared_ptr<TrajectoryWarden> trajectory_warden_out,
+          std::shared_ptr<QuadStateWarden> state_warden);
 
       void Stop();
 
@@ -37,25 +36,20 @@ namespace mediation_layer {
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  template<size_t T>
-  inline void MediationLayer<T>::Run(
-      std::shared_ptr<TrajectoryWarden<T>> trajectory_warden_in,
-      std::shared_ptr<TrajectoryWarden<T>> trajectory_warden_out,
-      std::shared_ptr<QuadStateWarden<T>> state_warden) {
+  inline void MediationLayer::Run(
+      std::shared_ptr<TrajectoryWarden> trajectory_warden_in,
+      std::shared_ptr<TrajectoryWarden> trajectory_warden_out,
+      std::shared_ptr<QuadStateWarden> state_warden) {
 
     while(this->ok_) {
       const std::string key = "phoenix";
-      Trajectory<T> trajectory;
+      Trajectory trajectory;
       trajectory_warden_in->Await(key, trajectory);
       trajectory_warden_out->Write(key, trajectory);
     }
   }
 
-  template<size_t T>
-  inline void MediationLayer<T>::Stop() {
+  inline void MediationLayer::Stop() {
     this->ok_ = false;
   }
-
-  using MediationLayer2D = MediationLayer<2>;
-  using MediationLayer3D = MediationLayer<3>;
 }

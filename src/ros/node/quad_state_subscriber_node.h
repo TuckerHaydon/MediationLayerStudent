@@ -15,10 +15,9 @@ namespace mediation_layer {
   // QuadStateSubscriberNode acts as an adapter between the ROS ecosystem and the
   // internal mediation layer ecosystem. Transforms incoming ROS data into a
   // QuadState and then passes it to the QuadStateWarden to manage.
-  template <size_t T>
   class QuadStateSubscriberNode {
     private:
-      std::shared_ptr<QuadStateWarden<T>> warden_;
+      std::shared_ptr<QuadStateWarden> warden_;
       ros::NodeHandle node_handle_;
       ros::Subscriber subscriber_;
       std::string key_;
@@ -32,33 +31,29 @@ namespace mediation_layer {
       QuadStateSubscriberNode(
           const std::string& topic, 
           const std::string& key,
-          std::shared_ptr<QuadStateWarden<T>> warden);
+          std::shared_ptr<QuadStateWarden> warden);
   };
 
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  template <size_t T>
-  QuadStateSubscriberNode<T>::QuadStateSubscriberNode(
+  QuadStateSubscriberNode::QuadStateSubscriberNode(
       const std::string& topic, 
       const std::string& key,
-      std::shared_ptr<QuadStateWarden<T>> warden) {
+      std::shared_ptr<QuadStateWarden> warden) {
     this->key_ = key;
     this->warden_ = warden;
+    // TODO: Should this be '~'?
     this->node_handle_ = ros::NodeHandle("~");
     this->subscriber_ = node_handle_.subscribe(
         topic, 
         1, 
-        &QuadStateSubscriberNode<T>::SubscriberCallback, 
+        &QuadStateSubscriberNode::SubscriberCallback, 
         this);
   }
 
-  template <size_t T>
-  void QuadStateSubscriberNode<T>::SubscriberCallback(const std_msgs::String& msg) {
-    QuadState<T> state;
+  void QuadStateSubscriberNode::SubscriberCallback(const std_msgs::String& msg) {
+    QuadState state;
     this->warden_->Write(this->key_, state);
   }
-
-  using QuadStateSubscriberNode2D = QuadStateSubscriberNode<2>;
-  using QuadStateSubscriberNode3D = QuadStateSubscriberNode<3>;
-};
+}

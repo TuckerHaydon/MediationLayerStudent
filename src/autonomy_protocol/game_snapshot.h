@@ -16,7 +16,6 @@ namespace mediation_layer {
   // automation protocol. Typically, a team has full knowledge of the pose of
   // their quadcopters but only has limited knowledge of the pose of the
   // opponents quadcopters (i.e. a noisy position estimate).
-  template <size_t T>
   class GameSnapshot {
     public:
       struct Options {
@@ -27,7 +26,7 @@ namespace mediation_layer {
       GameSnapshot(
           const std::vector<std::string> friendly_names,
           const std::vector<std::string> enemy_names,
-          const std::shared_ptr<QuadStateWarden<T>> quad_state_warden,
+          const std::shared_ptr<QuadStateWarden> quad_state_warden,
           const Options& options)
         : friendly_names_(friendly_names),
           enemy_names_(enemy_names),
@@ -39,7 +38,7 @@ namespace mediation_layer {
       //
       // If the quadcopter is friendly, the position returned is accurate.
       // If the quadcopter is enemy, the position returned is corrupted by noise.
-      bool Position(const std::string& quad_name, Eigen::Vector<double, T>& position);
+      bool Position(const std::string& quad_name, Eigen::Vector<double, 3>& position);
 
       // Returns the orientation of the quadcopter. If quad_name is invalid, returns
       // false, else returns true. Stores the data in 'orientation'. Orientation
@@ -55,23 +54,22 @@ namespace mediation_layer {
       // If the quadcopter is friendly, the velocity returned is accurate.
       // If the quadcopter is enemy, return false --- no access to enemy
       // velocity.
-      bool Velocity(const std::string& quad_name, Eigen::Vector<double, T>& velocity);
+      bool Velocity(const std::string& quad_name, Eigen::Vector<double, 3>& velocity);
 
 
     private:
       Options options_;
       std::vector<std::string> friendly_names_;
       std::vector<std::string> enemy_names_;
-      const std::shared_ptr<QuadStateWarden<T>> quad_state_warden_;
+      const std::shared_ptr<QuadStateWarden> quad_state_warden_;
   };
 
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  template <size_t T>
-  inline bool GameSnapshot<T>::Position(
+  inline bool GameSnapshot::Position(
       const std::string& quad_name, 
-      Eigen::Vector<double, T>& position) {
+      Eigen::Vector<double, 3>& position) {
     const bool is_friend = (std::find(
           this->friendly_names_.begin(), 
           this->friendly_names_.end(), 
@@ -88,8 +86,8 @@ namespace mediation_layer {
     }
 
     // Read from the warden
-    QuadState<T> state;
-    this->quad_state_warden_.Read(quad_name, state);
+    QuadState state;
+    this->quad_state_warden_->Read(quad_name, state);
 
     // Copy the position
     position = state.Position();
@@ -101,8 +99,7 @@ namespace mediation_layer {
     return true;
   }
 
-  template <size_t T>
-  inline bool GameSnapshot<T>::Orientation(
+  inline bool GameSnapshot::Orientation(
       const std::string& quad_name, 
       Eigen::Vector<double, 4>& orientation) {
     const bool is_friend = (std::find(
@@ -121,8 +118,8 @@ namespace mediation_layer {
     }
 
     // Read from the warden
-    QuadState<T> state;
-    this->quad_state_warden_.Read(quad_name, state);
+    QuadState state;
+    this->quad_state_warden_->Read(quad_name, state);
 
     // Copy the yaw
     orientation = Eigen::Vector<double, 4>(state.Orientation());
@@ -134,10 +131,9 @@ namespace mediation_layer {
     return true;
   }
 
-  template <size_t T>
-  inline bool GameSnapshot<T>::Velocity(
+  inline bool GameSnapshot::Velocity(
       const std::string& quad_name, 
-      Eigen::Vector<double, T>& velocity) {
+      Eigen::Vector<double, 3>& velocity) {
     const bool is_friend = (std::find(
           this->friendly_names_.begin(), 
           this->friendly_names_.end(), 
@@ -154,15 +150,12 @@ namespace mediation_layer {
     }
 
     // Read from the warden
-    QuadState<T> state;
-    this->quad_state_warden_.Read(quad_name, state);
+    QuadState state;
+    this->quad_state_warden_->Read(quad_name, state);
 
     // Copy the velocity
     velocity = state.Velocity();
 
     return true;
   }
-
-  using GameSnapshot2D = GameSnapshot<2>;
-  using GameSnapshot3D = GameSnapshot<3>;
 }

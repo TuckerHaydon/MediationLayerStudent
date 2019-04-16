@@ -18,7 +18,6 @@ namespace mediation_layer {
   // await changes in TrajectoryOut. Once a change has been made, the thread
   // pushes the data to the TrajectoryPublisherNode to be pushed onto the
   // network.
-  template <size_t T>
   class TrajectoryDispatcher {
     private:
       volatile std::atomic_bool ok_{true};
@@ -28,8 +27,8 @@ namespace mediation_layer {
       // Note that values are intentionally copied
       void AwaitTrajectoryChange(
           const std::string key, 
-          std::shared_ptr<TrajectoryWarden<T>> warden, 
-          std::shared_ptr<TrajectoryPublisherNode<T>> publisher);
+          std::shared_ptr<TrajectoryWarden> warden, 
+          std::shared_ptr<TrajectoryPublisherNode> publisher);
 
     public:
       // Start all the threads in the pool and wait for them to finish. This
@@ -39,10 +38,10 @@ namespace mediation_layer {
       //
       // Note that values are intentionally copied
       void Run(
-          std::shared_ptr<TrajectoryWarden<T>> warden, 
+          std::shared_ptr<TrajectoryWarden> warden, 
           std::unordered_map<
             std::string, 
-            std::shared_ptr<TrajectoryPublisherNode<T>>> trajectory_publishers);
+            std::shared_ptr<TrajectoryPublisherNode>> trajectory_publishers);
 
       // Stop this thread and all the sub-threads
       void Stop();
@@ -51,12 +50,11 @@ namespace mediation_layer {
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  template <size_t T>
-  inline void TrajectoryDispatcher<T>::Run(
-      std::shared_ptr<TrajectoryWarden<T>> warden,
+  inline void TrajectoryDispatcher::Run(
+      std::shared_ptr<TrajectoryWarden> warden,
       std::unordered_map<
         std::string, 
-        std::shared_ptr<TrajectoryPublisherNode<T>>> trajectory_publishers) {
+        std::shared_ptr<TrajectoryPublisherNode>> trajectory_publishers) {
     // Local thread pool 
     std::vector<std::thread> thread_pool;
 
@@ -92,24 +90,19 @@ namespace mediation_layer {
     } 
   }
 
-  template <size_t T>
-  inline void TrajectoryDispatcher<T>::AwaitTrajectoryChange(
+  inline void TrajectoryDispatcher::AwaitTrajectoryChange(
       const std::string key, 
-      std::shared_ptr<TrajectoryWarden<T>> warden, 
-      std::shared_ptr<TrajectoryPublisherNode<T>> publisher) {
+      std::shared_ptr<TrajectoryWarden> warden, 
+      std::shared_ptr<TrajectoryPublisherNode> publisher) {
     while(this->ok_) {
-      Trajectory<T> trajectory;
+      Trajectory trajectory;
       if(true == warden->Await(key, trajectory)) {
         publisher->Publish(trajectory);
       }
     }
   }
 
-  template <size_t T>
-  inline void TrajectoryDispatcher<T>::Stop() {
+  inline void TrajectoryDispatcher::Stop() {
     this->ok_ = false;
   }
-
-  using TrajectoryDispatcher2D = TrajectoryDispatcher<2>;
-  using TrajectoryDispatcher3D = TrajectoryDispatcher<3>;
 }

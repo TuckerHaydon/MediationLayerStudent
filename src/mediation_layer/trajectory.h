@@ -2,7 +2,6 @@
 
 #pragma once
 
-// #include <vector>
 #include <Eigen/StdVector>
 #include <Eigen/Dense>
 
@@ -13,14 +12,13 @@ namespace mediation_layer {
   // Abstract class encapsulating a trajectory through time. At the most basic
   // view, the class is just a list of Eigen::Vectors. Provides convienient
   // methods for accessing the data.
-  template <size_t T>
   class Trajectory {
     private:
       // Underlying data structure. Formatted as follows:
-      //   [ pos(T), vel(T), acc(T), yaw(1), time(1)]
+      //   [ pos(3), vel(3), acc(3), yaw(1), time(1)]
       std::vector<
-        Eigen::Vector<double, 3*T + 2>, 
-        Eigen::aligned_allocator<Eigen::Vector<double, 3*T + 2>>> data_;
+        Eigen::Vector<double, 11>, 
+        Eigen::aligned_allocator<Eigen::Vector<double, 11>>> data_;
   
     public:
       // Required by Eigen
@@ -29,72 +27,58 @@ namespace mediation_layer {
       // Constructor. Data must be passed in the following format: 
       //   [ pos, vel, acc, yaw, time]
       Trajectory(const std::vector<
-          Eigen::Vector<double, 3*T + 2>, 
-          Eigen::aligned_allocator<Eigen::Vector<double, 3*T + 2>>>& data = {}) 
+          Eigen::Vector<double, 11>, 
+          Eigen::aligned_allocator<Eigen::Vector<double, 11>>>& data = {}) 
         : data_(data) {}
 
       // Data access functions
-      const Eigen::Vector<double, T> Position(const size_t idx) const;
-      const Eigen::Vector<double, T> Velocity(const size_t idx) const;
-      const Eigen::Vector<double, T> Acceleration(const size_t idx) const;
+      const Eigen::Vector<double, 3> Position(const size_t idx) const;
+      const Eigen::Vector<double, 3> Velocity(const size_t idx) const;
+      const Eigen::Vector<double, 3> Acceleration(const size_t idx) const;
       const double Yaw(const size_t idx) const;
       const double Time(const size_t idx) const;
-      const Eigen::Vector<double, 3*T> PVA(const size_t idx) const;
-      const Eigen::Vector<double, 3*T + 2> PVAYT(const size_t idx) const;
+      const Eigen::Vector<double, 9> PVA(const size_t idx) const;
+      const Eigen::Vector<double, 11> PVAYT(const size_t idx) const;
       const size_t Size() const;
   };
 
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  template<size_t T>
-  inline const size_t Trajectory<T>::Size() const {
+  inline const size_t Trajectory::Size() const {
     return this->data_.size();
   }
 
-  template<size_t T>
-  inline const Eigen::Vector<double, T> Trajectory<T>::Position(const size_t idx) const {
-    return this->data_[idx].segment(0*T,T);
+  inline const Eigen::Vector<double, 3> Trajectory::Position(const size_t idx) const {
+    return this->data_[idx].segment(0, 3);
   }
 
-  template<size_t T>
-  inline const Eigen::Vector<double, T> Trajectory<T>::Velocity(const size_t idx) const {
-    return this->data_[idx].segment(1*T,T);
+  inline const Eigen::Vector<double, 3> Trajectory::Velocity(const size_t idx) const {
+    return this->data_[idx].segment(3, 3);
   }
 
-  template<size_t T>
-  inline const Eigen::Vector<double, T> Trajectory<T>::Acceleration(const size_t idx) const {
-    return this->data_[idx].segment(2*T,T);
+  inline const Eigen::Vector<double, 3> Trajectory::Acceleration(const size_t idx) const {
+    return this->data_[idx].segment(6,3);
   }
 
-  template<size_t T>
-  inline const double Trajectory<T>::Yaw(const size_t idx) const {
-    return this->data_[idx](3*T);
+  inline const double Trajectory::Yaw(const size_t idx) const {
+    return this->data_[idx](9);
   }
 
-  template<size_t T>
-  inline const double Trajectory<T>::Time(const size_t idx) const {
-    return this->data_[idx](3*T+1);
+  inline const double Trajectory::Time(const size_t idx) const {
+    return this->data_[idx](10);
   }
 
-  template<size_t T>
-  inline const Eigen::Vector<double, 3*T> Trajectory<T>::PVA(const size_t idx) const {
-    return this->data_[idx].segment(0,3*T);
+  inline const Eigen::Vector<double, 9> Trajectory::PVA(const size_t idx) const {
+    return this->data_[idx].segment(0,9);
   }
 
-  template<size_t T>
-  inline const Eigen::Vector<double, 3*T + 2> Trajectory<T>::PVAYT(const size_t idx) const {
+  inline const Eigen::Vector<double, 11> Trajectory::PVAYT(const size_t idx) const {
     return this->data_[idx];
   }
 
   // Convienient type definitions
-  using TrajectoryVector2D = std::vector<
-    Eigen::Vector<double, 8>, 
-    Eigen::aligned_allocator<Eigen::Vector<double, 8>>>;
   using TrajectoryVector3D = std::vector<
     Eigen::Vector<double, 11>, 
     Eigen::aligned_allocator<Eigen::Vector<double, 11>>>;
-
-  using Trajectory2D = Trajectory<2>;
-  using Trajectory3D = Trajectory<3>;
 }
