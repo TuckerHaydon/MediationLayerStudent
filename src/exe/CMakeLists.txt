@@ -17,7 +17,7 @@ target_link_libraries(mediation_layer
   ${catkin_LIBRARIES})
 set_target_properties(mediation_layer
   PROPERTIES
-  RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin/exe"
+  RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
 )
 
 add_executable(ap_blue ap_blue.cc)
@@ -34,7 +34,7 @@ target_link_libraries(ap_blue
   ${catkin_LIBRARIES})
 set_target_properties(ap_blue
   PROPERTIES
-  RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin/exe"
+  RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
 )
 
 add_executable(physics_simulator physics_simulator.cc)
@@ -51,7 +51,7 @@ target_link_libraries(physics_simulator
   ${catkin_LIBRARIES})
 set_target_properties(physics_simulator
   PROPERTIES
-  RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin/exe"
+  RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
 )
 
 add_executable(mock_state_reporter mock_state_reporter.cc)
@@ -67,5 +67,5 @@ target_link_libraries(mock_state_reporter
   ${catkin_LIBRARIES})
 set_target_properties(mock_state_reporter
   PROPERTIES
-  RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin/exe"
+  RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
 )

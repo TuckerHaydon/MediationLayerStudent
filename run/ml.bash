@@ -4,4 +4,4 @@
 rosparam load params.yaml mediation_layer
 
 # Run the executable. Should be installed to the current directory.
-../bin/exe/mediation_layer
+../bin/mediation_layer

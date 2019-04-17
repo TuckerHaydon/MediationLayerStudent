@@ -17,17 +17,6 @@ add_executable(environment_tests environment_tests.cc)
 target_link_libraries(environment_tests PUBLIC lib_environment)
 
 
-# Path planning unit tests
-add_executable(path_planning_tests path_planning_tests.cc)
-target_include_directories(path_planning_tests PUBLIC 
-  ../src/algorithm
-  )
-target_link_libraries(path_planning_tests PUBLIC 
-  lib_graph 
-  lib_geometry
-  lib_environment)
-
-
 # Integration library tests
 add_executable(integration_tests integration_tests.cc)
 target_link_libraries(integration_tests PUBLIC 
@@ -42,10 +31,3 @@ target_link_libraries(mediation_layer_tests PUBLIC
   lib_geometry
   lib_mediation_layer
   Eigen3::Eigen)
-
-set_target_properties( 
-  geometry_tests graph_tests environment_tests
-  path_planning_tests integration_tests mediation_layer_tests
-  PROPERTIES
-  RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin/test"
-)
