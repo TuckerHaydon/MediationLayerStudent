@@ -15,8 +15,8 @@
 
 #include "yaml-cpp/yaml.h"
 #include "map3d.h"
+#include "occupancy_grid3d.h"
 
-#include "quad_state_warden.h"
 #include "quad_state.h"
 #include "quad_state_publisher_node.h"
 #include "quad_state_guard.h"
@@ -41,7 +41,17 @@ int main(int argc, char** argv) {
   ros::init(argc, argv, "mock_state_reporter", ros::init_options::NoSigintHandler);
   ros::NodeHandle nh("/mediation_layer/");
 
-  // YAML config
+  // Load map
+  std::string map_file_path;
+  if(false == nh.getParam("map_file_path", map_file_path)) {
+    std::cerr << "Required parameter not found on server: map_file_path" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+
+  const YAML::Node node = YAML::LoadFile(map_file_path);
+  const Map3D map = node["map"].as<Map3D>();
+
+  // Load quad state topics
   std::map<std::string, std::string> quad_state_topics;
   if(false == nh.getParam("quad_state_topics", quad_state_topics)) {
     std::cerr << "Required parameter not found on server: quad_state_topics" << std::endl;
@@ -55,6 +65,13 @@ int main(int argc, char** argv) {
     quad_state_publishers.push_back(
         std::make_shared<QuadStatePublisherNode>(topic));
   }
+
+  // Plan path
+  OccupancyGrid3D occupancy_grid;
+  occupancy_grid.LoadFromMap(map, 0.25);
+  Graph3D graph = occupancy_grid.AsGraph();
+  
+  // Publish path
 
   // Kill program thread. This thread sleeps for a second and then checks if the
   // 'kill_program' variable has been set. If it has, it shuts ros down and

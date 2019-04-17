@@ -42,6 +42,10 @@ namespace mediation_layer{
       // given node
       const std::vector<std::shared_ptr<T>> Neighbors(const std::shared_ptr<T>& node) const;
 
+      // Returns the size of the graph. The size is the number of directed edges
+      // in the graph
+      size_t Size() const;
+
   };
 
   //============================
@@ -85,6 +89,11 @@ namespace mediation_layer{
       neighbors.push_back(edge.Sink());
     }
     return neighbors;
+  }
+
+  template <class T>
+  inline size_t Graph<T>::Size() const {
+    return this->edge_graph_.size();
   }
 
   using Graph2D = Graph<Node2D>;

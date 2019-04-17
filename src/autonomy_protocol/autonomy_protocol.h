@@ -19,6 +19,9 @@ namespace mediation_layer {
   // intended future actions for specific quadcopters.
   //
   // The AutonomyProtocol should be run as its own thread.
+  //
+  // TODO: Pass the map to the autonomy protocol
+  // TODO: Pass the position of the balloon to the autonomy protocol
   class AutonomyProtocol {
     protected:
       std::vector<std::string> friendly_names_;
