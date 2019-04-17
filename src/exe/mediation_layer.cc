@@ -157,7 +157,7 @@ int main(int argc, char** argv) {
   }
 
   // The quad state dispatcher pipes data from the state warden to any state
-  // quards
+  // guards
   auto quad_state_dispatcher = std::make_shared<QuadStateDispatcher>();
   std::thread quad_state_dispatcher_thread([&](){
       quad_state_dispatcher->Run(quad_state_warden, quad_state_guards);
@@ -177,26 +177,10 @@ int main(int argc, char** argv) {
       });
 
   // TODO: WIP
-  //    for(const Plane3D face: obstacle.Faces()) {
-  //      const auto potential = std::make_shared<Plane3DPotential>(
-  //          face, 
-  //          environment_view_options.plane3d_potential_options);
-  //    }
   std::string quad_mesh_file_path;
   if(false == nh.getParam("quad_mesh_file_path", quad_mesh_file_path)) {
     std::cerr << "Required parameter not found on server: quad_mesh_file_path" << std::endl;
     std::exit(EXIT_FAILURE);
-  }
-
-  std::vector<std::shared_ptr<Potential>> potentials;
-
-  for(const Polyhedron& obstacle: map.Obstacles()) {
-    for(const Plane3D face: obstacle.Faces()) {
-      potentials.push_back(
-          std::make_shared<Plane3DPotential>(
-            face, 
-            Plane3DPotential::Options()));
-    }
   }
 
   std::map<std::string, std::string> team_assignments;
@@ -215,7 +199,6 @@ int main(int argc, char** argv) {
 
   ViewManager::EnvironmentViewOptions environment_view_options;
   environment_view_options.map = map;
-  environment_view_options.potentials = potentials;
 
   auto view_manager = std::make_shared<ViewManager>();
   std::thread view_manager_thread(
