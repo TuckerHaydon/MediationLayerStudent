@@ -15,6 +15,7 @@
 #include "plane3d_potential_view.h"
 
 #include "quad_view.h"
+#include "balloon_view.h"
 
 namespace mediation_layer {
   // The ViewManager is a convenience object that encapsulates all of the code
@@ -23,6 +24,13 @@ namespace mediation_layer {
   // The ViewManager should run as its own thread.
   class ViewManager {
     public:
+      struct BalloonViewOptions {
+        std::string balloon_mesh_file_path;
+        std::vector<std::pair<std::string, Eigen::Vector3d>> balloons;
+
+        BalloonViewOptions() {}
+      }; 
+
       struct QuadViewOptions {
         std::string quad_mesh_file_path;
         std::vector<std::pair<std::string, std::shared_ptr<QuadStateGuard>>> quads;
@@ -50,6 +58,7 @@ namespace mediation_layer {
 
       void Run(
           const QuadViewOptions quad_view_options,
+          const BalloonViewOptions balloon_view_options,
           const EnvironmentViewOptions environment_view_options);
 
       void Stop();
@@ -57,6 +66,8 @@ namespace mediation_layer {
     private:
       void RunQuadPublisher(
           const QuadViewOptions quad_view_options);
+      void RunBalloonPublisher(
+          const BalloonViewOptions balloon_view_options);
       void RunEnvironmentPublisher(
           const EnvironmentViewOptions environment_view_options);
 
@@ -68,11 +79,17 @@ namespace mediation_layer {
   //  ******************
   inline void ViewManager::Run(
       const QuadViewOptions quad_view_options,
+      const BalloonViewOptions balloon_view_options,
       const EnvironmentViewOptions environment_view_options) {
 
     std::thread quad_publisher_thread(
         [&]() {
           RunQuadPublisher(quad_view_options);
+        });
+
+    std::thread balloon_publisher_thread(
+        [&]() {
+          RunBalloonPublisher(balloon_view_options);
         });
 
     std::thread environment_publisher_thread(
@@ -81,6 +98,7 @@ namespace mediation_layer {
         });
 
     quad_publisher_thread.join();
+    balloon_publisher_thread.join();
     environment_publisher_thread.join();
   }
 
@@ -117,6 +135,45 @@ namespace mediation_layer {
       for(const auto& view: quad_views) {
         for(const visualization_msgs::Marker& marker: view.Markers()) {
           quads_publisher->Publish(marker);
+        }
+      }
+      std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    }
+  }
+
+  inline void ViewManager::RunBalloonPublisher(
+      const BalloonViewOptions balloon_view_options) {
+
+    // Setup
+    std::vector<BalloonView> balloon_views;
+
+    for(const auto p: balloon_view_options.balloons) {
+      if(p.first == "red") {
+        BalloonView::Options view_options;
+        view_options.mesh_resource = balloon_view_options.balloon_mesh_file_path;
+        view_options.r = 1.0f;
+        view_options.g = 0.0f;
+        view_options.b = 0.0f;
+        balloon_views.emplace_back(p.second, view_options);
+      }
+      else if(p.first == "blue") {
+        BalloonView::Options view_options;
+        view_options.mesh_resource = balloon_view_options.balloon_mesh_file_path;
+        view_options.r = 0.0f;
+        view_options.g = 0.0f;
+        view_options.b = 1.0f;
+        balloon_views.emplace_back(p.second, view_options);
+      }
+    }
+
+    auto balloons_publisher = std::make_shared<MarkerPublisherNode>("balloons");
+
+    // Main loop
+    // 50 Hz. 
+    while(this->ok_) {
+      for(const auto& view: balloon_views) {
+        for(const visualization_msgs::Marker& marker: view.Markers()) {
+          balloons_publisher->Publish(marker);
         }
       }
       std::this_thread::sleep_for(std::chrono::milliseconds(20));

@@ -176,12 +176,38 @@ int main(int argc, char** argv) {
             quad_state_warden);
       });
 
-  // TODO: WIP
+  // Views
   std::string quad_mesh_file_path;
   if(false == nh.getParam("quad_mesh_file_path", quad_mesh_file_path)) {
     std::cerr << "Required parameter not found on server: quad_mesh_file_path" << std::endl;
     std::exit(EXIT_FAILURE);
   }
+
+  std::string balloon_mesh_file_path;
+  if(false == nh.getParam("balloon_mesh_file_path", balloon_mesh_file_path)) {
+    std::cerr << "Required parameter not found on server: balloon_mesh_file_path" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+
+  std::vector<double> blue_balloon_position_vector;
+  if(false == nh.getParam("blue_balloon_position", blue_balloon_position_vector)) {
+    std::cerr << "Required parameter not found on server: blue_balloon_position" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  const Eigen::Vector3d blue_balloon_position(
+      blue_balloon_position_vector[0],
+      blue_balloon_position_vector[1],
+      blue_balloon_position_vector[2]);
+
+  std::vector<double> red_balloon_position_vector;
+  if(false == nh.getParam("red_balloon_position", red_balloon_position_vector)) {
+    std::cerr << "Required parameter not found on server: red_balloon_position" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  const Eigen::Vector3d red_balloon_position(
+      red_balloon_position_vector[0],
+      red_balloon_position_vector[1],
+      red_balloon_position_vector[2]);
 
   std::map<std::string, std::string> team_assignments;
   if(false == nh.getParam("team_assignments", team_assignments)) {
@@ -197,6 +223,11 @@ int main(int argc, char** argv) {
     quad_view_options.quads.push_back(std::make_pair<>(color, quad_state_guards[quad_name]));
   }
 
+  ViewManager::BalloonViewOptions balloon_view_options;
+  balloon_view_options.balloon_mesh_file_path = balloon_mesh_file_path;
+  balloon_view_options.balloons.push_back(std::make_pair("red", red_balloon_position));
+  balloon_view_options.balloons.push_back(std::make_pair("blue", blue_balloon_position));
+
   ViewManager::EnvironmentViewOptions environment_view_options;
   environment_view_options.map = map;
 
@@ -205,9 +236,9 @@ int main(int argc, char** argv) {
       [&]() {
         view_manager->Run(
             quad_view_options,
+            balloon_view_options,
             environment_view_options);
       });
-  // TODO: END WIP
 
   // Kill program thread. This thread sleeps for a second and then checks if the
   // 'kill_program' variable has been set. If it has, it shuts ros down and

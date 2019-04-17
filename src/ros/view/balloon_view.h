@@ -8,10 +8,9 @@
 #include <mutex>
 
 #include "marker_view.h"
-#include "quad_state_guard.h"
 
 namespace mediation_layer {
-  class QuadView : public MarkerView {
+  class BalloonView : public MarkerView {
     public:
       struct Options {
         // ROS frame
@@ -44,10 +43,10 @@ namespace mediation_layer {
         {}
       };
 
-      QuadView(
-          std::shared_ptr<QuadStateGuard> quad_state_guard = nullptr,
+      BalloonView(
+          const Eigen::Vector3d& balloon_position,
           const Options& options = Options())
-        : quad_state_guard_(quad_state_guard),
+        : balloon_position_(balloon_position),
           options_(options),
           unique_id_(GenerateUniqueId()) {}
 
@@ -55,7 +54,7 @@ namespace mediation_layer {
 
     private: 
       Options options_;
-      std::shared_ptr<QuadStateGuard> quad_state_guard_;
+      Eigen::Vector3d balloon_position_;
       uint32_t unique_id_;
 
       static uint32_t GenerateUniqueId();
@@ -64,24 +63,19 @@ namespace mediation_layer {
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  inline std::vector<visualization_msgs::Marker> QuadView::Markers() const {
-    QuadState quad_state;
-    this->quad_state_guard_->Read(quad_state);
-
-    const Eigen::Vector<double, 3> quad_position = quad_state.Position();
-
+  inline std::vector<visualization_msgs::Marker> BalloonView::Markers() const {
     visualization_msgs::Marker marker;
     marker.header.frame_id = this->options_.frame_id;
     marker.id = this->unique_id_;
-    marker.ns = "Quad";
+    marker.ns = "Balloon";
     marker.type = visualization_msgs::Marker::MESH_RESOURCE;
     marker.action = visualization_msgs::Marker::ADD;
-    marker.scale.x = 0.6f;
-    marker.scale.y = 0.6f;
-    marker.scale.z = 0.6f;
-    marker.pose.position.x = quad_position.x();
-    marker.pose.position.y = quad_position.y();
-    marker.pose.position.z = quad_position.z();
+    marker.scale.x = 15.0f;
+    marker.scale.y = 15.0f;
+    marker.scale.z = 15.0f;
+    marker.pose.position.x = this->balloon_position_.x();
+    marker.pose.position.y= this->balloon_position_.y();
+    marker.pose.position.z = this->balloon_position_.z() - 0.3; // Heuristic offset
     marker.color.r = this->options_.r;
     marker.color.g = this->options_.g;
     marker.color.b = this->options_.b;
@@ -92,7 +86,7 @@ namespace mediation_layer {
     return {marker};
   }
 
-  inline uint32_t QuadView::GenerateUniqueId() {
+  inline uint32_t BalloonView::GenerateUniqueId() {
     static std::mutex mtx;
     static uint32_t id = 0;
 
