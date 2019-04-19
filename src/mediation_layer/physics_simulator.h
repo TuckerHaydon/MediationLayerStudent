@@ -103,16 +103,16 @@ namespace mediation_layer {
         double kd = -0.1;
 
         // Gauss markov constant
-        double alpha = 0.7;
+        double alpha = 0.90;
 
         // Gauss markov noise mean
         Eigen::Vector3d mu = Eigen::Vector3d(0,0,0);
 
         // Gauss markov noise covariance
         Eigen::Matrix3d sigma = (Eigen::Matrix3d() << 
-            1e-3, 0, 0,
-            0, 1e-3, 0,
-            0, 0, 1e-3).finished();
+            5e-4,    0, 1e-5,
+            0,    5e-4, 1e-5,
+            1e-5, 1e-5, 5e-4).finished();
 
 
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -235,7 +235,6 @@ namespace mediation_layer {
         // hold the last position. 
         Eigen::Vector<double, 9> pva_intended = trajectory.PVA(trajectory_idx);
         Eigen::Vector<double, 9> pva_perturbed = pva_perturbed_register[quad_name];
-        std::cout << "Reading " << quad_name << ": " << pva_perturbed.block(0,0,6,1).transpose() << std::endl;
         TimeSpan ts(0,1,0.5);
         while(true) {
           if(trajectory_idx+1 < trajectory_size) {
@@ -306,9 +305,7 @@ namespace mediation_layer {
           }
         }
 
-        std::cout << "Storing " << quad_name << ": " << pva_perturbed.block(0,0,6,1).transpose() << std::endl;
         pva_perturbed_register[quad_name] = pva_perturbed;
-        std::cout << "------------------------------------------------" << std::endl << std::endl;
       }
 
       std::this_thread::sleep_until(current_time + this->options_.simulation_time);
