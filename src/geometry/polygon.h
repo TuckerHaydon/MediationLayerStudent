@@ -274,27 +274,27 @@ namespace mediation_layer{
 }
 
 namespace YAML {
-template<>
-struct convert<mediation_layer::Polygon> {
-  static Node encode(const mediation_layer::Polygon& rhs) {
-    Node node;
-    node.push_back(rhs.edges_);
-    return node;
-  }
-
-  static bool decode(const Node& node, mediation_layer::Polygon& rhs) {
-    if(!node.IsSequence()) {
-      return false;
+  template<>
+  struct convert<mediation_layer::Polygon> {
+    static Node encode(const mediation_layer::Polygon& rhs) {
+      Node node;
+      node.push_back(rhs.edges_);
+      return node;
     }
-
-    std::vector<mediation_layer::Line2D> edges;
-    edges.reserve(node.size());
-    for(size_t idx = 0; idx < node.size(); ++idx) {
-      edges.push_back(node[idx].as<mediation_layer::Line2D>());
+  
+    static bool decode(const Node& node, mediation_layer::Polygon& rhs) {
+      if(!node.IsSequence()) {
+        return false;
+      }
+  
+      std::vector<mediation_layer::Line2D> edges;
+      edges.reserve(node.size());
+      for(size_t idx = 0; idx < node.size(); ++idx) {
+        edges.push_back(node[idx].as<mediation_layer::Line2D>());
+      }
+  
+      rhs.SetEdges(edges);
+      return true;
     }
-
-    rhs.SetEdges(edges);
-    return true;
-  }
-};
+  };
 }

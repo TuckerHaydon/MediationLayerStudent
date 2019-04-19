@@ -17,17 +17,6 @@ add_executable(environment_tests environment_tests.cc)
 target_link_libraries(environment_tests PUBLIC lib_environment)
 
 
-# Path planning unit tests
-add_executable(path_planning_tests path_planning_tests.cc)
-target_include_directories(path_planning_tests PUBLIC 
-  ../src/algorithm
-  )
-target_link_libraries(path_planning_tests PUBLIC 
-  lib_graph 
-  lib_geometry
-  lib_environment)
-
-
 # Integration library tests
 add_executable(integration_tests integration_tests.cc)
 target_link_libraries(integration_tests PUBLIC 
@@ -37,11 +26,8 @@ target_link_libraries(integration_tests PUBLIC
 
 add_executable(mediation_layer_tests mediation_layer_tests.cc)
 target_include_directories(mediation_layer_tests PUBLIC 
-  ../src/mediation_layer
-  ../src/mediation_layer/potential
-  ../src/geometry
 )
 target_link_libraries(mediation_layer_tests PUBLIC 
+  lib_geometry
   lib_mediation_layer
   Eigen3::Eigen)
-

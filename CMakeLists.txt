@@ -12,7 +12,8 @@ if(NOT CMAKE_BUILD_TYPE)
     "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CURRENT_CMAKE_SOURCE_DIR}/bin)
+
 add_subdirectory(src)
-add_subdirectory(examples)
 add_subdirectory(test) 
 add_subdirectory(labs) 
