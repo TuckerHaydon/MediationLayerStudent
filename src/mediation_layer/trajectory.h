@@ -16,6 +16,7 @@ namespace mediation_layer {
     private:
       // Underlying data structure. Formatted as follows:
       //   [ pos(3), vel(3), acc(3), yaw(1), time(1)]
+      // Time is a floating point value measuring the seconds since the epoch
       std::vector<
         Eigen::Vector<double, 11>, 
         Eigen::aligned_allocator<Eigen::Vector<double, 11>>> data_;

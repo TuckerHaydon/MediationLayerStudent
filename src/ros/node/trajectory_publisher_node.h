@@ -52,6 +52,7 @@ namespace mediation_layer {
       instant.acc.linear.y = trajectory.Acceleration(idx).y();
       instant.acc.linear.z = trajectory.Acceleration(idx).z();
       instant.yaw = trajectory.Yaw(idx);
+      instant.header.frame_id = "world";
       instant.header.stamp.sec = std::floor(trajectory.Time(idx));
       instant.header.stamp.nsec 
         = (trajectory.Time(idx) - std::floor(trajectory.Time(idx))) * 1e9;

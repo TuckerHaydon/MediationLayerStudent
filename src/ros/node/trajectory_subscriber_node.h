@@ -43,8 +43,7 @@ namespace mediation_layer {
       std::shared_ptr<TrajectoryWarden> warden) {
     this->key_ = key;
     this->warden_ = warden;
-    // TODO: Should this be `~`?
-    this->node_handle_ = ros::NodeHandle("~");
+    this->node_handle_ = ros::NodeHandle("/mediation_layer/");
     this->subscriber_ = node_handle_.subscribe(
         topic, 
         1, 
@@ -70,7 +69,7 @@ namespace mediation_layer {
       local_instant(7) = instant.acc.linear.y;
       local_instant(8) = instant.acc.linear.z;
       local_instant(9) = instant.yaw;
-      local_instant(10) = instant.header.stamp.sec + instant.header.stamp.nsec / 1e9;
+      local_instant(10) = instant.header.stamp.sec + (double)instant.header.stamp.nsec / 1e9;
       data.push_back(local_instant);
     }
 

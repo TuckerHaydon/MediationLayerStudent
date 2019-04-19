@@ -114,6 +114,11 @@ int main(int argc, char** argv) {
   // Initialize the TrajectoryWarden
   auto trajectory_warden_out = std::make_shared<TrajectoryWarden>();
 
+  for(const auto& kv: proposed_trajectory_topics) {
+    const std::string& quad_name = kv.first;  
+    trajectory_warden_out->Register(quad_name);
+  }
+
   // Pipe the TrajectoryWarden to the TrajectoryPublishers
   auto trajectory_dispatcher = std::make_shared<TrajectoryDispatcher>();
   std::thread trajectory_dispatcher_thread([&](){

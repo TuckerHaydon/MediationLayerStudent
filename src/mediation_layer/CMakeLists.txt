@@ -10,4 +10,6 @@ target_include_directories(${TARGET} INTERFACE
   ${CMAKE_CURRENT_SOURCE_DIR}/potential
   ../util
 )
-target_link_libraries(${TARGET} INTERFACE Eigen3::Eigen)
+target_link_libraries(${TARGET} INTERFACE 
+  lib_integration
+  Eigen3::Eigen)

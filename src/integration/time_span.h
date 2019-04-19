@@ -10,9 +10,9 @@ namespace mediation_layer {
    * POD structure containing time span information used during integrator
    */
   struct TimeSpan {
-    const double t0_;
-    const double tf_;
-    const double dt_;
+    double t0_;
+    double tf_;
+    double dt_;
 
     TimeSpan(const double t0,
              const double tf,
