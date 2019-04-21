@@ -11,10 +11,11 @@ updated_trajectory_topics:
   "phoenix": "/phoenix/updated_trajectory"
 
 map_file_path: "/home/tuckerhaydon/Workspace/MediationLayer/data/maps/arena.map"
-
 quad_mesh_file_path: "file:///home/tuckerhaydon/Workspace/MediationLayer/resources/meshes/quad.stl"
-
 balloon_mesh_file_path: "file:///home/tuckerhaydon/Workspace/MediationLayer/resources/meshes/balloon.stl"
 
-blue_balloon_position: [1, 1, 1]
+blue_balloon_position: [9, 1, 1]
 red_balloon_position:  [9, 4, 1]
+
+true_blue_balloon_position: [9, 1, 1]
+true_red_balloon_position:  [9, 4, 1]

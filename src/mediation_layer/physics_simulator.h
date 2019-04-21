@@ -103,16 +103,16 @@ namespace mediation_layer {
         double kd = -0.1;
 
         // Gauss markov constant
-        double alpha = 0.90;
+        double alpha = 0.85;
 
         // Gauss markov noise mean
         Eigen::Vector3d mu = Eigen::Vector3d(0,0,0);
 
         // Gauss markov noise covariance
         Eigen::Matrix3d sigma = (Eigen::Matrix3d() << 
-            5e-4,    0, 1e-5,
-            0,    5e-4, 1e-5,
-            1e-5, 1e-5, 5e-4).finished();
+            5e-4,    0,    0,
+            0,    5e-4,    0,
+               0,    0, 5e-4).finished();
 
 
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW

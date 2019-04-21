@@ -82,6 +82,10 @@ namespace mediation_layer {
     marker.pose.position.x = quad_position.x();
     marker.pose.position.y = quad_position.y();
     marker.pose.position.z = quad_position.z();
+    marker.pose.orientation.w = 0.5f;
+    marker.pose.orientation.x = 0.5f;
+    marker.pose.orientation.y = 0.5f;
+    marker.pose.orientation.z = 0.5f;
     marker.color.r = this->options_.r;
     marker.color.g = this->options_.g;
     marker.color.b = this->options_.b;
