@@ -9,6 +9,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <Eigen/Dense>
 
 #include "trajectory_warden.h"
 #include "game_snapshot.h"
@@ -19,27 +20,40 @@ namespace mediation_layer {
   // intended future actions for specific quadcopters.
   //
   // The AutonomyProtocol should be run as its own thread.
-  //
-  // TODO: Pass the map to the autonomy protocol
-  // TODO: Pass the position of the balloon to the autonomy protocol
   class AutonomyProtocol {
     protected:
       std::vector<std::string> friendly_names_;
       std::vector<std::string> enemy_names_;
       std::shared_ptr<GameSnapshot> snapshot_;
       std::shared_ptr<TrajectoryWarden> trajectory_warden_out_;
+      Map3D map3d_;
+      std::map<
+        std::string, 
+        Eigen::Vector<double, 3>, 
+        std::less<std::string>, 
+        Eigen::aligned_allocator<std::pair<const std::string, Eigen::Vector<double, 3>>>> balloon_map_;
       volatile std::atomic<bool> ok_{true};
 
     public:
+      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
       AutonomyProtocol(
           const std::vector<std::string>& friendly_names,
           const std::vector<std::string>& enemy_names,
           const std::shared_ptr<GameSnapshot> snapshot,
-          const std::shared_ptr<TrajectoryWarden> trajectory_warden_out)
+          const std::shared_ptr<TrajectoryWarden> trajectory_warden_out,
+          const Map3D& map3d,
+          std::map<
+            std::string, 
+            Eigen::Vector<double, 3>, 
+            std::less<std::string>, 
+            Eigen::aligned_allocator<std::pair<const std::string, Eigen::Vector<double, 3>>>> balloon_map)
         : friendly_names_(friendly_names),
           enemy_names_(enemy_names),
           snapshot_(snapshot),
-          trajectory_warden_out_(trajectory_warden_out) {}
+          trajectory_warden_out_(trajectory_warden_out),
+          map3d_(map3d),
+          balloon_map_(balloon_map) {};
 
       virtual ~AutonomyProtocol(){}
 
@@ -52,10 +66,7 @@ namespace mediation_layer {
       // Virtual function to be implemented as by an actor. Input is a snapshot
       // of the system, output is an intended trajectory for each of the
       // friendly quads.
-      virtual std::unordered_map<std::string, Trajectory> UpdateTrajectories(
-          std::shared_ptr<GameSnapshot> snapshot,
-          const std::vector<std::string>& friendly_names,
-          const std::vector<std::string>& enemy_names) = 0;
+      virtual std::unordered_map<std::string, Trajectory> UpdateTrajectories() = 0;
   };
 
   //  ******************
@@ -66,7 +77,7 @@ namespace mediation_layer {
 
       // Request trajectory updates from the virtual function
       const std::unordered_map<std::string, Trajectory> trajectories = 
-        this->UpdateTrajectories(this->snapshot_, this->friendly_names_, this->enemy_names_);
+        this->UpdateTrajectories();
 
 
       // For every friendly quad, push the intended trajectory to the trajectory

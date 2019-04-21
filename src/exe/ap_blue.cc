@@ -25,6 +25,7 @@
 
 #include "game_snapshot.h"
 #include "ap_test.h"
+#include "map3d.h"
 
 using namespace mediation_layer;
 
@@ -46,6 +47,15 @@ int main(int argc, char** argv) {
   ros::NodeHandle nh("/mediation_layer/");
 
   // Read ROS data
+  std::string map_file_path;
+  if(false == nh.getParam("map_file_path", map_file_path)) {
+    std::cerr << "Required parameter not found on server: map_file_path" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+
+  const YAML::Node node = YAML::LoadFile(map_file_path);
+  const Map3D map3d = node["map"].as<Map3D>();
+
   std::map<std::string, std::string> team_assignments;
   if(false == nh.getParam("team_assignments", team_assignments)) {
     std::cerr << "Required parameter not found on server: team_assignments" << std::endl;
@@ -63,6 +73,35 @@ int main(int argc, char** argv) {
     std::cerr << "Required parameter not found on server: proposed_trajectory_topics" << std::endl;
     std::exit(EXIT_FAILURE);
   }
+
+  std::vector<double> blue_balloon_position_vector;
+  if(false == nh.getParam("blue_balloon_position", blue_balloon_position_vector)) {
+    std::cerr << "Required parameter not found on server: blue_balloon_position" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  const Eigen::Vector3d blue_balloon_position(
+      blue_balloon_position_vector[0],
+      blue_balloon_position_vector[1],
+      blue_balloon_position_vector[2]);
+
+  std::vector<double> red_balloon_position_vector;
+  if(false == nh.getParam("red_balloon_position", red_balloon_position_vector)) {
+    std::cerr << "Required parameter not found on server: red_balloon_position" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  const Eigen::Vector3d red_balloon_position(
+      red_balloon_position_vector[0],
+      red_balloon_position_vector[1],
+      red_balloon_position_vector[2]);
+
+  std::map<
+    std::string, 
+    Eigen::Vector<double, 3>, 
+    std::less<std::string>, 
+    Eigen::aligned_allocator<std::pair<const std::string, Eigen::Vector<double, 3>>>> balloon_map;
+
+  balloon_map["red"] = red_balloon_position;
+  balloon_map["blue"] = red_balloon_position;
 
   // Team Assignments
   std::vector<std::string> red_quad_names;
@@ -130,7 +169,9 @@ int main(int argc, char** argv) {
       blue_quad_names, 
       red_quad_names,
       game_snapshot,
-      trajectory_warden_out);
+      trajectory_warden_out,
+      map3d,
+      balloon_map);
 
   // Start the autonomy protocol
   std::thread ap_thread(
