@@ -10,10 +10,18 @@
 #include "yaml-cpp/yaml.h"
 
 namespace mediation_layer {
+  // The Map3D class encapsulates data about static obstacles and map
+  // boundaries. The map maintains data structures, setters, and accessors to
+  // the various planes, lines, and vertices that make up a map.
   class Map2D {
     private:
+      // The boundary of the map is represented by a convex polygon
       Polygon boundary_;
+
+      // The obstacles in the map are represented by a list of convex polygons
       std::vector<Polygon> obstacles_;
+
+      // Forward-declare friend class for parsing
       friend class YAML::convert<Map2D>;
 
     public:
@@ -22,13 +30,24 @@ namespace mediation_layer {
         : boundary_(boundary),
           obstacles_(obstacles) {}
 
+      // Boundary accessor
       const Polygon& Boundary() const;
+
+      // Boundry setter
       bool SetBoundary(const Polygon& boundary);
 
+      // Obstacles accessor
       const std::vector<Polygon>& Obstacles() const;
+
+      // Obstacles setter
       bool SetObstacles(const std::vector<Polygon>& obtacles);
 
+      // Determines whether or not a point is contained within the map
       bool Contains(const Point2D& point) const;
+
+      // Determines whether or not a point is considered free space. A point is
+      // free space if it is contained in the map and not contained in any
+      // obstacle
       bool IsFreeSpace(const Point2D& point) const;
 
       Polygon Extents() const;

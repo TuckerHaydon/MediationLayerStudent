@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1)
-project(PathPlanning)
+project(MediationLayer)
 set(CMAKE_CXX_STANDARD 14)
 
 set(default_build_type "Release")
@@ -12,7 +12,10 @@ if(NOT CMAKE_BUILD_TYPE)
     "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
+add_definitions(
+  -Wfatal-errors
+)
+
 add_subdirectory(src)
-add_subdirectory(examples)
 add_subdirectory(test) 
 add_subdirectory(labs) 

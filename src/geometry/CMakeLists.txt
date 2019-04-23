@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 
 set(TARGET lib_geometry)
 
-find_package (Eigen3 3.3 NO_MODULE)
+find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 add_library(${TARGET} INTERFACE)
 target_include_directories(${TARGET} INTERFACE

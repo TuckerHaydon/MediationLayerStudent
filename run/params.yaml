@@ -1,13 +1,21 @@
 team_assignments:
   "phoenix": "blue"
-  "gryphon": "red"
+
+quad_state_topics:
+  "phoenix": "/phoenix/state"
 
 proposed_trajectory_topics:
   "phoenix": "/phoenix/proposed_trajectory"
-  "gryphon": "/gryphon/proposed_trajectory"
 
 updated_trajectory_topics:
   "phoenix": "/phoenix/updated_trajectory"
-  "gryphon": "/gryphon/updated_trajectory"
 
-map_file_path: "/home/aerial-robotics/Workspace/MediationLayer/data/arena.map"
+map_file_path: "/home/aerial-robotics/Workspace/MediationLayer/resources/maps/arena1.map"
+quad_mesh_file_path: "file:///home/aerial-robotics/Workspace/MediationLayer/resources/meshes/quad.stl"
+balloon_mesh_file_path: "file:///home/aerial-robotics/Workspace/MediationLayer/resources/meshes/balloon.stl"
+
+blue_balloon_position: [9, 1, 1]
+red_balloon_position:  [9, 4, 1]
+
+true_blue_balloon_position: [9, 1, 1]
+true_red_balloon_position:  [9, 4, 1]

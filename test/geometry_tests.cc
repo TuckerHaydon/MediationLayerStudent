@@ -8,6 +8,7 @@
 #include <Eigen/Core>
 
 #include "line2d.h"
+#include "line3d.h"
 #include "polygon.h"
 #include "line3d.h"
 #include "plane3d.h"
@@ -54,7 +55,7 @@ void test_Polyhedron() {
     const Line3D l1(a,b), l2(b,c), l3(c,d), l4(d,a);
     faces[5] = Plane3D({l1,l2,l3,l4});
   }
-
+ 
   const Polyhedron poly(faces);
 
   const Point3D interior_point(0.5,0.5,0.5);
@@ -62,18 +63,84 @@ void test_Polyhedron() {
 
   assert(true  == poly.Contains(interior_point));
   assert(false == poly.Contains(exterior_point));
+
 }
 
 void test_Plane3D() { 
-  const Point3D a(0,0,0), b(1,0,0), c(1,1,0), d(0,1,0);
-  const Line3D l1(a,b), l2(b,c), l3(c,d), l4(d,a);
-  const Plane3D plane({l1,l2,l3,l4});
+  { // Left side
+    const Point3D a(0,0,0), b(1,0,0), c(1,1,0), d(0,1,0);
+    const Line3D l1(a,b), l2(b,c), l3(c,d), l4(d,a);
+    const Plane3D plane({l1,l2,l3,l4});
 
-  const Point3D left_side_point(0.5,0.5,1);
-  const Point3D right_side_point(0.5,0.5,-1);
+    const Point3D left_side_point(0.5,0.5,1);
+    const Point3D right_side_point(0.5,0.5,-1);
 
-  assert(true  == plane.OnLeftSide(left_side_point));
-  assert(false == plane.OnLeftSide(right_side_point));
+    assert(true  == plane.OnLeftSide(left_side_point));
+    assert(false == plane.OnLeftSide(right_side_point));
+  }
+
+  { // Equation of the plane
+    Plane3D plane({
+        Line3D(Point3D(1,-2,0), Point3D(3,1,4)),
+        Line3D(Point3D(3,1,4), Point3D(0,-1,2)),
+        Line3D(Point3D(0,-1,2), Point3D(1,-2,0)),
+          });
+    Eigen::Vector<double, 4> equation = plane.Equation();
+    assert(true == (Eigen::Vector<double, 4>(2,-8,5,-18)).isApprox(equation));
+  }
+
+  { // Contains
+    Plane3D plane({
+        Line3D(Point3D(0,0,0), Point3D(1,0,0)),
+        Line3D(Point3D(1,0,0), Point3D(1,1,0)),
+        Line3D(Point3D(1,1,0), Point3D(0,1,0)),
+        Line3D(Point3D(0,1,0), Point3D(0,0,0)),
+        });
+    assert(true == plane.Contains(Point3D(0.5, 0.5, 0.0)));
+
+    // Not within convex region
+    assert(false == plane.Contains(Point3D(-0.5, 0.5, 0.0)));
+
+    // Not on plane
+    assert(false == plane.Contains(Point3D(0.5, 0.5, 1.0)));
+  }
+
+  { // NormalVector
+    Plane3D plane({
+        Line3D(Point3D(0,0,0), Point3D(1,0,0)),
+        Line3D(Point3D(1,0,0), Point3D(1,1,0)),
+        Line3D(Point3D(1,1,0), Point3D(0,1,0)),
+        Line3D(Point3D(0,1,0), Point3D(0,0,0)),
+        });
+    assert(true == (plane.NormalVector()).isApprox(Vec3D(0,0,1)));
+  }
+
+  { // Closest Point
+    Plane3D plane({
+        Line3D(Point3D(0,0,1), Point3D(0,0.25,0)),
+        Line3D(Point3D(0,0.25,0), Point3D(1.0/3.0,0,0))
+          });
+    const Point3D closest_point = plane.ClosestPoint(Point3D(1,0,1));
+    assert(true == (Point3D(17.0/26.0, -12.0/26.0, 23.0/26.0)).isApprox(closest_point));
+  }
+
+  { // Read from file
+    const std::string plane3d_yaml = R"V0G0N(
+      plane: [
+        [0,0,0,1,0,0],
+        [1,0,0,1,1,0],
+        [1,1,0,0,1,0],
+        [0,1,0,0,0,0]
+      ])V0G0N";
+
+    YAML::Node node = YAML::Load(plane3d_yaml);
+    const Plane3D plane3d = node["plane"].as<Plane3D>();
+    const Point3D left_side_point(0.5,0.5,1);
+    const Point3D right_side_point(0.5,0.5,-1);
+
+    assert(true  == plane3d.OnLeftSide(left_side_point));
+    assert(false == plane3d.OnLeftSide(right_side_point));
+  }
 }
 
 void test_Polygon() {
@@ -232,11 +299,36 @@ void test_Line2D() {
   }
 }
 
+void test_Line3D() {
+  { // Test AsVector
+    Line3D l(Point3D(1,1,1), Point3D(2,2,2));
+    Point3D v = l.AsVector();
+    assert(Point3D(1,1,1).isApprox(v)); 
+  }
+
+  { // Read from file
+    const std::string line3d_yaml = R"V0G0N(
+      [
+      1, 2, 3, 4, 5, 6
+      ])V0G0N";
+
+    YAML::Node node = YAML::Load(line3d_yaml);
+    const Line3D line3d = node.as<Line3D>();
+    assert(1 == line3d.Start().x());
+    assert(2 == line3d.Start().y());
+    assert(3 == line3d.Start().z());
+    assert(4 == line3d.End().x());
+    assert(5 == line3d.End().y());
+    assert(6 == line3d.End().z());
+  }
+}
+
 int main(int argc, char** argv) {
-  test_Line2D();
-  test_Polygon();
+  // test_Line2D();
+  // test_Line3D();
+  // test_Polygon();
   test_Plane3D();
-  test_Polyhedron();
+  // test_Polyhedron();
 
   std::cout << "All tests passed!" << std::endl;
   return EXIT_SUCCESS;

@@ -8,25 +8,35 @@
 #include "yaml-cpp/yaml.h"
 
 namespace mediation_layer {
-  /*
-   * Encapsulates information about a 2D line
-   */
+  // A 2D line implementation
   class Line2D {
     private:
+      // Start point
       Point2D start_;
+
+      // End point
       Point2D end_;
+
+      // Forward-declare parser
       friend class YAML::convert<Line2D>;
 
     public:
+      // Constructor
       Line2D(const Point2D& start = Point2D(),
              const Point2D& end = Point2D())
         : start_(start),
           end_(end) {};
 
+      // Start point accessor
       const Point2D& Start() const;
+
+      // End point accessor
       const Point2D& End() const;
 
+      // Start point setter
       bool SetStart(const Point2D& start);
+
+      // End point setter
       bool SetEnd(const Point2D& end);
       
       // Express the line as a 2D vector.
@@ -161,27 +171,27 @@ namespace mediation_layer {
 }
 
 namespace YAML {
-template<>
-struct convert<mediation_layer::Line2D> {
-  static Node encode(const mediation_layer::Line2D& rhs) {
-    Node node;
-    node.push_back(rhs.start_.x());
-    node.push_back(rhs.start_.y());
-    node.push_back(rhs.end_.x());
-    node.push_back(rhs.end_.y());
-    return node;
-  }
-
-  static bool decode(const Node& node, mediation_layer::Line2D& rhs) {
-    if(!node.IsSequence() || node.size() != 4) {
-      return false;
+  template<>
+  struct convert<mediation_layer::Line2D> {
+    static Node encode(const mediation_layer::Line2D& rhs) {
+      Node node;
+      node.push_back(rhs.start_.x());
+      node.push_back(rhs.start_.y());
+      node.push_back(rhs.end_.x());
+      node.push_back(rhs.end_.y());
+      return node;
     }
-
-    rhs.start_.x() = node[0].as<double>();
-    rhs.start_.y() = node[1].as<double>();
-    rhs.end_.x()   = node[2].as<double>();
-    rhs.end_.y()   = node[3].as<double>();
-    return true;
-  }
-};
+  
+    static bool decode(const Node& node, mediation_layer::Line2D& rhs) {
+      if(!node.IsSequence() || node.size() != 4) {
+        return false;
+      }
+  
+      rhs.start_.x() = node[0].as<double>();
+      rhs.start_.y() = node[1].as<double>();
+      rhs.end_.x()   = node[2].as<double>();
+      rhs.end_.y()   = node[3].as<double>();
+      return true;
+    }
+  };
 }
