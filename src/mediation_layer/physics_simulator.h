@@ -94,13 +94,13 @@ namespace mediation_layer {
         std::chrono::microseconds wind_zoh_time = std::chrono::milliseconds(1);
 
         // Number of intermediate RK4 integration steps
-        size_t integration_steps = 10;
+        size_t integration_steps = 200;
 
         // Proportional constant
-        double kp = -1;
+        double kp = -25.00;
 
         // Derivative constant
-        double kd = -0.1;
+        double kd = -10.0;
 
         // Gauss markov constant
         double alpha = 0.85;
@@ -110,9 +110,9 @@ namespace mediation_layer {
 
         // Gauss markov noise covariance
         Eigen::Matrix3d sigma = (Eigen::Matrix3d() << 
-            5e-4,    0,    0,
-            0,    5e-4,    0,
-               0,    0, 5e-4).finished();
+         3e-0,     0,      0,
+            0,  3e-0,     0,
+            0,     0,   2e-0).finished();
 
 
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -213,7 +213,7 @@ namespace mediation_layer {
         // Require a trajectory to be published
         const size_t trajectory_size = trajectory.Size();
         if(trajectory_size == 0) {
-          std::cout << "PhysicsSimulator::Run -- Trajectory not specified." << std::endl;
+          // std::cout << "PhysicsSimulator::Run -- Trajectory not specified." << std::endl;
           continue;
         }
 
@@ -222,11 +222,14 @@ namespace mediation_layer {
         // the current time. Assuming a zero-order-hold for intended trajectory
         // inputs. Always round down.
         size_t trajectory_idx = 0;
-        for(size_t idx = 0; idx < trajectory_size; ++idx) {
-          if(trajectory.Time(idx) > current_time_float) {
-            trajectory_idx = trajectory_idx == 0 ? 0 : trajectory_idx - 1;
-          } else {
-            continue;
+        if(trajectory.Time(trajectory_size-1) < current_time_float) {
+          trajectory_idx = trajectory.Size()-1;
+        } else {
+          for(size_t idx = 0; idx < trajectory_size; ++idx) {
+            if(trajectory.Time(idx) > current_time_float) {
+              trajectory_idx = ( (idx == 0) ? 0 : idx - 1 );
+              break;
+            }
           }
         }
 
@@ -237,7 +240,7 @@ namespace mediation_layer {
         Eigen::Vector<double, 9> pva_perturbed = pva_perturbed_register[quad_name];
         TimeSpan ts(0,1,0.5);
         while(true) {
-          if(trajectory_idx+1 < trajectory_size) {
+          if(trajectory_idx != trajectory_size - 1) {
             // Go to next segment
             pva_intended = trajectory.PVA(trajectory_idx);
 
@@ -252,7 +255,7 @@ namespace mediation_layer {
               Eigen::Vector3d::Zero(),
               Eigen::Vector3d::Zero()).finished();
 
-            const double t0 = trajectory.Time(trajectory_size - 1);
+            const double t0 = current_time_float;
             const double tf = end_time_float + 0.01;
             const double dt = (tf - t0) / this->options_.integration_steps;
             ts = TimeSpan(t0, tf, dt);
@@ -283,8 +286,8 @@ namespace mediation_layer {
 							}
 						}
 
-            Eigen::Vector<double, 12> input;
-            input.block(0,0,3,1) = disturbance_instance.acceleration;
+            Eigen::Vector<double, 12> input = Eigen::Vector<double, 12>::Zero();
+            // input.block(0,0,3,1) = disturbance_instance.acceleration;
             input.block(3,0,9,1) = pva_intended;
 
             const Eigen::Vector<double, 9> t1 = A * pva_intermediate;

@@ -10,7 +10,7 @@ proposed_trajectory_topics:
 updated_trajectory_topics:
   "phoenix": "/phoenix/updated_trajectory"
 
-map_file_path: "/home/tuckerhaydon/Workspace/MediationLayer/data/maps/arena.map"
+map_file_path: "/home/tuckerhaydon/Workspace/MediationLayer/resources/maps/arena2.map"
 quad_mesh_file_path: "file:///home/tuckerhaydon/Workspace/MediationLayer/resources/meshes/quad.stl"
 balloon_mesh_file_path: "file:///home/tuckerhaydon/Workspace/MediationLayer/resources/meshes/balloon.stl"
 
