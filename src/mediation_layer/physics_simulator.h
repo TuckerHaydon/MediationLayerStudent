@@ -216,7 +216,6 @@ namespace mediation_layer {
           // std::cout << "PhysicsSimulator::Run -- Trajectory not specified." << std::endl;
           continue;
         }
-        std::cout << "Trajectory received." << std::endl;
 
         // A trajectory may not have been updated between simulation periods.
         // Must find the index in the trajectory that most closely aligns with

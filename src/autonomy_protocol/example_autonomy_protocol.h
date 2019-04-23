@@ -44,36 +44,35 @@ namespace mediation_layer {
   //  ******************
   std::unordered_map<std::string, Trajectory> ExampleAutonomyProtocol::UpdateTrajectories() {
 
-    // Use a static function variable to ensure that one and only one trajectory
-    // is published. Static variables are not destroyed when the function leaves
-    // scope, instead they keep their last value and may be accessed again in
-    // the next function call. Static variables are only initialized once (it
-    // will only be set to false once). These variables may be thought of the
-    // C++ equivalent to Matlab's persistent variable.
-    //
-    // If the trajectory has already been specified, return an empty map. By
-    // returning an empty map, we instruct the controller to follow the previous
-    // trajectory and hold the final position.
-    static bool trajectory_already_specified = false;
-    if(true == trajectory_already_specified) {
-      std::unordered_map<std::string, Trajectory> m;
-      return m;
-    } else {
-      trajectory_already_specified = true;
-    }
-
     // Always use the chrono::system_clock for time. Trajectories require time
     // points measured in floating point seconds from the unix epoch.
-    const std::chrono::time_point<std::chrono::system_clock> current_chrono_time 
-      = std::chrono::system_clock::now();
     const std::chrono::milliseconds T = std::chrono::seconds(30);
     const std::chrono::milliseconds dt = std::chrono::milliseconds(20);
+    const std::chrono::time_point<std::chrono::system_clock> current_chrono_time 
+      = std::chrono::system_clock::now();
+
+    // Use a static function variable to log the first time this function was
+    // called. The static function variable acts like a matlab persistent
+    // variable, maintaining its value between function calls. The initializer 
+    // is only called once.
+    static const std::chrono::time_point<std::chrono::system_clock> start_chrono_time 
+      = std::chrono::system_clock::now();
+    static const std::chrono::time_point<std::chrono::system_clock> end_chrono_time
+      = start_chrono_time + T;
+
+    // If at the end, return an empty map
+    if(current_chrono_time > end_chrono_time) {
+      return std::unordered_map<std::string, Trajectory>();
+    }
+
+    const std::chrono::duration<double> remaining_chrono_time = end_chrono_time - current_chrono_time;
+    const std::chrono::duration<double> current_flight_chrono_time = current_chrono_time - start_chrono_time;
 
     // Number of samples
-    const size_t N = T/dt;
+    const size_t N = remaining_chrono_time/dt;
 
     // Angular speed in radians/s
-    const double omega = 2*M_PI/5.0;
+    constexpr double omega = 2*M_PI/5.0;
 
     // TrajectoryVector3D is an std::vector object defined in the trajectory.h
     // file. It's aliased for convenience.
@@ -81,15 +80,15 @@ namespace mediation_layer {
     for(size_t idx = 0; idx < N; ++idx) {
       // chrono::duration<double> maintains high-precision floating point time in seconds
       // use the count function to cast into floating point
-      const std::chrono::duration<double> local_chrono_time = idx * dt;
-      const double local_time = local_chrono_time.count();
+      const std::chrono::duration<double> flight_chrono_time = current_flight_chrono_time + idx * dt;
+      const double flight_time = flight_chrono_time.count();
 
       // Angle in radians
-      const double theta = local_time / omega;
+      const double theta = flight_time / omega;
 
-      // Circle centered at (1,1,1)
+      // Circle centered at (1,2,1)
       const double x = 1.0 + std::cos(theta);
-      const double y = 1.0 + std::sin(theta);
+      const double y = 2.0 + std::sin(theta);
       const double z = 1.0;
 
       const double vx = -std::sin(theta);
@@ -105,14 +104,14 @@ namespace mediation_layer {
       // The trajectory requires the time to be specified as a floating point
       // number that measures the number of seconds since the unix epoch.
       const std::chrono::duration<double> global_time_chrono 
-        = current_chrono_time.time_since_epoch() + local_chrono_time;
+        = current_chrono_time.time_since_epoch() + flight_chrono_time;
       const double global_time = global_time_chrono.count();
 
       // Push an Eigen instance onto the trajectory vector
       trajectory_vector.push_back(Eigen::Vector<double, 11>(
-            x,y,z,
-            vx,vy,vz,
-            ax,ay,az,
+            x,   y,   z,
+            vx,  vy,  vz,
+            ax,  ay,  az,
             yaw,
             global_time
             ));
