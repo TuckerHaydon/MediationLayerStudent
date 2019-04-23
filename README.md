@@ -104,3 +104,4 @@ cd build/test
 - Create TrajectoryVetter. TrajectoryVetter determines if an intended trajectory
   are within the constraints set by StateConstraints. If not, rejects the
   trajectory.
+- Change CMake libraries from interfaces into static libraries
