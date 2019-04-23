@@ -7,8 +7,8 @@ find_package (Eigen3 3.3 NO_MODULE)
 add_library(${TARGET} INTERFACE)
 target_include_directories(${TARGET} INTERFACE
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ../util
 )
 target_link_libraries(${TARGET} INTERFACE 
   lib_mediation_layer
+  lib_util
   Eigen3::Eigen)

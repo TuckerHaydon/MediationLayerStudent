@@ -11,7 +11,6 @@ add_subdirectory(lib)
 # Build custom libraries
 add_subdirectory(util)
 add_subdirectory(integration)
-add_subdirectory(threading)
 add_subdirectory(geometry)
 add_subdirectory(graph)
 add_subdirectory(environment)

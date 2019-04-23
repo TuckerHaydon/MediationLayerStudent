@@ -77,23 +77,6 @@ int main(int argc, char** argv) {
             trajectory_warden_in);
   }
 
-  // auto quad_state_warden = std::make_shared<QuadStateWarden>();
-  // for(const auto& kv: quad_state_topics) {
-  //   const std::string& quad_name = kv.first;  
-  //   quad_state_warden->Register(quad_name);
-  // }
-
-  // std::vector<std::shared_ptr<QuadStateSubscriberNode>> state_subscribers;
-  // for(const auto& kv: quad_state_topics) {
-  //   const std::string& quad_name = kv.first;  
-  //   const std::string& topic = kv.second;  
-  //   state_subscribers.push_back(
-  //       std::make_shared<QuadStateSubscriberNode>(
-  //           topic, 
-  //           quad_name, 
-  //           quad_state_warden));
-  // }
-
   std::unordered_map<std::string, std::shared_ptr<QuadStatePublisherNode>> quad_state_publishers;
   for(const auto& kv: quad_state_topics) {
     const std::string& quad_name = kv.first;  

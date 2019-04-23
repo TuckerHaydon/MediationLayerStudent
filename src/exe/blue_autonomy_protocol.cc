@@ -24,7 +24,7 @@
 #include "quad_state_guard.h"
 
 #include "game_snapshot.h"
-#include "ap_test.h"
+#include "example_autonomy_protocol.h"
 #include "map3d.h"
 
 using namespace mediation_layer;
@@ -165,7 +165,7 @@ int main(int argc, char** argv) {
       });
 
   // The AutonomyProtocol
-  std::shared_ptr<AutonomyProtocol> autonomy_protocol = std::make_shared<TestAP>(
+  std::shared_ptr<AutonomyProtocol> autonomy_protocol = std::make_shared<ExampleAutonomyProtocol>(
       blue_quad_names, 
       red_quad_names,
       game_snapshot,

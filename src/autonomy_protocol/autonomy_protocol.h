@@ -19,6 +19,16 @@ namespace mediation_layer {
   // actor to read limited information from the GameSimulator and report
   // intended future actions for specific quadcopters.
   //
+  // This class is an interface --- it should not be constructed as a standalone
+  // object. Instead, a sub-class should implement this class. Sub-classes must
+  // implement the UpdateTrajectories function. The UpdateTrajectories function
+  // should map friendly quadcopters current positions to intended trajectories.
+  //
+  // UpdateTrajectories is called every 200ms (5 hz). A protocol may either
+  // specify a new trajectory, overwriting the last trajectory, or return an
+  // empty trajectory, implicitly instructing the quadcopter to continue following 
+  // the previous trajectory or holding the final position.
+  //
   // The AutonomyProtocol should be run as its own thread.
   class AutonomyProtocol {
     protected:

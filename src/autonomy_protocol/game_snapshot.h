@@ -13,9 +13,11 @@
 
 namespace mediation_layer {
   // A GameSnapshot is a particular view of the game that is presented to the
-  // automation protocol. Typically, a team has full knowledge of the pose of
+  // autonomy protocol. Typically, a team has full knowledge of the pose of
   // their quadcopters but only has limited knowledge of the pose of the
   // opponents quadcopters (i.e. a noisy position estimate).
+  //
+  // TODO: Corrupt enemy states with noise
   class GameSnapshot {
     public:
       struct Options {
