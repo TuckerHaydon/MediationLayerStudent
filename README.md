@@ -1,10 +1,6 @@
 # Mediation Layer
-The mediation layer (ML) is a software layer that sits between a quadcopter's
-controller and the path planner. Given a map of the environment and a proposed
-quadcopter trajectory, the ML modifies the quadcopter trajectory to
-ensure that it does not run into any obstacles. In this sense, the ML acts as a
-padded room and allows any user to fly the quadcopters without worrying about
-their safety. 
+
+## Project Structure
 
 ## Installation
 ### Prerequisites 
@@ -20,7 +16,6 @@ cd MediationLayer
 git submodule update --init --recursive
 ```
 
-
 ### Build
 ```bash
 mkdir build 
@@ -29,10 +24,32 @@ cmake ..
 make -j4
 ```
 
-### Examples
+## Running the Mediation Layer
+The ML is comprised of a couple of executables. After building, you must ensure
+that the following programs are running. It may be helpful to use a terminal
+multiplexer like tmux or terminator and start each program in a separate pane.
+
+### ROS Core
 ```bash
-cd build/examples
-./$EXECUTABLE_OF_CHOICE
+roscore
+```
+
+### Mediation Layer
+```
+cd MediationLayer/bin
+./mediation_layer
+```
+
+### Physics Simulator
+```
+cd MediationLayer/bin
+./physics_simulator
+```
+
+### Autonomy Protocol
+```
+cd MediationLayer/bin
+./blue_autonomy_protocol
 ```
 
 ### Tests
