@@ -58,6 +58,12 @@ cd MediationLaster/run
 rosparam load params.yaml /mediation_layer/
 ```
 
+### ROS Visualizer
+```
+cd MediationLayer/run
+rosrun rviz rviz config.rviz
+```
+
 ### Mediation Layer
 ```
 cd MediationLayer/bin
