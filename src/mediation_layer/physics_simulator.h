@@ -81,6 +81,8 @@ namespace mediation_layer {
   // In the presence of no forcing function, the perturbed trajectory will be
   // exactly the mediated trajectory (provided the mediation trajectory is
   // smooth).
+  //
+  // TODO: Change the starting location of the quadcopter
   class PhysicsSimulator {
     public:
       struct Options {
@@ -139,7 +141,7 @@ namespace mediation_layer {
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  void PhysicsSimulator::Run(
+  inline void PhysicsSimulator::Run(
       std::shared_ptr<TrajectoryWarden> trajectory_warden_in,
       std::unordered_map<std::string, std::shared_ptr<QuadStatePublisherNode>> quad_state_publishers) {
     
@@ -170,7 +172,6 @@ namespace mediation_layer {
       Eigen::aligned_allocator<std::pair<const std::string, Eigen::Vector<double, 9>>>> pva_perturbed_register;
 
     // Initially, the quads are in their current state
-    // TODO: Change origin to state
     for(const std::string& quad_name: quad_names) {
       pva_perturbed_register[quad_name] = Eigen::Vector<double, 9>::Zero();
     }

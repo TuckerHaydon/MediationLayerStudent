@@ -9,15 +9,19 @@
 #include "node_eigen.h"
 
 namespace mediation_layer{
-  /*
-   * Abstraction of a graph. A graph maintains a set of directed edges
-   * connecting various nodes.
-   */
+  // A graph maintains a set of directed edges connecting various nodes. 
+  //
+  // Graph is templated and may contain different types of data.  Convenient
+  // aliases for 2D and 3D Eigen data are defined at the bottom of this file.
   template <class T>
   class Graph {
     private: 
       // Graph is an abstraction of an unordered map (hash map). Nodes are
       // mapped to a list of DirectedEdges that are eminating from that node.
+      //
+      // Note that nodes are passed around as shared_ptr while directed edges
+      // are copied. Directed edges are lightweight: they only contains pointers
+      // and a cost while nodes could contain an arbitrary amount of data
       std::unordered_map<
         std::shared_ptr<T>, 
         std::vector<DirectedEdge<T>>,
@@ -29,10 +33,10 @@ namespace mediation_layer{
       Graph(const std::vector<DirectedEdge<T>>& edges = {});
   
       // Add an edge to the graph
-      bool AddEdge(const DirectedEdge<T>& edge);
+      void AddEdge(const DirectedEdge<T>& edge);
 
       // Add a vector of edges to the graph
-      bool AddEdges(const std::vector<DirectedEdge<T>>& edges);
+      void AddEdges(const std::vector<DirectedEdge<T>>& edges);
 
       // Returns a vector of edges that are eminating from a given node
       const std::vector<DirectedEdge<T>> Edges(const std::shared_ptr<T>& node) const;
@@ -57,18 +61,16 @@ namespace mediation_layer{
   }
   
   template <class T>
-  inline bool Graph<T>::AddEdge(const DirectedEdge<T>& edge) {
+  inline void Graph<T>::AddEdge(const DirectedEdge<T>& edge) {
     this->edge_graph_[edge.source_].push_back(edge);   
-    return true;
   }
   
   template <class T>
-  inline bool Graph<T>::AddEdges(const std::vector<DirectedEdge<T>>& edges) {
+  inline void Graph<T>::AddEdges(const std::vector<DirectedEdge<T>>& edges) {
     std::for_each(edges.begin(), edges.end(), 
         [this](const DirectedEdge<T>& edge){ 
         this->AddEdge(edge); 
     });
-    return true;
   }
 
   template <class T>

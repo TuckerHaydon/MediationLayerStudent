@@ -10,15 +10,26 @@
 #include "plane3d.h"
 
 namespace mediation_layer {
+  // A polyhedron is represented by a connected set of convex polygons that
+  // encapsulate a closed, convex, 3D space.
+  //
+  // TODO: Put checks into place to ensure that the polyhedron is convex and
+  // closed
   class Polyhedron {
     private:
+      // Set of convex polygons embedded in a 3D space that make up the boundary
+      // of the polyhedron
       std::vector<Plane3D> faces_;
+
+      // Forward-declare parser
       friend class YAML::convert<Polyhedron>;
 
     public: 
+      // Constructor
       Polyhedron(const std::vector<Plane3D>& faces = {}) 
         : faces_(faces) {}
 
+      // Faces accessor
       const std::vector<Plane3D>& Faces() const;
 
       // Determines if a 3D point is contained within the polyhedron. A point is
@@ -42,9 +53,6 @@ namespace mediation_layer {
   }
 
   inline bool Polyhedron::Contains(const Point3D& point) const {
-    // TODO: Check polyhedron convex
-    // TODO: Check polyhedron complete
-
     for(const Plane3D& face: this->faces_) {
       if(false == face.OnLeftSide(point)) { return false; }
     }

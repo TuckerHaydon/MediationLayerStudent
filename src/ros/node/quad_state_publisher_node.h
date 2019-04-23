@@ -15,6 +15,9 @@ namespace mediation_layer {
   // QuadStatePublisherNode acts as an adapter between the ROS ecosystem and the
   // internal mediation layer ecosystem. Transforms internal QuadState into a
   // ROS quad_state and publishes it.
+  //
+  // Wraps the publisher in a publisher guard to ensure that instances of this
+  // class may be safely used across multiple threads
   class QuadStatePublisherNode {
     private:
       // A publisher guard ensures that the Publish() function may be called in

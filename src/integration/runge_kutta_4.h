@@ -7,13 +7,14 @@
 #include "time_span.h"
 
 namespace mediation_layer {
-  /*
-   * 4th-order RungeKutta integrator
-   * Reference: http://mathworld.wolfram.com/Runge-KuttaMethod.html
-   */
+  // 4th-order RungeKutta integrator implementation. RungeKutta4 is templated
+  // and may take a variety of types of data.
+  //
+  // Reference: http://mathworld.wolfram.com/Runge-KuttaMethod.html
   template<class T>
   class RungeKutta4 {
     private:
+      // Forward integrates the function f by a small time step, dt
       T ForwardIntegrateStep(const std::function<T (double, const T&)>& f,
                              const T& y0,
                              const TimeSpan& ts) const { 
@@ -28,6 +29,7 @@ namespace mediation_layer {
       };
 
     public:
+      // Forward integrates a function through a series of time-steps
       T ForwardIntegrate(const std::function<T (double, const T&)>& f, 
                          const T& y0, 
                          const TimeSpan& ts) const {

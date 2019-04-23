@@ -17,11 +17,20 @@ namespace mediation_layer {
   // trajectory and then passes it to the TrajectoryWarden to manage.
   class TrajectorySubscriberNode {
     private:
+      // Trajectory warden manages multi-threaded access to trajectory data
       std::shared_ptr<TrajectoryWarden> warden_;
+
+      // ROS node handle
       ros::NodeHandle node_handle_;
+
+      // ROS subscriebr
       ros::Subscriber subscriber_;
+
+      // Key to be passed on to the trajectory warden
       std::string key_;
 
+      // Subscriber callback. Extracts ROS data and converts it into a
+      // Trajectory instance to be passed on to the trajectory warden
       void SubscriberCallback(const mg_msgs::PVAYStampedTrajectory& msg);
       
     public:
@@ -37,7 +46,7 @@ namespace mediation_layer {
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  TrajectorySubscriberNode::TrajectorySubscriberNode(
+  inline TrajectorySubscriberNode::TrajectorySubscriberNode(
       const std::string& topic, 
       const std::string& key,
       std::shared_ptr<TrajectoryWarden> warden) {
@@ -51,7 +60,7 @@ namespace mediation_layer {
         this);
   }
 
-  void TrajectorySubscriberNode::SubscriberCallback(const mg_msgs::PVAYStampedTrajectory& msg) {
+  inline void TrajectorySubscriberNode::SubscriberCallback(const mg_msgs::PVAYStampedTrajectory& msg) {
       // Required data structure. Formatted as follows:
       //   [ pos(3), vel(3), acc(3), yaw(1), time(1)]
       std::vector<

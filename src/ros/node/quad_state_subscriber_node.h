@@ -18,11 +18,20 @@ namespace mediation_layer {
   // QuadState and then passes it to the QuadStateWarden to manage.
   class QuadStateSubscriberNode {
     private:
+      // Quad state warden that manages multi-threaded access to QuadState data
       std::shared_ptr<QuadStateWarden> warden_;
+
+      // ROS node handle
       ros::NodeHandle node_handle_;
+
+      // ROS subscriber
       ros::Subscriber subscriber_;
+
+      // Key to use to pass on to the QuadStateWarden
       std::string key_;
 
+      // Subscriber callback function. Extracts ROS data and converts it into a
+      // QuadState to be passed on to the QuadStateWarden
       void SubscriberCallback(const nav_msgs::Odometry& msg);
       
     public:
@@ -38,7 +47,7 @@ namespace mediation_layer {
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  QuadStateSubscriberNode::QuadStateSubscriberNode(
+  inline QuadStateSubscriberNode::QuadStateSubscriberNode(
       const std::string& topic, 
       const std::string& key,
       std::shared_ptr<QuadStateWarden> warden) {
@@ -52,7 +61,7 @@ namespace mediation_layer {
         this);
   }
 
-  void QuadStateSubscriberNode::SubscriberCallback(const nav_msgs::Odometry& msg) {
+  inline void QuadStateSubscriberNode::SubscriberCallback(const nav_msgs::Odometry& msg) {
     QuadState state(Eigen::Vector<double, 13>(
           msg.pose.pose.position.x, 
           msg.pose.pose.position.y, 

@@ -8,12 +8,19 @@
 #include "node.h"
 
 namespace mediation_layer {
-  // Abstract node that contains Eigen data
+  // Abstract node implementation that contains Eigen data. Due to constraints
+  // on hash function precision, users of NodeEigen should not expect their data
+  // to contain more than 3 decimal points of accuracy. See the hash function
+  // documentation below as to why.
+  //
+  // NodeEigen is templated and may contain different sizes of data.  Convenient
+  // aliases for 2D and 3D Eigen data are defined at the bottom of this file.
   template <int D>
   class NodeEigen : public Node<Eigen::Matrix<double, D, 1>> {
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
+      // Constructor
       NodeEigen(const Eigen::Matrix<double, D, 1>& data = Eigen::Matrix<double, D, 1>()) 
         : Node<Eigen::Matrix<double, D, 1>>(
             data, 
@@ -21,8 +28,18 @@ namespace mediation_layer {
             std::bind(&NodeEigen::Hash, this)
             ) {}
 
+      // Equality operator. NodeEigen objects are equal if their elements are
+      // component-wise within epsilon of each other.
+      //
+      // epsilon = 1e-4
       bool operator==(const NodeEigen& other) const;
 
+      // Hash function. Hash functions for floating point numbers are
+      // complicated due to numerical errors. 3.0 != 3.0 always. To solve this,
+      // when computing the hash, floating point numbers are multiplied by 10^4
+      // and truncated to the nearest integer. Determining the hash of a tuple
+      // of integers is easy. Thus, NodeEigen should not be used if the data
+      // required more than 3 decimal points of precision.
       size_t Hash() const;
 
   };

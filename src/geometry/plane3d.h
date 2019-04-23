@@ -10,21 +10,32 @@
 #include "line3d.h"
 
 namespace mediation_layer {
-  // 3D plane object. A 3D plane is built from a set of 3D edges. The edges
-  // should be sequential, connected, and the cross product of adjacent edges
-  // form a vector that determines the plane's direction. If these assumptions
-  // are broken, the behaivor of internal functions is undefined.
+  // Implementation of a 2D closed, convex polygon embedded in a 3D space. A
+  // plane may be represented by a set of continuous 3D lines all lying on the
+  // same plane and encapsulating a convex region. 
   //
-  // TODO: Provide checks for assumptions
+  // Edges must be specified with the following properties:
+  //  1) The end point of each edge must coincide with the start-point of
+  //     another edge
+  //  2) Edges must be ordered such that the cross product between sequential
+  //     edges points towards the center of the convex region
+  //  3) All edges must lie on the same 3D plane
+  //
+  // TODO: Add checks for convex and closed properties
   class Plane3D {
     private:
+      // Edges defining the boundaries of the plane
       std::vector<Line3D> edges_;
+
+      // Forward declare parser
       friend class YAML::convert<Plane3D>;
 
     public:
+      // Constructor
       Plane3D(const std::vector<Line3D>& edges = {})
         : edges_(edges) {};
 
+      // Edges accessor
       const std::vector<Line3D>& Edges() const;
 
       // A point is on the left side of a plane if, given given a
@@ -33,7 +44,9 @@ namespace mediation_layer {
       // counter-clockwise edges) is positive
       bool OnLeftSide(const Point3D& point) const;
 
-      // Returns the standard plane equation
+      // Return the equation of the plane. The equation is defined as:
+      //   Ax + By + Cz + D = 0
+      // The vector is ordered as [A,B,C,D];
       Eigen::Vector<double, 4> Equation() const;
 
       // Determines a point on the plane that is closest to the parameter point.
@@ -51,10 +64,6 @@ namespace mediation_layer {
   //  * IMPLEMENTATION *
   //  ******************
   inline Eigen::Vector<double, 4> Plane3D::Equation() const {
-    // Contains the equation of the plane. The equation is defined as:
-    //   Ax + By + Cz + D = 0
-    // The vector is ordered as [A,B,C,D];
-    
     // Determine the equation for the plane. The equation can be found in the
     // following manner:
     //  1) Take the cross product of two vectors in the plane: v

@@ -27,7 +27,13 @@ namespace mediation_layer {
   // UpdateTrajectories is called every 200ms (5 hz). A protocol may either
   // specify a new trajectory, overwriting the last trajectory, or return an
   // empty trajectory, implicitly instructing the quadcopter to continue following 
-  // the previous trajectory or holding the final position.
+  // the previous trajectory or holding the final position. 
+  //
+  // Warning: sometimes ROS drops the first couple of messages in a stream. It's
+  // busy connecting publishers and subscribers together and does not properly
+  // pass on messages. As a result, if a trajectory is only published the first
+  // time there is no guarantee that it gets to the destination. The trajectory
+  // may need to be re-published.
   //
   // The AutonomyProtocol should be run as its own thread.
   class AutonomyProtocol {

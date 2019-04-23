@@ -14,21 +14,42 @@
 #include "yaml-cpp/yaml.h"
 
 namespace mediation_layer{
-  // Class representing a 2D convex polygon.
+  // Implementation of a 2D closed, convex polygon in R2. A polygon may be
+  // represented by a set of continuous 2D lines all lying on the same plane and
+  // encapsulating a convex region. 
+  //
+  // Edges must be specified with the following properties:
+  //  1) The end point of each edge must coincide with the start-point of
+  //     another edge
+  //  2) Edges must be ordered such that the cross product between sequential
+  //     edges points towards the center of the convex region
+  //
+  // TODO: Add checks for convex and closed properties
   class Polygon {
     private:
+      // Edges of the polygon
       std::vector<Line2D> edges_;
+
+      // Vertices of the polygon
       std::vector<Point2D> vertices_;
 
-      bool UpdateVertices();
+      // Updates vertices vector to reflect changes in edges
+      void UpdateVertices();
+
+      // Forward-declare parser
       friend class YAML::convert<Polygon>;
 
     public:
+      // Constructor
       Polygon(const std::vector<Line2D>& edges = {});
 
+      // Edges accessor
       const std::vector<Line2D>& Edges() const;
-      bool SetEdges(const std::vector<Line2D>& edges);
 
+      // Edges setter
+      void SetEdges(const std::vector<Line2D>& edges);
+
+      // Vertices accessor
       const std::vector<Point2D>& Vertices() const;
 
       // Determines if a point is contained within the polygon. A point is
@@ -53,11 +74,11 @@ namespace mediation_layer{
 
       // Constructs a convex polygon from the convex hull of a set of points.
       // Reference: https://en.wikipedia.org/wiki/Gift_wrapping_algorithm
-      bool ConvexHullFromPoints(const std::vector<Point2D>& points);
+      void ConvexHullFromPoints(const std::vector<Point2D>& points);
 
       // Constructs the polygon from a list of points. When traversed, the list
       // of points should form a convex polygon.
-      bool ConstructFromPoints(const std::vector<Point2D>& points);
+      void ConstructFromPoints(const std::vector<Point2D>& points);
 
       // Reverse the start and end points of all the edges to reverse the
       // direction of the edges. 
@@ -67,17 +88,12 @@ namespace mediation_layer{
       // are reversed. Edges will now point outwards. Functions that assume
       // edge order will not work as expected.
       Polygon Invert() const;
-
-      // Check that the polygon is valid
-      void Check() const;
   };
 
   //============================
   //     IMPLEMENTATION
   //============================
   inline Polygon Polygon::Expand(double dist) const { 
-    this->Check();
-
     // Find the arithmetic mean of the vertices. For a convex polygon,
     // guaranteed to be contained by the polygon.
     double avg_x{0}, avg_y{0};
@@ -130,7 +146,7 @@ namespace mediation_layer{
     return true;
   }
 
-  inline bool Polygon::ConvexHullFromPoints(const std::vector<Point2D>& points) {
+  inline void Polygon::ConvexHullFromPoints(const std::vector<Point2D>& points) {
     std::vector<Point2D> vertices;
     
     Point2D left_most_point;
@@ -172,7 +188,6 @@ namespace mediation_layer{
     }
 
     *(this) = Polygon(edges);
-    return true;
   }
 
   inline Polygon::Polygon(const std::vector<Line2D>& edges)
@@ -180,24 +195,21 @@ namespace mediation_layer{
       this->UpdateVertices(); 
   }
 
-  inline bool Polygon::UpdateVertices() {
+  inline void Polygon::UpdateVertices() {
     this->vertices_.clear();
     this->vertices_.reserve(this->edges_.size());
     for(const Line2D& edge: this->edges_) {
       this->vertices_.push_back(edge.Start());
     }
-    return true;
   }
 
   inline const std::vector<Line2D>& Polygon::Edges() const {
     return this->edges_;
   }
 
-  inline bool Polygon::SetEdges(const std::vector<Line2D>& edges) {
+  inline void Polygon::SetEdges(const std::vector<Line2D>& edges) {
     this->edges_ = edges;
     this->UpdateVertices();
-
-    return true;
   }
 
   inline const std::vector<Point2D>& Polygon::Vertices() const {
@@ -205,8 +217,6 @@ namespace mediation_layer{
   }
 
   inline bool Polygon::Contains(const Point2D& point) const {
-    this->Check();
-
     for(const Line2D& edge: this->edges_) {
       if(false == edge.OnLeftSide(point)) { return false; }
     }
@@ -234,23 +244,13 @@ namespace mediation_layer{
       Line2D(Point2D(min_x, max_y), Point2D(min_x, min_y))});
   }
 
-  inline bool Polygon::ConstructFromPoints(const std::vector<Point2D>& points) {
+  inline void Polygon::ConstructFromPoints(const std::vector<Point2D>& points) {
     std::vector<Line2D> edges;
     edges.reserve(points.size());
     for(size_t idx = 0; idx < points.size(); ++idx) {
       edges.emplace_back(points[idx], points[(idx + 1) % points.size()]);
     }
     *(this) = Polygon(edges);
-
-    return true;
-  }
-
-  inline void Polygon::Check() const {  
-    // TODO: Check that the polygon is complete
-    if(false == this->IsConvex()) {
-      std::cerr << "Polygon is not convex. Exiting." << std::endl;
-      std::exit(EXIT_FAILURE);
-    }
   }
   
   inline std::vector<Line2D> Polygon::ReversedEdges() const {

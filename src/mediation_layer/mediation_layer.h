@@ -13,7 +13,10 @@ namespace mediation_layer {
   // machine games, two user are allowed to specify trajectories for
   // quadcopters. The user-provided trajectories may not be safe --- the
   // trajetories might cause quads to fly into each other, walls, or other
-  // obstacles in the environment. The Mediation
+  // obstacles in the environment. 
+  //
+  // TODO: Modify trajectories to prevent quads from flying into them
+  // TODO: Change hard-coded key 'phoenix'
   class MediationLayer {
     private:
       volatile std::atomic_bool ok_{true};

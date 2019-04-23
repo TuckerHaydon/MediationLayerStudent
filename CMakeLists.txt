@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1)
-project(PathPlanning)
+project(MediationLayer)
 set(CMAKE_CXX_STANDARD 14)
 
 set(default_build_type "Release")
@@ -12,7 +12,9 @@ if(NOT CMAKE_BUILD_TYPE)
     "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
-# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CURRENT_CMAKE_SOURCE_DIR}/bin)
+add_definitions(
+  -Wfatal-errors
+)
 
 add_subdirectory(src)
 add_subdirectory(test) 

@@ -5,25 +5,33 @@
 #include "types.h"
 
 namespace mediation_layer {
-  /*
-   * Encapsulates information about a 3D line
-   */
+  // Implementation of a 3D line
   class Line3D {
     private:
+      // Start point
       Point3D start_;
+
+      // End point
       Point3D end_;
+
+      // Forward-declare parser
       friend class YAML::convert<Line3D>;
 
     public:
+      // Constructor
       Line3D(const Point3D& start = Point3D(), 
              const Point3D& end = Point3D())
         : start_(start),
           end_(end) {}
 
+      // Start point accessor
       const Point3D& Start() const;
+
+      // End point accessor
       const Point3D& End() const;
 
-      Point3D AsVector() const;
+      // Expresses the line as a 3D vector
+      Vec3D AsVector() const;
 
   };
 
