@@ -8,15 +8,14 @@
 #include "types.h"
 
 namespace mediation_layer {
-
-  // Abstract class encapsulating a trajectory through time. At the most basic
-  // view, the class is just a list of Eigen::Vectors. Provides convienient
-  // methods for accessing the data.
+  // Abstract class representing a continuous trajectory sampled in time. At the
+  // most basic view, the class is just a list of Eigen::Vectors. Provides
+  // convienient methods for accessing the data.
   class Trajectory {
     private:
       // Underlying data structure. Formatted as follows:
       //   [ pos(3), vel(3), acc(3), yaw(1), time(1)]
-      // Time is a floating point value measuring the seconds since the epoch
+      // Time is a floating point value measuring the seconds since the unix epoch
       std::vector<
         Eigen::Vector<double, 11>, 
         Eigen::aligned_allocator<Eigen::Vector<double, 11>>> data_;
@@ -38,8 +37,14 @@ namespace mediation_layer {
       const Eigen::Vector<double, 3> Acceleration(const size_t idx) const;
       const double Yaw(const size_t idx) const;
       const double Time(const size_t idx) const;
+
+      // Position, Velocity, Acceleration
       const Eigen::Vector<double, 9> PVA(const size_t idx) const;
+
+      // Position, Velocity, Acceleration, Yaw, Time
       const Eigen::Vector<double, 11> PVAYT(const size_t idx) const;
+
+      // Number of samples in trajectory
       const size_t Size() const;
   };
 

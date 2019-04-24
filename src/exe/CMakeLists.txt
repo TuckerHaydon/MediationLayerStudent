@@ -20,23 +20,6 @@ set_target_properties(mediation_layer
   RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
 )
 
-add_executable(blue_autonomy_protocol blue_autonomy_protocol.cc)
-target_include_directories(blue_autonomy_protocol PUBLIC ${catkin_INCLUDE_DIRS})
-target_link_libraries(blue_autonomy_protocol
-  lib_geometry
-  lib_environment
-  lib_util
-  lib_mediation_layer
-  lib_ros_node
-  lib_ros_view
-  lib_autonomy_protocol
-  yaml-cpp
-  ${catkin_LIBRARIES})
-set_target_properties(blue_autonomy_protocol
-  PROPERTIES
-  RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
-)
-
 add_executable(physics_simulator physics_simulator.cc)
 target_include_directories(physics_simulator PUBLIC ${catkin_INCLUDE_DIRS})
 target_link_libraries(physics_simulator
@@ -50,6 +33,40 @@ target_link_libraries(physics_simulator
   yaml-cpp
   ${catkin_LIBRARIES})
 set_target_properties(physics_simulator
+  PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
+)
+
+add_executable(example_autonomy_protocol example_autonomy_protocol.cc)
+target_include_directories(example_autonomy_protocol PUBLIC ${catkin_INCLUDE_DIRS})
+target_link_libraries(example_autonomy_protocol
+  lib_geometry
+  lib_environment
+  lib_util
+  lib_mediation_layer
+  lib_ros_node
+  lib_ros_view
+  lib_autonomy_protocol
+  yaml-cpp
+  ${catkin_LIBRARIES})
+set_target_properties(example_autonomy_protocol
+  PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
+)
+
+add_executable(student_autonomy_protocol student_autonomy_protocol.cc)
+target_include_directories(student_autonomy_protocol PUBLIC ${catkin_INCLUDE_DIRS})
+target_link_libraries(student_autonomy_protocol
+  lib_geometry
+  lib_environment
+  lib_util
+  lib_mediation_layer
+  lib_ros_node
+  lib_ros_view
+  lib_autonomy_protocol
+  yaml-cpp
+  ${catkin_LIBRARIES})
+set_target_properties(student_autonomy_protocol
   PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
 )

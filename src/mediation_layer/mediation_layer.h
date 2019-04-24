@@ -16,6 +16,7 @@ namespace mediation_layer {
   // obstacles in the environment. 
   //
   // TODO: Modify trajectories to prevent quads from flying into obstacles
+  // TODO: Vet trajectories and ensure that they do not exceed prescribed bounds
   class MediationLayer {
     private:
       volatile std::atomic_bool ok_{true};
