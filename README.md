@@ -59,27 +59,35 @@ rosparam load params.yaml /mediation_layer/
 ```
 
 ### ROS Visualizer
+The ROS visualizer manages a 3D environment that the simulation will provides
+displays for.
 ```
 cd MediationLayer/run
 rosrun rviz rviz config.rviz
 ```
 
 ### Mediation Layer
+The mediation layer mediates proposed trajectories and ensures that they won't
+cause a quadcopter to crash.
 ```
 cd MediationLayer/bin
 ./mediation_layer
 ```
 
 ### Physics Simulator
+The physics simulator forward-integrates proposed quadcopter trajectories a
+small period in the future and publishes the resulting state.
 ```
 cd MediationLayer/bin
 ./physics_simulator
 ```
 
 ### Autonomy Protocol
+The autonomy protocol takes the current quadcopter state and publishes a
+proposed trajectory for the quadcopter to follow.
 ```
 cd MediationLayer/bin
-./blue_autonomy_protocol
+./example_autonomy_protocol
 ```
 
 ### Tests
