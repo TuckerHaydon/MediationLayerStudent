@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5.0)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
@@ -14,9 +14,14 @@ target_link_libraries(mediation_layer
   lib_ros_node
   lib_ros_view
   yaml-cpp
-  ${catkin_LIBRARIES})
+  ${catkin_LIBRARIES}
+)
+
 set_target_properties(mediation_layer
   PROPERTIES
+  CXX_STANDARD 14
+  CXX_STANDARD_REQUIRED YES
+  CXX_EXTENSIONS NO
   RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
 )
 
@@ -34,6 +39,9 @@ target_link_libraries(physics_simulator
   ${catkin_LIBRARIES})
 set_target_properties(physics_simulator
   PROPERTIES
+  CXX_STANDARD 14
+  CXX_STANDARD_REQUIRED YES
+  CXX_EXTENSIONS NO
   RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
 )
 
@@ -51,6 +59,9 @@ target_link_libraries(example_autonomy_protocol
   ${catkin_LIBRARIES})
 set_target_properties(example_autonomy_protocol
   PROPERTIES
+  CXX_STANDARD 14
+  CXX_STANDARD_REQUIRED YES
+  CXX_EXTENSIONS NO
   RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
 )
 
@@ -68,5 +79,8 @@ target_link_libraries(student_autonomy_protocol
   ${catkin_LIBRARIES})
 set_target_properties(student_autonomy_protocol
   PROPERTIES
+  CXX_STANDARD 14
+  CXX_STANDARD_REQUIRED YES
+  CXX_EXTENSIONS NO
   RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
 )

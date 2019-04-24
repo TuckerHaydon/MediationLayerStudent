@@ -4,15 +4,7 @@
 
 #include "autonomy_protocol.h"
 
-#include <chrono>
-
 namespace mediation_layer {
-  // The StudentAutonomyProtocol is a class that demonstrates how to create a
-  // trajectory for a quadcopter to follow. The example protocol instructs a
-  // quadcopter to fly in a circle of radius two at an altitude of one meter.
-  //
-  // The trajectory with be specified by parameterizing the circle with time.
-  // The quadcopter must complete a revolution every five seconds. 
   class StudentAutonomyProtocol : public AutonomyProtocol {
     private:
 
@@ -38,14 +30,4 @@ namespace mediation_layer {
 
       std::unordered_map<std::string, Trajectory> UpdateTrajectories() override;
   };
-
-  //  ******************
-  //  * IMPLEMENTATION *
-  //  ******************
-  std::unordered_map<std::string, Trajectory> StudentAutonomyProtocol::UpdateTrajectories() {
-
-    // STUDENTS MUST FILL OUT THIS FUNCTION
-
-    return std::unordered_map<std::string, Trajectory>();
-  }
 }

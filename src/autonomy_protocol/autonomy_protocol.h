@@ -13,6 +13,7 @@
 
 #include "trajectory_warden.h"
 #include "game_snapshot.h"
+#include "map3d.h"
 
 namespace mediation_layer {
   // The AutonomyProtocol interfaces with the GameSimulator and enables an
@@ -88,7 +89,7 @@ namespace mediation_layer {
   //  ******************
   //  * IMPLEMENTATION *
   //  ******************
-  void AutonomyProtocol::Run() {
+  inline void AutonomyProtocol::Run() {
     while(this->ok_) {
 
       // Request trajectory updates from the virtual function
@@ -113,7 +114,7 @@ namespace mediation_layer {
     }
   }
 
-  void AutonomyProtocol::Stop() {
+  inline void AutonomyProtocol::Stop() {
     this->ok_ = false;
   }
 }

@@ -2,9 +2,7 @@
 
 #pragma once
 
-#include <memory>
 #include <mutex>
-#include <string>
 
 #include "quad_state.h"
 
@@ -22,19 +20,5 @@ namespace mediation_layer {
 
       void Write(const QuadState& state);
       void Read(QuadState& state) const;
-
   };
-
-  //  ******************
-  //  * IMPLEMENTATION *
-  //  ******************
-  inline void QuadStateGuard::Write(const QuadState& state) {
-    std::lock_guard<std::mutex> lock(this->mtx_);
-    this->state_ = state;
-  }
-
-  inline void QuadStateGuard::Read(QuadState& state) const {
-    std::lock_guard<std::mutex> lock(this->mtx_);
-    state = this->state_;
-  }
 }

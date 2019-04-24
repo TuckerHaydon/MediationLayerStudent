@@ -25,16 +25,4 @@ namespace mediation_layer {
       // Publish the message
       void Publish(const visualization_msgs::Marker& msg);
   };
-
-  //  ******************
-  //  * IMPLEMENTATION *
-  //  ******************
-  inline MarkerPublisherNode::MarkerPublisherNode(const std::string& topic) {
-    this->publisher_guard_ 
-      = std::make_shared<PublisherGuard<visualization_msgs::Marker>>(topic);
-  }
-
-  inline void MarkerPublisherNode::Publish(const visualization_msgs::Marker& msg) {
-    this->publisher_guard_->Publish(msg);
-  }
 }
