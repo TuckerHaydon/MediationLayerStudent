@@ -13,18 +13,7 @@
 #include "quad_state.h"
 #include "quad_state_warden.h"
 
-#include "point3d_potential.h"
-#include "plane3d_potential.h"
-
 using namespace mediation_layer;
-
-void test_Point3DPotential() {
-  {
-    Point3D point(0,0,0);
-    Point3DPotential::Options options;
-    Point3DPotential potential(point, options);
-  }
-}
 
 void test_TrajectoryWarden() {
   { // Trivial
@@ -110,75 +99,11 @@ void test_QuadStateWarden() {
   }
 }
 
-void test_Plane3DPotential() {
-  { // No force outside of range
-    Plane3D plane({
-        Line3D(Point3D(0,0,0), Point3D(1,0,0)),
-        Line3D(Point3D(1,0,0), Point3D(1,1,0)),
-        Line3D(Point3D(1,1,0), Point3D(0,1,0)),
-        Line3D(Point3D(0,0,0), Point3D(0,0,0)),
-        });
-    Plane3DPotential::Options options;
-    options.activation_dist = 1;
-    options.min_dist = 0.2;
-    const Plane3DPotential potential(plane, options);
-    const Point3D p(0.5, 0.5, 100);
-    const Vec3D force = potential.Resolve(p);
-    assert(true == force.isApprox(Vec3D(0,0,0)));
-  }
-
-  { // Testing for inside and outside of convex region
-    Plane3D plane({
-        Line3D(Point3D(0,0,0), Point3D(1,0,0)),
-        Line3D(Point3D(1,0,0), Point3D(1,1,0)),
-        Line3D(Point3D(1,1,0), Point3D(0,1,0)),
-        Line3D(Point3D(0,0,0), Point3D(0,0,0)),
-        });
-    Plane3DPotential::Options options;
-    options.activation_dist = 1;
-    options.min_dist = 0.2;
-    const Plane3DPotential potential(plane, options);
-    { // Outside
-      const Point3D p(0.5, -0.5, 0.5);
-      const Vec3D force = potential.Resolve(p);
-      assert(true == force.isApprox(Vec3D(0,0,0)));
-    }
-
-    { // Inside
-      const Point3D p(0.5, 0.5, 0.5);
-      const Vec3D force = potential.Resolve(p);
-      assert(false == force.isApprox(Vec3D(0,0,0)));
-    }
-  }
-
-  { // Deterministic force
-    Plane3D plane({
-        Line3D(Point3D(0,0,0), Point3D(1,0,0)),
-        Line3D(Point3D(1,0,0), Point3D(1,1,0)),
-        Line3D(Point3D(1,1,0), Point3D(0,1,0)),
-        Line3D(Point3D(0,0,0), Point3D(0,0,0)),
-        });
-    Plane3DPotential::Options options;
-    options.activation_dist = 1;
-    options.min_dist = 0.0;
-    options.scale = 1.0;
-    const Plane3DPotential potential(plane, options);
-    { // Outside
-      const Point3D p(0.5, 0.5, 0.5);
-      const Vec3D force = potential.Resolve(p);
-      assert(true == force.isApprox(Vec3D(0,0,3)));
-    }
-  }
-
-}
-
 int main(int argc, char** argv) {
   test_Trajectory();
   test_TrajectoryWarden();
   test_QuadState();
   test_QuadStateWarden();
-  test_Point3DPotential();
-  test_Plane3DPotential();
 
   std::cout << "All tests passed!" << std::endl;
   return EXIT_SUCCESS;

@@ -1,9 +1,9 @@
-cmake_minimum_required(VERSION 3.1)
-project(MediationLayer)
-set(CMAKE_CXX_STANDARD 14)
+cmake_minimum_required(VERSION 3.5.0)
+project(GameEngine)
+
 
 set(default_build_type "Release")
-if(NOT CMAKE_BUILD_TYPE)
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "Setting build type to '${default_build_type}' as none was specified.")
   set(CMAKE_BUILD_TYPE "${default_build_type}" CACHE
       STRING "Choose the type of build." FORCE)
@@ -15,6 +15,7 @@ endif()
 add_definitions(
   -Wfatal-errors
 )
+set(CMAKE_CXX_STANDARD 14)
 
 add_subdirectory(src)
 add_subdirectory(test) 

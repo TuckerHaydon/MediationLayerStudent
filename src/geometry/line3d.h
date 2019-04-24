@@ -3,6 +3,7 @@
 #pragma once 
 
 #include "types.h"
+#include "yaml-cpp/yaml.h"
 
 namespace mediation_layer {
   // Implementation of a 3D line
@@ -34,21 +35,6 @@ namespace mediation_layer {
       Vec3D AsVector() const;
 
   };
-
-  //  ******************
-  //  * IMPLEMENTATION *
-  //  ******************
-  inline const Point3D& Line3D::Start() const {
-    return this->start_;
-  }
-
-  inline const Point3D& Line3D::End() const {
-    return this->end_;
-  }
-
-  inline Point3D Line3D::AsVector() const {
-    return this->end_ - this->start_;
-  }
 }
 
 namespace YAML {
