@@ -13,7 +13,7 @@
 #include "quad_state_guard.h"
 #include "quad_state.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // Class that manages data transfer between a state warden and state guards
   class QuadStateDispatcher {
     private:

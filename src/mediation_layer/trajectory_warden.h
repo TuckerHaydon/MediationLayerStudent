@@ -13,7 +13,7 @@
 
 #include "trajectory.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // TrajectoryWarden is a thread-safe abstraction around an unordered map
   // [trajectory_name -> trajectory]. TrajectoryWarden provides thread-safe access,
   // modification, and await-modification of the underlying trajectory.

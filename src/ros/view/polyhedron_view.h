@@ -10,7 +10,7 @@
 #include "marker_view.h"
 #include "polyhedron.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // Ros view object for a polyhedron
   class PolyhedronView : public MarkerView {
     public:

@@ -4,7 +4,7 @@
 
 #include "autonomy_protocol.h"
 
-namespace mediation_layer {
+namespace game_engine {
   class StudentAutonomyProtocol : public AutonomyProtocol {
     private:
 

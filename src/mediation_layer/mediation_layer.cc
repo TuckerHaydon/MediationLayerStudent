@@ -4,7 +4,7 @@
 
 #include "mediation_layer.h"
 
-namespace mediation_layer {
+namespace game_engine {
   void MediationLayer::TransferData(
       const std::string& key,
       std::shared_ptr<TrajectoryWarden> trajectory_warden_in,

@@ -2,7 +2,7 @@
 
 #include "marker_publisher_node.h"
 
-namespace mediation_layer {
+namespace game_engine {
   MarkerPublisherNode::MarkerPublisherNode(const std::string& topic) {
     this->publisher_guard_ 
       = std::make_shared<PublisherGuard<visualization_msgs::Marker>>(topic);

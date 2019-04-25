@@ -7,7 +7,7 @@
 
 #include "node.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // Abstract node implementation that contains Eigen data. Due to constraints
   // on hash function precision, users of NodeEigen should not expect their data
   // to contain more than 3 decimal points of accuracy. See the hash function

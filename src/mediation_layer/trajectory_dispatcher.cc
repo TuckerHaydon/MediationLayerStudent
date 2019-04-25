@@ -2,7 +2,7 @@
 
 #include "trajectory_dispatcher.h"
 
-namespace mediation_layer {
+namespace game_engine {
   void TrajectoryDispatcher::Run(
       std::shared_ptr<TrajectoryWarden> warden,
       std::unordered_map<

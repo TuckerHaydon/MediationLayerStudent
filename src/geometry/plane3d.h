@@ -9,7 +9,7 @@
 #include "plane3d.h"
 #include "line3d.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // Implementation of a 2D closed, convex polygon embedded in a 3D space. A
   // plane may be represented by a set of continuous 3D lines all lying on the
   // same plane and encapsulating a convex region. 
@@ -63,22 +63,22 @@ namespace mediation_layer {
 
 namespace YAML {
   template<>
-  struct convert<mediation_layer::Plane3D> {
-    static Node encode(const mediation_layer::Plane3D& rhs) {
+  struct convert<game_engine::Plane3D> {
+    static Node encode(const game_engine::Plane3D& rhs) {
       Node node;
       node.push_back(rhs.edges_);
       return node;
     }
   
-    static bool decode(const Node& node, mediation_layer::Plane3D& rhs) {
+    static bool decode(const Node& node, game_engine::Plane3D& rhs) {
       if(!node.IsSequence()) {
         return false;
       }
   
-      std::vector<mediation_layer::Line3D> edges;
+      std::vector<game_engine::Line3D> edges;
       edges.reserve(node.size());
       for(size_t idx = 0; idx < node.size(); ++idx) {
-        edges.push_back(node[idx].as<mediation_layer::Line3D>());
+        edges.push_back(node[idx].as<game_engine::Line3D>());
       }
   
       rhs.edges_ = edges;

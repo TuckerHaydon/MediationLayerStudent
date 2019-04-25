@@ -2,7 +2,7 @@
 
 #include "balloon_view.h"
 
-namespace mediation_layer {
+namespace game_engine {
   std::vector<visualization_msgs::Marker> BalloonView::Markers() const {
     visualization_msgs::Marker marker;
     marker.header.frame_id = this->options_.frame_id;

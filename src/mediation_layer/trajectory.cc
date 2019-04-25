@@ -2,7 +2,7 @@
 
 #include "trajectory.h"
 
-namespace mediation_layer {
+namespace game_engine {
   const size_t Trajectory::Size() const {
     return this->data_.size();
   }

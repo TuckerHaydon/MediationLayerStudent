@@ -2,7 +2,7 @@
 
 #include "student_autonomy_protocol.h"
 
-namespace mediation_layer {
+namespace game_engine {
   std::unordered_map<std::string, Trajectory> StudentAutonomyProtocol::UpdateTrajectories() {
 
     // STUDENTS MUST FILL OUT THIS FUNCTION

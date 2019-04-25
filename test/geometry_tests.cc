@@ -15,7 +15,7 @@
 #include "polyhedron.h"
 #include "yaml-cpp/yaml.h"
 
-using namespace mediation_layer;
+using namespace game_engine;
 
 void test_Polyhedron() {
   std::vector<Plane3D> faces(6);

@@ -5,7 +5,7 @@
 #include <visualization_msgs/Marker.h>
 #include <vector>
 
-namespace mediation_layer {
+namespace game_engine {
   // MarkerView specifies interface functions for View objects that publish
   // markers
   class MarkerView {

@@ -2,7 +2,7 @@
 
 #include "plane3d_view.h"
 
-namespace mediation_layer {
+namespace game_engine {
   std::vector<visualization_msgs::Marker> Plane3DView::Markers() const {
     visualization_msgs::Marker marker;
     marker.header.frame_id = this->options_.frame_id;

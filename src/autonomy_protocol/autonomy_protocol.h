@@ -15,7 +15,7 @@
 #include "game_snapshot.h"
 #include "map3d.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // The AutonomyProtocol interfaces with the GameSimulator and enables an
   // actor to read limited information from the GameSimulator and report
   // intended future actions for specific quadcopters.

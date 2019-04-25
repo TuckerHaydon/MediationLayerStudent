@@ -8,7 +8,7 @@
 
 #include "publisher_guard.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // ROS node that publishers marker messages. Wraps the publisher in a
   // publisher guard to ensure that instances of this class may be used in
   // across multiple threads

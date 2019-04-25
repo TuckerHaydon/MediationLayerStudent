@@ -5,7 +5,7 @@
 #include <string>
 #include <chrono>
 
-namespace mediation_layer {
+namespace game_engine {
   // Utility timer class
   class Timer {
     private:

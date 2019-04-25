@@ -10,7 +10,7 @@
 #include "marker_view.h"
 #include "quad_state_guard.h"
 
-namespace mediation_layer {
+namespace game_engine {
   class QuadView : public MarkerView {
     public:
       struct Options {

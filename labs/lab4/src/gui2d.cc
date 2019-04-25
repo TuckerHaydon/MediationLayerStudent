@@ -2,7 +2,7 @@
 
 #include "gui2d.h"
 
-namespace mediation_layer {
+namespace game_engine {
   namespace {
     struct PolygonView {
       struct Options {

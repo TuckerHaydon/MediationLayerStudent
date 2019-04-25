@@ -4,7 +4,7 @@
 
 #include "example_autonomy_protocol.h"
 
-namespace mediation_layer {
+namespace game_engine {
   std::unordered_map<std::string, Trajectory> ExampleAutonomyProtocol::UpdateTrajectories() {
 
     // Always use the chrono::system_clock for time. Trajectories require time

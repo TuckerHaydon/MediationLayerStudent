@@ -4,7 +4,7 @@
 
 #include "quad_state_warden.h"
 
-namespace mediation_layer {
+namespace game_engine {
   bool QuadStateWarden::Register(const std::string& key) {
     // If this key already exists, return false
     if(this->map_.end() != this->map_.find(key)) {

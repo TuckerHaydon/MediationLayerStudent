@@ -2,7 +2,7 @@
 
 #include "occupancy_grid2d.h"
 
-namespace mediation_layer {
+namespace game_engine {
   OccupancyGrid2D::~OccupancyGrid2D() {
     if(false == this->heap_allocated_) { return; }
 

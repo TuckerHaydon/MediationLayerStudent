@@ -2,7 +2,7 @@
 
 #include "polyhedron.h"
 
-namespace mediation_layer {
+namespace game_engine {
   const std::vector<Plane3D>& Polyhedron::Faces() const {
     return this->faces_;
   }

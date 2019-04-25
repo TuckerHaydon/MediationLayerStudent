@@ -8,7 +8,7 @@
 #include "quad_state_warden.h"
 #include "quad_state.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // A GameSnapshot is a particular view of the game that is presented to the
   // autonomy protocol. Typically, a team has full knowledge of the pose of
   // their quadcopters but only has limited knowledge of the pose of the

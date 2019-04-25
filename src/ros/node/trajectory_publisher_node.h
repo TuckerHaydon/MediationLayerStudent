@@ -11,7 +11,7 @@
 #include "publisher_guard.h"
 #include "mg_msgs/PVAYStampedTrajectory.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // Trajectory publisher acts as an adapter between the ROS ecosystem and the
   // internal mediation layer ecosystem. Transforms internal trajectory into a
   // ROS trajectory and publishes it.

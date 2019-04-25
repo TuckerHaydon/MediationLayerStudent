@@ -9,7 +9,7 @@
 
 #include "node_eigen.h"
 
-namespace mediation_layer {
+namespace game_engine {
 
   // Structure that encapsulates information about a path
   struct PathInfo {

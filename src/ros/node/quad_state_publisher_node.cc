@@ -2,7 +2,7 @@
 
 #include "quad_state_publisher_node.h"
 
-namespace mediation_layer {
+namespace game_engine {
   QuadStatePublisherNode::QuadStatePublisherNode(
       const std::string& topic) {
     this->publisher_guard_ 

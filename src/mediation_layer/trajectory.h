@@ -7,7 +7,7 @@
 
 #include "types.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // Abstract class representing a continuous trajectory sampled in time. At the
   // most basic view, the class is just a list of Eigen::Vectors. Provides
   // convienient methods for accessing the data.

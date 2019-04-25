@@ -11,7 +11,7 @@
 #include "trajectory.h"
 #include "mg_msgs/PVAYStampedTrajectory.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // Trajectory subscriber acts as an adapter between the ROS ecosystem and the
   // internal mediation layer ecosystem. Transforms incoming ROS data into a
   // trajectory and then passes it to the TrajectoryWarden to manage.

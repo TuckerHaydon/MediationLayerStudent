@@ -4,7 +4,7 @@
 
 #include "dijkstra2d.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // Hiding extraneous information
   // Do not need to modify this
   using Node2DPtr = std::shared_ptr<Node2D>;

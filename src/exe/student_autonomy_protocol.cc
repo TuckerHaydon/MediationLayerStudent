@@ -27,7 +27,7 @@
 #include "student_autonomy_protocol.h"
 #include "map3d.h"
 
-using namespace mediation_layer;
+using namespace game_engine;
 
 namespace { 
   // Signal variable and handler

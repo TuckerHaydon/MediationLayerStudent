@@ -2,7 +2,7 @@
 
 #include "trajectory_subscriber_node.h"
 
-namespace mediation_layer {
+namespace game_engine {
   TrajectorySubscriberNode::TrajectorySubscriberNode(
       const std::string& topic, 
       const std::string& key,

@@ -11,7 +11,7 @@
 #include "publisher_guard.h"
 #include "nav_msgs/Odometry.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // QuadStatePublisherNode acts as an adapter between the ROS ecosystem and the
   // internal mediation layer ecosystem. Transforms internal QuadState into a
   // ROS quad_state and publishes it.

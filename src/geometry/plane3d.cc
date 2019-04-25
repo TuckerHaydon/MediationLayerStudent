@@ -2,7 +2,7 @@
 
 #include "plane3d.h"
 
-namespace mediation_layer {
+namespace game_engine {
   Eigen::Vector4d Plane3D::Equation() const {
     // Determine the equation for the plane. The equation can be found in the
     // following manner:

@@ -4,7 +4,7 @@
 
 #include "timer.h"
 
-namespace mediation_layer {
+namespace game_engine {
   void Timer::Start() {
     this->start_time_ 
       = std::chrono::high_resolution_clock::now();

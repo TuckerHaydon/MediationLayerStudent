@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <cassert>
 
-namespace mediation_layer {
+namespace game_engine {
   // Data structure containing time span information for use integration
   //
   // TODO: Add checks for valid data

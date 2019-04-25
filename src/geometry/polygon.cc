@@ -2,7 +2,7 @@
 
 #include "polygon.h"
 
-namespace mediation_layer {
+namespace game_engine {
   Polygon Polygon::Expand(double dist) const { 
     // Find the arithmetic mean of the vertices. For a convex polygon,
     // guaranteed to be contained by the polygon.

@@ -8,7 +8,7 @@
 #include "directed_edge.h"
 #include "node_eigen.h"
 
-namespace mediation_layer{
+namespace game_engine{
   // A graph maintains a set of directed edges connecting various nodes. 
   //
   // Graph is templated and may contain different types of data.  Convenient

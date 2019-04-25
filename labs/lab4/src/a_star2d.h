@@ -11,7 +11,7 @@
 #include "timer.h"
 #include "path_info.h"
 
-namespace mediation_layer {
+namespace game_engine {
 
   struct AStar2D {
     using Node2DPtr = std::shared_ptr<Node2D>;

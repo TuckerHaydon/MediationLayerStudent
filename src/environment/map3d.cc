@@ -2,7 +2,7 @@
 
 #include "map3d.h"
 
-namespace mediation_layer {
+namespace game_engine {
   const Polyhedron& Map3D::Boundary() const {
     return this->boundary_;
   } 
