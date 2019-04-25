@@ -63,7 +63,7 @@ The ROS visualizer manages a 3D environment that the simulation will provides
 displays for.
 ```
 cd MediationLayer/run
-rosrun rviz rviz config.rviz
+rosrun rviz rviz -d config.rviz
 ```
 
 ### Mediation Layer
