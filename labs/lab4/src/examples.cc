@@ -11,7 +11,7 @@
  * data from the graph, printing objects, and evaluating object equality.
  */
 
-using namespace mediation_layer;
+using namespace game_engine;
 using Node2DPtr = std::shared_ptr<Node2D>;
 
 int main(int argc, char** argv) {

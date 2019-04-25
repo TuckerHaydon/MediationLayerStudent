@@ -2,7 +2,7 @@
 
 #include "line3d.h"
 
-namespace mediation_layer {
+namespace game_engine {
   const Point3D& Line3D::Start() const {
     return this->start_;
   }

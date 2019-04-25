@@ -2,7 +2,7 @@
 
 #include "quad_state.h"
 
-namespace mediation_layer {
+namespace game_engine {
   Eigen::Vector3d QuadState::Position() const {
     return data_.segment(0,3);
   }

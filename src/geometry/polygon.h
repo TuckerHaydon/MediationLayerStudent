@@ -13,7 +13,7 @@
 #include "line2d.h"
 #include "yaml-cpp/yaml.h"
 
-namespace mediation_layer{
+namespace game_engine{
   // Implementation of a 2D closed, convex polygon in R2. A polygon may be
   // represented by a set of continuous 2D lines all lying on the same plane and
   // encapsulating a convex region. 
@@ -93,22 +93,22 @@ namespace mediation_layer{
 
 namespace YAML {
   template<>
-  struct convert<mediation_layer::Polygon> {
-    static Node encode(const mediation_layer::Polygon& rhs) {
+  struct convert<game_engine::Polygon> {
+    static Node encode(const game_engine::Polygon& rhs) {
       Node node;
       node.push_back(rhs.edges_);
       return node;
     }
   
-    static bool decode(const Node& node, mediation_layer::Polygon& rhs) {
+    static bool decode(const Node& node, game_engine::Polygon& rhs) {
       if(!node.IsSequence()) {
         return false;
       }
   
-      std::vector<mediation_layer::Line2D> edges;
+      std::vector<game_engine::Line2D> edges;
       edges.reserve(node.size());
       for(size_t idx = 0; idx < node.size(); ++idx) {
-        edges.push_back(node[idx].as<mediation_layer::Line2D>());
+        edges.push_back(node[idx].as<game_engine::Line2D>());
       }
   
       rhs.SetEdges(edges);

@@ -10,7 +10,7 @@
 #include "runge_kutta_4.h"
 #include "time_span.h"
 
-using namespace mediation_layer;
+using namespace game_engine;
 
 void TestRK4Eigen(double epsilon) {
   

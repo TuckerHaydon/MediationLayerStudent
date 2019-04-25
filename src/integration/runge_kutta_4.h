@@ -6,7 +6,7 @@
 
 #include "time_span.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // 4th-order RungeKutta integrator implementation. RungeKutta4 is templated
   // and may take a variety of types of data.
   //

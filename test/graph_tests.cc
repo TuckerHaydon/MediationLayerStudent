@@ -11,7 +11,7 @@
 #include "directed_edge.h"
 #include "graph.h"
 
-using namespace mediation_layer;
+using namespace game_engine;
 
 void test_NodeEigen() {
   NodeEigen<2> n1(Eigen::Vector2d(0,0));

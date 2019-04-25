@@ -9,7 +9,7 @@
 #include "node_eigen.h"
 #include "yaml-cpp/yaml.h"
 
-using namespace mediation_layer;
+using namespace game_engine;
 
 void test_Map2D() {
   { // Contains/Free Space

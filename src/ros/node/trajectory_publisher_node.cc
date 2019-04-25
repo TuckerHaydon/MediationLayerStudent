@@ -2,7 +2,7 @@
 
 #include "trajectory_publisher_node.h"
 
-namespace mediation_layer {
+namespace game_engine {
   TrajectoryPublisherNode::TrajectoryPublisherNode(
       const std::string& topic) {
     this->publisher_guard_ 

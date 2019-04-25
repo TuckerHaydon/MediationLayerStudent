@@ -2,7 +2,7 @@
 
 #include "game_snapshot.h"
 
-namespace mediation_layer {
+namespace game_engine {
   bool GameSnapshot::Position(
       const std::string& quad_name, 
       Eigen::Vector3d& position) {

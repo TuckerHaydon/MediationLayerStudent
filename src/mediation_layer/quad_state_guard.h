@@ -6,7 +6,7 @@
 
 #include "quad_state.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // State guard is a wrapper around a QuadState that ensures thread-safe,
   // sychronized access to the QuadState. 
   class QuadStateGuard {

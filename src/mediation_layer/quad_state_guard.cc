@@ -2,7 +2,7 @@
 
 #include "quad_state_guard.h"
 
-namespace mediation_layer {
+namespace game_engine {
   void QuadStateGuard::Write(const QuadState& state) {
     std::lock_guard<std::mutex> lock(this->mtx_);
     this->state_ = state;

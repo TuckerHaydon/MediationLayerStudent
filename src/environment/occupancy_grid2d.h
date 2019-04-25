@@ -12,7 +12,7 @@
 #include "graph.h"
 #include "node_eigen.h"
 
-namespace mediation_layer {
+namespace game_engine {
   class OccupancyGrid2D {
     private:
       bool** data_;

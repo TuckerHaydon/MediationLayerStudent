@@ -4,7 +4,7 @@
 
 #include "autonomy_protocol.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // The ExampleAutonomyProtocol is a class that demonstrates how to create a
   // trajectory for a quadcopter to follow. The example protocol instructs a
   // quadcopter to fly in a circle of radius two at an altitude of one meter.

@@ -7,7 +7,7 @@
 #include <string>
 #include <ros/ros.h>
 
-namespace mediation_layer {
+namespace game_engine {
   // Publisher guard is a wrapper around a publisher that ensures thread-safe,
   // sychronized access to a publisher. 
   //

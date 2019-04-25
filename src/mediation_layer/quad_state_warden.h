@@ -12,7 +12,7 @@
 
 #include "quad_state.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // QuadStateWarden encapsulates state data and provides thread-safe read, write,
   // and await-modification access.
   class QuadStateWarden {

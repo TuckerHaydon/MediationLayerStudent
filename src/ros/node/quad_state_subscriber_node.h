@@ -12,7 +12,7 @@
 
 #include "nav_msgs/Odometry.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // QuadStateSubscriberNode acts as an adapter between the ROS ecosystem and the
   // internal mediation layer ecosystem. Transforms incoming ROS data into a
   // QuadState and then passes it to the QuadStateWarden to manage.

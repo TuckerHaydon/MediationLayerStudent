@@ -8,7 +8,7 @@
 #include "trajectory_warden.h"
 #include "quad_state_warden.h"
 
-namespace mediation_layer { 
+namespace game_engine { 
   // The mediation layer is a software layer that mediates user input to ensure
   // that the trajectories provided to quadcopters are safe. During the
   // machine games, two user are allowed to specify trajectories for

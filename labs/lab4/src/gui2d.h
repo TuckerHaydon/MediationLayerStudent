@@ -12,7 +12,7 @@
 #include "polygon.h"
 #include "node_eigen.h"
 
-namespace mediation_layer {
+namespace game_engine {
 
   class Gui2D {
     public:

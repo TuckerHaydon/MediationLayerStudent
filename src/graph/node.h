@@ -7,7 +7,7 @@
 #include <type_traits>
 #include <memory>
 
-namespace mediation_layer {
+namespace game_engine {
   // Interface defining a Node data for use in DirectedEdge and Graph data
   // structures. Nodes contain data, but must also implement equals and hash
   // functions for storage in STL containers.

@@ -3,7 +3,7 @@
 #include "physics_simulator.h"
 #include "runge_kutta_4.h"
 
-namespace mediation_layer {
+namespace game_engine {
   namespace{
 		/* mvnrnd
     * Generates a multivariate gaussian sample.

@@ -13,7 +13,7 @@
 #include "quad_state.h"
 #include "quad_state_warden.h"
 
-using namespace mediation_layer;
+using namespace game_engine;
 
 void test_TrajectoryWarden() {
   { // Trivial

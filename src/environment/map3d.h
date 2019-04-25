@@ -11,7 +11,7 @@
 #include "polyhedron.h"
 #include "yaml-cpp/yaml.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // The Map3D class encapsulates data about static obstacles and map
   // boundaries. The map maintains data structures, setters, and accessors to
   // the various planes, lines, and vertices that make up a map.
@@ -67,23 +67,23 @@ namespace mediation_layer {
 
 namespace YAML {
 template<>
-struct convert<mediation_layer::Map3D> {
-  static Node encode(const mediation_layer::Map3D& rhs) {
+struct convert<game_engine::Map3D> {
+  static Node encode(const game_engine::Map3D& rhs) {
     Node node;
     node["boundary"] = rhs.boundary_;
     node["obstacles"] = rhs.obstacles_;
     return node;
   }
 
-  static bool decode(const Node& node, mediation_layer::Map3D& rhs) {
+  static bool decode(const Node& node, game_engine::Map3D& rhs) {
     if(!node.IsMap() || !node["boundary"]) {
       return false;
     }
 
-    rhs.boundary_ = node["boundary"].as<mediation_layer::Polyhedron>();
+    rhs.boundary_ = node["boundary"].as<game_engine::Polyhedron>();
 
     if(node["obstacles"]) {
-      rhs.obstacles_ = node["obstacles"].as<std::vector<mediation_layer::Polyhedron>>();
+      rhs.obstacles_ = node["obstacles"].as<std::vector<game_engine::Polyhedron>>();
     }
 
     return true;

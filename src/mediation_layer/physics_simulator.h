@@ -17,7 +17,7 @@
 #include "trajectory_warden.h"
 #include "quad_state_publisher_node.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // The physics simulator alters the path of mediated trajectories to create
   // stochastic variations in a manner that mirrors conditions seen in real
   // life. After introducing the variations, the simulator selects the perturbed state of

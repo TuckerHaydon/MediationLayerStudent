@@ -2,7 +2,7 @@
 
 #include "quad_state_subscriber_node.h"
 
-namespace mediation_layer {
+namespace game_engine {
   QuadStateSubscriberNode::QuadStateSubscriberNode(
       const std::string& topic, 
       const std::string& key,

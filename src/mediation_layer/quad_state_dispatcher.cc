@@ -2,7 +2,7 @@
 
 #include "quad_state_dispatcher.h"
 
-namespace mediation_layer {
+namespace game_engine {
   void QuadStateDispatcher::Run(
       std::shared_ptr<QuadStateWarden> warden, 
       std::unordered_map<std::string, std::shared_ptr<QuadStateGuard>> state_guards) {

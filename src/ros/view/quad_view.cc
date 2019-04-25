@@ -2,7 +2,7 @@
 
 #include "quad_view.h"
 
-namespace mediation_layer {
+namespace game_engine {
   std::vector<visualization_msgs::Marker> QuadView::Markers() const {
     QuadState quad_state;
     this->quad_state_guard_->Read(quad_state);

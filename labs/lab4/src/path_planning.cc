@@ -10,7 +10,7 @@
 #include "path_info.h"
 #include "gui2d.h"
 
-using namespace mediation_layer;
+using namespace game_engine;
 using Node2DPtr = std::shared_ptr<Node2D>;
 
 

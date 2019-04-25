@@ -10,7 +10,7 @@
 
 #include "marker_view.h"
 
-namespace mediation_layer {
+namespace game_engine {
   class BalloonView : public MarkerView {
     public:
       struct Options {

@@ -10,7 +10,7 @@
 #include "marker_view.h"
 #include "plane3d.h"
 
-namespace mediation_layer {
+namespace game_engine {
   class Plane3DView : public MarkerView {
     public:
       struct Options {

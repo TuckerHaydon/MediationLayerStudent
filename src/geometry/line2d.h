@@ -7,7 +7,7 @@
 #include "types.h"
 #include "yaml-cpp/yaml.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // A 2D line implementation
   class Line2D {
     private:
@@ -82,8 +82,8 @@ namespace mediation_layer {
 
 namespace YAML {
   template<>
-  struct convert<mediation_layer::Line2D> {
-    static Node encode(const mediation_layer::Line2D& rhs) {
+  struct convert<game_engine::Line2D> {
+    static Node encode(const game_engine::Line2D& rhs) {
       Node node;
       node.push_back(rhs.start_.x());
       node.push_back(rhs.start_.y());
@@ -92,7 +92,7 @@ namespace YAML {
       return node;
     }
   
-    static bool decode(const Node& node, mediation_layer::Line2D& rhs) {
+    static bool decode(const Node& node, game_engine::Line2D& rhs) {
       if(!node.IsSequence() || node.size() != 4) {
         return false;
       }

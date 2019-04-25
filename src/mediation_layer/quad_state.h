@@ -4,7 +4,7 @@
 
 #include <Eigen/Dense>
 
-namespace mediation_layer {
+namespace game_engine {
   // Abstract class encapsulating the current state of an element in the
   // mediation layer
   class QuadState {

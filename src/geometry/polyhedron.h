@@ -9,7 +9,7 @@
 #include "yaml-cpp/yaml.h"
 #include "plane3d.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // A polyhedron is represented by a connected set of convex polygons that
   // encapsulate a closed, convex, 3D space.
   //
@@ -48,22 +48,22 @@ namespace mediation_layer {
 
 namespace YAML {
   template<>
-  struct convert<mediation_layer::Polyhedron> {
-    static Node encode(const mediation_layer::Polyhedron& rhs) {
+  struct convert<game_engine::Polyhedron> {
+    static Node encode(const game_engine::Polyhedron& rhs) {
       Node node;
       node.push_back(rhs.faces_);
       return node;
     }
   
-    static bool decode(const Node& node, mediation_layer::Polyhedron& rhs) {
+    static bool decode(const Node& node, game_engine::Polyhedron& rhs) {
       if(!node.IsSequence()) {
         return false;
       }
   
-      std::vector<mediation_layer::Plane3D> faces;
+      std::vector<game_engine::Plane3D> faces;
       faces.reserve(node.size());
       for(size_t idx = 0; idx < node.size(); ++idx) {
-        faces.push_back(node[idx].as<mediation_layer::Plane3D>());
+        faces.push_back(node[idx].as<game_engine::Plane3D>());
       }
   
       rhs.faces_ = faces;

@@ -5,7 +5,7 @@
 #include "types.h"
 #include "yaml-cpp/yaml.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // Implementation of a 3D line
   class Line3D {
     private:
@@ -39,8 +39,8 @@ namespace mediation_layer {
 
 namespace YAML {
   template<>
-  struct convert<mediation_layer::Line3D> {
-    static Node encode(const mediation_layer::Line3D& rhs) {
+  struct convert<game_engine::Line3D> {
+    static Node encode(const game_engine::Line3D& rhs) {
       Node node;
       node.push_back(rhs.start_.x());
       node.push_back(rhs.start_.y());
@@ -51,7 +51,7 @@ namespace YAML {
       return node;
     }
   
-    static bool decode(const Node& node, mediation_layer::Line3D& rhs) {
+    static bool decode(const Node& node, game_engine::Line3D& rhs) {
       if(!node.IsSequence() || node.size() != 6) {
         return false;
       }

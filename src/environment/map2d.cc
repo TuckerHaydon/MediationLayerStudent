@@ -5,7 +5,7 @@
 
 #include "map2d.h"
 
-namespace mediation_layer {
+namespace game_engine {
   const Polygon& Map2D::Boundary() const {
     return this->boundary_;
   } 

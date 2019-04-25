@@ -16,7 +16,7 @@
 #include "quad_view.h"
 #include "balloon_view.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // The ViewManager is a convenience object that encapsulates all of the code
   // used to publish views to RViz. 
   //

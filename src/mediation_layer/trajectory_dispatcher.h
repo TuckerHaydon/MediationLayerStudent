@@ -12,7 +12,7 @@
 #include "trajectory_warden.h"
 #include "trajectory_publisher_node.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // Class that manages data transfer between a TrajectoryWarden and a
   // TrajectoryPublisherNode. This class maintains an internal thread pool that
   // await changes in TrajectoryOut. Once a change has been made, the thread

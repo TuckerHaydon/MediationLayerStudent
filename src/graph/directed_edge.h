@@ -8,7 +8,7 @@
 
 #include "node_eigen.h"
 
-namespace mediation_layer {
+namespace game_engine {
   // Directed edge for a graph. Every directed edge has a single source, sink,
   // and cost.
   //

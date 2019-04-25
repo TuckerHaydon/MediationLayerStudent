@@ -2,7 +2,7 @@
 
 #include "view_manager.h"
 
-namespace mediation_layer {
+namespace game_engine {
   void ViewManager::Run(
       const QuadViewOptions quad_view_options,
       const BalloonViewOptions balloon_view_options,

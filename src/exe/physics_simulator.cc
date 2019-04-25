@@ -30,7 +30,7 @@
 
 #include "quad_state_guard.h"
 
-using namespace mediation_layer;
+using namespace game_engine;
 
 namespace { 
   // Signal variable and handler
