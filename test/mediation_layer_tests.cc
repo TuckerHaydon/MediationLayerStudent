@@ -29,7 +29,7 @@ void test_TrajectoryWarden() {
   { // Test read/write
     TrajectoryWarden warden;
 
-    Trajectory trajectory_write({Eigen::Vector<double, 11>(1,1,1,1,1,1,1,1,1,1,1)});
+    Trajectory trajectory_write({Eigen::Matrix<double, 11, 1>(1,1,1,1,1,1,1,1,1,1,1)});
     assert(true == warden.Register("test"));
     assert(true == warden.Write("test", trajectory_write));
 
@@ -49,7 +49,7 @@ void test_Trajectory() {
 
   { // Test access
     TrajectoryVector3D hist = {};
-    hist.push_back(Eigen::Vector<double, 11>(1,1,1,2,2,2,3,3,3,0.1,0.2));
+    hist.push_back(Eigen::Matrix<double, 11, 1>(1,1,1,2,2,2,3,3,3,0.1,0.2));
     Trajectory trajectory(hist);
 
     assert(Eigen::Vector3d(1,1,1).isApprox(trajectory.Position(0)));
@@ -57,18 +57,18 @@ void test_Trajectory() {
     assert(Eigen::Vector3d(3,3,3).isApprox(trajectory.Acceleration(0)));
     assert(0.1 == trajectory.Yaw(0));
     assert(0.2 == trajectory.Time(0));
-    assert((Eigen::Vector<double, 9>(1,1,1,2,2,2,3,3,3)).isApprox(trajectory.PVA(0)));
-    assert((Eigen::Vector<double, 11>(1,1,1,2,2,2,3,3,3,0.1,0.2)).isApprox(trajectory.PVAYT(0)));
+    assert((Eigen::Matrix<double, 9, 1>(1,1,1,2,2,2,3,3,3)).isApprox(trajectory.PVA(0)));
+    assert((Eigen::Matrix<double, 11, 1>(1,1,1,2,2,2,3,3,3,0.1,0.2)).isApprox(trajectory.PVAYT(0)));
   }
 }
 
 void test_QuadState() {
   { // Trivial
-    QuadState state(Eigen::Vector<double,13>(1,1,1,2,2,2,1,0,0,0,1,2,3));
-    assert((Eigen::Vector<double, 3>(1,1,1)).isApprox(state.Position()));
-    assert((Eigen::Vector<double, 3>(2,2,2)).isApprox(state.Velocity()));
-    assert((Eigen::Vector<double, 4>(1,0,0,0)).isApprox(state.Orientation()));
-    assert((Eigen::Vector<double, 3>(1,2,3)).isApprox(state.Twist()));
+    QuadState state(Eigen::Matrix<double, 13, 1>(1,1,1,2,2,2,1,0,0,0,1,2,3));
+    assert((Eigen::Vector3d(1,1,1)).isApprox(state.Position()));
+    assert((Eigen::Vector3d(2,2,2)).isApprox(state.Velocity()));
+    assert((Eigen::Vector4d(1,0,0,0)).isApprox(state.Orientation()));
+    assert((Eigen::Vector3d(1,2,3)).isApprox(state.Twist()));
   }
 }
 
@@ -86,7 +86,7 @@ void test_QuadStateWarden() {
   { // Test read/write
     QuadStateWarden warden;
 
-    QuadState state_write({Eigen::Vector<double, 13>(0,0,0,0,0,0,1,0,0,0,0,0,0)});
+    QuadState state_write({Eigen::Matrix<double, 13, 1>(0,0,0,0,0,0,1,0,0,0,0,0,0)});
     assert(true == warden.Register("test"));
     assert(true == warden.Write("test", state_write));
 
