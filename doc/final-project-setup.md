@@ -29,6 +29,8 @@ First, clone a fresh copy of the MediationLayer repository and call it the
 ```bash
 cd ~/Workspace/
 git clone https://github.com/tuckerhaydon/MediationLayerStudent.git GameEngine
+cd GameEngine
+git submodule update --init --recursive
 ```
 
 ## Set up the new GameEngine repository
