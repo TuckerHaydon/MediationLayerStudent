@@ -61,7 +61,7 @@ namespace mediation_layer {
             this->options_.wind_zoh_time));
 
     // Integrator
-    RungeKutta4<Eigen::Vector<double, 9>> rk4;
+    RungeKutta4<Eigen::Matrix<double, 9, 1>> rk4;
 
     // Extract quad names
     std::vector<std::string> quad_names;
@@ -72,13 +72,13 @@ namespace mediation_layer {
     // Store the last location of the quads
     std::map<
       std::string, 
-      Eigen::Vector<double, 9>, 
+      Eigen::Matrix<double, 9, 1>, 
       std::less<std::string>, 
-      Eigen::aligned_allocator<std::pair<const std::string, Eigen::Vector<double, 9>>>> pva_perturbed_register;
+      Eigen::aligned_allocator<std::pair<const std::string, Eigen::Matrix<double, 9, 1>>>> pva_perturbed_register;
 
     // Initially, the quads are in their current state
     for(const std::string& quad_name: quad_names) {
-      pva_perturbed_register[quad_name] = Eigen::Vector<double, 9>::Zero();
+      pva_perturbed_register[quad_name] = Eigen::Matrix<double, 9, 1>::Zero();
     }
 
     while(true == this->ok_) {
@@ -142,8 +142,8 @@ namespace mediation_layer {
         // Forward simulate
         // If simulation window extends beyond the provided trajectory window,
         // hold the last position. 
-        Eigen::Vector<double, 9> pva_intended = trajectory.PVA(trajectory_idx);
-        Eigen::Vector<double, 9> pva_perturbed = pva_perturbed_register[quad_name];
+        Eigen::Matrix<double, 9, 1> pva_intended = trajectory.PVA(trajectory_idx);
+        Eigen::Matrix<double, 9, 1> pva_perturbed = pva_perturbed_register[quad_name];
         TimeSpan ts(0,1,0.5);
         while(true) {
           if(trajectory_idx != trajectory_size - 1) {
@@ -156,7 +156,7 @@ namespace mediation_layer {
             ts = TimeSpan(t0, tf, dt);
           } else {
             // Hold final position
-            pva_intended = (Eigen::Vector<double, 9>() << 
+            pva_intended = (Eigen::Matrix<double, 9, 1>() << 
               trajectory.Position(trajectory_size - 1),
               Eigen::Vector3d::Zero(),
               Eigen::Vector3d::Zero()).finished();
@@ -182,7 +182,7 @@ namespace mediation_layer {
 
           auto DynamicsFunction = [&](
               double time, 
-              const Eigen::Vector<double, 9>& pva_intermediate) {
+              const Eigen::Matrix<double, 9, 1>& pva_intermediate) {
 						WindInstance disturbance_instance;
 						for(size_t wind_idx = 0; wind_idx < wind_vector_size; ++wind_idx) {
 							WindInstance wind_instance = wind_instances[wind_idx];
@@ -192,13 +192,13 @@ namespace mediation_layer {
 							}
 						}
 
-            Eigen::Vector<double, 12> input = Eigen::Vector<double, 12>::Zero();
+            Eigen::Matrix<double, 12, 1> input = Eigen::Matrix<double, 12, 1>::Zero();
             // input.block(0,0,3,1) = disturbance_instance.acceleration;
             input.block(3,0,9,1) = pva_intended;
 
-            const Eigen::Vector<double, 9> t1 = A * pva_intermediate;
-            const Eigen::Vector<double, 9> t2 = B * input;
-            const Eigen::Vector<double, 9> t3 = t1 + t2;
+            const Eigen::Matrix<double, 9, 1> t1 = A * pva_intermediate;
+            const Eigen::Matrix<double, 9, 1> t2 = B * input;
+            const Eigen::Matrix<double, 9, 1> t3 = t1 + t2;
 
             return t3;
           };
@@ -222,8 +222,8 @@ namespace mediation_layer {
       // Publish
       for(const auto& kv: quad_state_publishers) {
         const std::string& quad_name = kv.first;
-        const Eigen::Vector<double, 9> pva_perturbed = pva_perturbed_register[quad_name];
-        QuadState quad_state(Eigen::Vector<double, 13>(
+        const Eigen::Matrix<double, 9, 1> pva_perturbed = pva_perturbed_register[quad_name];
+        QuadState quad_state(Eigen::Matrix<double, 13, 1>(
               pva_perturbed(0), pva_perturbed(1), pva_perturbed(2),
               pva_perturbed(3), pva_perturbed(4), pva_perturbed(5),
               1,0,0,0,

@@ -47,7 +47,7 @@ namespace mediation_layer {
       // Return the equation of the plane. The equation is defined as:
       //   Ax + By + Cz + D = 0
       // The vector is ordered as [A,B,C,D];
-      Eigen::Vector<double, 4> Equation() const;
+      Eigen::Vector4d Equation() const;
 
       // Determines a point on the plane that is closest to the parameter point.
       Point3D ClosestPoint(const Point3D& point) const;

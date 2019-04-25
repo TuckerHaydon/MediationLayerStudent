@@ -71,7 +71,7 @@ namespace mediation_layer {
       const double global_time = global_time_chrono.count();
 
       // Push an Eigen instance onto the trajectory vector
-      trajectory_vector.push_back(Eigen::Vector<double, 11>(
+      trajectory_vector.push_back(Eigen::Matrix<double, 11, 1>(
             x,   y,   z,
             vx,  vy,  vz,
             ax,  ay,  az,

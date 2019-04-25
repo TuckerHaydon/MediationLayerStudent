@@ -5,7 +5,7 @@
 namespace mediation_layer {
   bool GameSnapshot::Position(
       const std::string& quad_name, 
-      Eigen::Vector<double, 3>& position) {
+      Eigen::Vector3d& position) {
     const bool is_friend = (std::find(
           this->friendly_names_.begin(), 
           this->friendly_names_.end(), 
@@ -37,7 +37,7 @@ namespace mediation_layer {
 
   bool GameSnapshot::Orientation(
       const std::string& quad_name, 
-      Eigen::Vector<double, 4>& orientation) {
+      Eigen::Vector4d& orientation) {
     const bool is_friend = (std::find(
           this->friendly_names_.begin(), 
           this->friendly_names_.end(), 
@@ -58,7 +58,7 @@ namespace mediation_layer {
     this->quad_state_warden_->Read(quad_name, state);
 
     // Copy the yaw
-    orientation = Eigen::Vector<double, 4>(state.Orientation());
+    orientation = Eigen::Vector4d(state.Orientation());
 
     if(true == is_enemy) {
       // TODO: Corrupt position with noise
@@ -69,7 +69,7 @@ namespace mediation_layer {
 
   bool GameSnapshot::Velocity(
       const std::string& quad_name, 
-      Eigen::Vector<double, 3>& velocity) {
+      Eigen::Vector3d& velocity) {
     const bool is_friend = (std::find(
           this->friendly_names_.begin(), 
           this->friendly_names_.end(), 

@@ -17,8 +17,8 @@ namespace mediation_layer {
       //   [ pos(3), vel(3), acc(3), yaw(1), time(1)]
       // Time is a floating point value measuring the seconds since the unix epoch
       std::vector<
-        Eigen::Vector<double, 11>, 
-        Eigen::aligned_allocator<Eigen::Vector<double, 11>>> data_;
+        Eigen::Matrix<double, 11, 1>, 
+        Eigen::aligned_allocator<Eigen::Matrix<double, 11, 1>>> data_;
   
     public:
       // Required by Eigen
@@ -27,22 +27,22 @@ namespace mediation_layer {
       // Constructor. Data must be passed in the following format: 
       //   [ pos, vel, acc, yaw, time]
       Trajectory(const std::vector<
-          Eigen::Vector<double, 11>, 
-          Eigen::aligned_allocator<Eigen::Vector<double, 11>>>& data = {}) 
+          Eigen::Matrix<double, 11, 1>, 
+          Eigen::aligned_allocator<Eigen::Matrix<double, 11, 1>>>& data = {}) 
         : data_(data) {}
 
       // Data access functions
-      const Eigen::Vector<double, 3> Position(const size_t idx) const;
-      const Eigen::Vector<double, 3> Velocity(const size_t idx) const;
-      const Eigen::Vector<double, 3> Acceleration(const size_t idx) const;
+      const Eigen::Vector3d Position(const size_t idx) const;
+      const Eigen::Vector3d Velocity(const size_t idx) const;
+      const Eigen::Vector3d Acceleration(const size_t idx) const;
       const double Yaw(const size_t idx) const;
       const double Time(const size_t idx) const;
 
       // Position, Velocity, Acceleration
-      const Eigen::Vector<double, 9> PVA(const size_t idx) const;
+      const Eigen::Matrix<double, 9, 1> PVA(const size_t idx) const;
 
       // Position, Velocity, Acceleration, Yaw, Time
-      const Eigen::Vector<double, 11> PVAYT(const size_t idx) const;
+      const Eigen::Matrix<double, 11, 1> PVAYT(const size_t idx) const;
 
       // Number of samples in trajectory
       const size_t Size() const;
@@ -50,6 +50,6 @@ namespace mediation_layer {
 
   // Convienient type definitions
   using TrajectoryVector3D = std::vector<
-    Eigen::Vector<double, 11>, 
-    Eigen::aligned_allocator<Eigen::Vector<double, 11>>>;
+    Eigen::Matrix<double, 11, 1>, 
+    Eigen::aligned_allocator<Eigen::Matrix<double, 11, 1>>>;
 }

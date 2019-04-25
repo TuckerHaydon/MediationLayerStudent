@@ -18,7 +18,7 @@ namespace mediation_layer {
   }
 
   void QuadStateSubscriberNode::SubscriberCallback(const nav_msgs::Odometry& msg) {
-    QuadState state(Eigen::Vector<double, 13>(
+    QuadState state(Eigen::Matrix<double, 13, 1>(
           msg.pose.pose.position.x, 
           msg.pose.pose.position.y, 
           msg.pose.pose.position.z, 

@@ -96,9 +96,9 @@ int main(int argc, char** argv) {
 
   std::map<
     std::string, 
-    Eigen::Vector<double, 3>, 
+    Eigen::Vector3d, 
     std::less<std::string>, 
-    Eigen::aligned_allocator<std::pair<const std::string, Eigen::Vector<double, 3>>>> balloon_map;
+    Eigen::aligned_allocator<std::pair<const std::string, Eigen::Vector3d>>> balloon_map;
 
   balloon_map["red"] = red_balloon_position;
   balloon_map["blue"] = red_balloon_position;
