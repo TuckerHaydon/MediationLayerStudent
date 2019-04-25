@@ -71,6 +71,11 @@ namespace game_engine {
             0,  3e-0,     0,
             0,     0,   2e-0).finished();
 
+        std::map<
+          std::string, 
+          Eigen::Vector3d, 
+          std::less<std::string>, 
+          Eigen::aligned_allocator<std::pair<const std::string, Eigen::Vector3d>>> initial_quad_positions;
 
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 

@@ -7,6 +7,7 @@
 
 #include "trajectory_warden.h"
 #include "quad_state_warden.h"
+#include "map3d.h"
 
 namespace game_engine { 
   // The mediation layer is a software layer that mediates user input to ensure
@@ -26,8 +27,10 @@ namespace game_engine {
       // trajectory_warden_out
       void TransferData(
           const std::string& key,
+          const Map3D& map,
           std::shared_ptr<TrajectoryWarden> trajectory_warden_in,
-          std::shared_ptr<TrajectoryWarden> trajectory_warden_out);
+          std::shared_ptr<TrajectoryWarden> trajectory_warden_out,
+          std::shared_ptr<QuadStateWarden> quad_state_warden);
 
     public:
       MediationLayer() {}
@@ -36,6 +39,7 @@ namespace game_engine {
       //
       // Note: These values are intentionally copied
       void Run(
+          const Map3D& map,
           std::shared_ptr<TrajectoryWarden> trajectory_warden_in,
           std::shared_ptr<TrajectoryWarden> trajectory_warden_out,
           std::shared_ptr<QuadStateWarden> state_warden);

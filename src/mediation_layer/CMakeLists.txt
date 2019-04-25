@@ -14,6 +14,7 @@ set(SOURCE_FILES
   trajectory.cc
   trajectory_dispatcher.cc
   trajectory_warden.cc
+  trajectory_vetter.cc
 )
 
 add_library(${TARGET} STATIC ${SOURCE_FILES})
@@ -25,6 +26,7 @@ target_include_directories(${TARGET} PUBLIC
 target_link_libraries(${TARGET} PUBLIC
   lib_geometry
   lib_integration
+  lib_environment
   lib_util
   lib_ros_node
   Eigen3::Eigen

@@ -9,6 +9,7 @@
 #include <thread>
 #include <csignal>
 #include <utility>
+#include <sstream>
 
 #include <Eigen/Dense>
 #include <ros/ros.h>
@@ -149,11 +150,38 @@ int main(int argc, char** argv) {
             quad_state_warden));
   }
 
+  // Parse the initial quad positions
+  std::map<std::string, std::string> initial_quad_positions_string;
+  if(false == nh.getParam("initial_quad_positions", initial_quad_positions_string)) {
+    std::cerr << "Required parameter not found on server: initial_quad_positions" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::map<
+    std::string, 
+    Eigen::Vector3d, 
+    std::less<std::string>, 
+    Eigen::aligned_allocator<std::pair<const std::string, Eigen::Vector3d>>> initial_quad_positions;
+  for(const auto& kv: initial_quad_positions_string) {
+    const std::string& quad_name = kv.first;
+    const std::string& quad_position_string = kv.second;
+    std::stringstream ss(quad_position_string);
+    double x,y,z;
+    ss >> x >> y >> z;
+    initial_quad_positions[quad_name] = Eigen::Vector3d(x,y,z);
+  }
+
   // Create quad state guards that will be accessed by the mediation layer
   std::unordered_map<std::string, std::shared_ptr<QuadStateGuard>> quad_state_guards;
   for(const auto& kv: quad_state_topics) {
     const std::string& quad_name = kv.first;
-    quad_state_guards[quad_name] = std::make_shared<QuadStateGuard>();
+    const Eigen::Vector3d& initial_quad_position = initial_quad_positions[quad_name];
+    quad_state_guards[quad_name] 
+      = std::make_shared<QuadStateGuard>(QuadState(Eigen::Matrix<double, 13, 1>(
+          initial_quad_position(0), initial_quad_position(1), initial_quad_position(2),
+          0,0,0,
+          1,0,0,0,
+          0,0,0
+          )));
   }
 
   // The quad state dispatcher pipes data from the state warden to any state
@@ -171,6 +199,7 @@ int main(int argc, char** argv) {
   std::thread mediation_layer_thread(
       [&]() {
         mediation_layer->Run(
+            map,
             trajectory_warden_in, 
             trajectory_warden_out, 
             quad_state_warden);

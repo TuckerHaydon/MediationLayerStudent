@@ -10,9 +10,7 @@ namespace game_engine {
     // Always use the chrono::system_clock for time. Trajectories require time
     // points measured in floating point seconds from the unix epoch.
     const std::chrono::milliseconds T = std::chrono::seconds(30);
-    const std::chrono::milliseconds dt = std::chrono::milliseconds(20);
-    const std::chrono::time_point<std::chrono::system_clock> current_chrono_time 
-      = std::chrono::system_clock::now();
+    const std::chrono::milliseconds dt = std::chrono::milliseconds(15);
 
     // Use a static function variable to log the first time this function was
     // called. The static function variable acts like a matlab persistent
@@ -22,6 +20,8 @@ namespace game_engine {
       = std::chrono::system_clock::now();
     static const std::chrono::time_point<std::chrono::system_clock> end_chrono_time
       = start_chrono_time + T;
+    const std::chrono::time_point<std::chrono::system_clock> current_chrono_time 
+      = std::chrono::system_clock::now();
 
     // If at the end, return an empty map
     if(current_chrono_time > end_chrono_time) {
@@ -34,8 +34,11 @@ namespace game_engine {
     // Number of samples
     const size_t N = remaining_chrono_time/dt;
 
+    // Radius
+    const double r = 1.0;
+
     // Angular speed in radians/s
-    constexpr double omega = 2*M_PI/5.0;
+    constexpr double omega = 2*M_PI/10;
 
     // TrajectoryVector3D is an std::vector object defined in the trajectory.h
     // file. It's aliased for convenience.
@@ -47,19 +50,21 @@ namespace game_engine {
       const double flight_time = flight_chrono_time.count();
 
       // Angle in radians
-      const double theta = flight_time / omega;
+      const double theta = flight_time * omega;
 
       // Circle centered at (1,2,1)
-      const double x = 1.0 + std::cos(theta);
-      const double y = 2.0 + std::sin(theta);
+      const double x = 1.0 + r * std::cos(theta);
+      const double y = 2.0 + r * std::sin(theta);
       const double z = 1.0;
 
-      const double vx = -std::sin(theta);
-      const double vy =  std::cos(theta);
+      // Chain rule
+      const double vx = -r * std::sin(theta) * omega;
+      const double vy =  r * std::cos(theta) * omega;
       const double vz = 0.0;
 
-      const double ax = -std::cos(theta);
-      const double ay = -std::sin(theta);
+      // Chain rule
+      const double ax = -r * std::cos(theta) * omega * omega;
+      const double ay = -r * std::sin(theta) * omega * omega;
       const double az = 0.0;
 
       const double yaw = 0.0;

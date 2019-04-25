@@ -78,7 +78,13 @@ namespace game_engine {
 
     // Initially, the quads are in their current state
     for(const std::string& quad_name: quad_names) {
-      pva_perturbed_register[quad_name] = Eigen::Matrix<double, 9, 1>::Zero();
+      pva_perturbed_register[quad_name] = (Eigen::Matrix<double, 9, 1>() <<
+          this->options_.initial_quad_positions[quad_name](0),
+          this->options_.initial_quad_positions[quad_name](1),
+          this->options_.initial_quad_positions[quad_name](2),
+          0,0,0,
+          0,0,0
+            ).finished();
     }
 
     while(true == this->ok_) {

@@ -17,8 +17,10 @@ balloon_mesh_file_path: "file:///home/aerial-robotics/Workspace/GameEngine/resou
 blue_balloon_position: [9, 1, 1]
 red_balloon_position:  [9, 4, 1]
 
-true_blue_balloon_position: [9, 1, 1]
-true_red_balloon_position:  [9, 4, 1]
+initial_quad_positions:
+  "phoenix": "2 2 1"
 
 max_quadcopter_velocity: 2.0
 max_quadcopter_acceleration: 0.4
+
+

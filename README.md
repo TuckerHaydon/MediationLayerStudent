@@ -109,7 +109,3 @@ cd build/test
   around obstacles. If so, end the game
 - Create StateConstraints structure that lists the constraints of a quadcopter's
   actions. Pass an instance of this to the AutonomyProtocol.
-- Create TrajectoryVetter. TrajectoryVetter determines if an intended trajectory
-  are within the constraints set by StateConstraints. If not, rejects the
-  trajectory.
-- Change CMake libraries from interfaces into static libraries

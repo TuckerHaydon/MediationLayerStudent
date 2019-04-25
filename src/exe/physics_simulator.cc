@@ -9,6 +9,7 @@
 #include <thread>
 #include <csignal>
 #include <utility>
+#include <sstream>
 
 #include <Eigen/Dense>
 #include <ros/ros.h>
@@ -85,7 +86,28 @@ int main(int argc, char** argv) {
         = std::make_shared<QuadStatePublisherNode>(topic);
   }
 
+  // Parse the initial quad positions
+  std::map<std::string, std::string> initial_quad_positions_string;
+  if(false == nh.getParam("initial_quad_positions", initial_quad_positions_string)) {
+    std::cerr << "Required parameter not found on server: initial_quad_positions" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  std::map<
+    std::string, 
+    Eigen::Vector3d, 
+    std::less<std::string>, 
+    Eigen::aligned_allocator<std::pair<const std::string, Eigen::Vector3d>>> initial_quad_positions;
+  for(const auto& kv: initial_quad_positions_string) {
+    const std::string& quad_name = kv.first;
+    const std::string& quad_position_string = kv.second;
+    std::stringstream ss(quad_position_string);
+    double x,y,z;
+    ss >> x >> y >> z;
+    initial_quad_positions[quad_name] = Eigen::Vector3d(x,y,z);
+  }
+
   PhysicsSimulator::Options physics_simulator_options;
+  physics_simulator_options.initial_quad_positions = initial_quad_positions;
   auto physics_simulator = std::make_shared<PhysicsSimulator>(physics_simulator_options);
   std::thread physics_simulator_thread(
       [&]() {
