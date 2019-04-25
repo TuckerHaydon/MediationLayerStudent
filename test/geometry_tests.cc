@@ -85,8 +85,8 @@ void test_Plane3D() {
         Line3D(Point3D(3,1,4), Point3D(0,-1,2)),
         Line3D(Point3D(0,-1,2), Point3D(1,-2,0)),
           });
-    Eigen::Vector<double, 4> equation = plane.Equation();
-    assert(true == (Eigen::Vector<double, 4>(2,-8,5,-18)).isApprox(equation));
+    Eigen::Vector4d equation = plane.Equation();
+    assert(true == (Eigen::Vector4d(2,-8,5,-18)).isApprox(equation));
   }
 
   { // Contains
