@@ -55,3 +55,10 @@ Quadcopters must not fly in any direction with an acceleration magnitude greater
 than **0.4 m/s^2**. If the Mediation Layer determines that a proposed trajectory
 will exceed the above bound, the proposed trajectory is rejected and the
 quadcopter will continue to follow the most recent, valid trajectory.
+
+### Time
+Teams will have up to seven (7) minutes to complete their balloon-popping
+mission. The timer starts as soon as a team's AutonomyProtocol is engaged. At
+the end of the time period, the quadcopter is frozen and forced to land. The
+attempt will be scored normally.
+
