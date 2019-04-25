@@ -3,19 +3,19 @@
 #include "quad_state.h"
 
 namespace mediation_layer {
-  Eigen::Vector<double, 3> QuadState::Position() const {
+  Eigen::Vector3d QuadState::Position() const {
     return data_.segment(0,3);
   }
 
-  Eigen::Vector<double, 3> QuadState::Velocity() const {
+  Eigen::Vector3d QuadState::Velocity() const {
     return data_.segment(3,3);
   }
 
-  Eigen::Vector<double, 4> QuadState::Orientation() const {
+  Eigen::Vector4d QuadState::Orientation() const {
     return data_.segment(6,4);
   }
 
-  Eigen::Vector<double, 3> QuadState::Twist() const {
+  Eigen::Vector3d QuadState::Twist() const {
     return data_.segment(10,3);
   }
 }

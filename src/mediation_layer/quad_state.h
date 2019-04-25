@@ -11,20 +11,20 @@ namespace mediation_layer {
     private:
       // The structure of the state is:
       //   [pos(3), vel(3), q(4), e_dot(3)]
-      Eigen::Vector<double, 13> data_;
+      Eigen::Matrix<double, 13, 1> data_;
 
     public:
       // Required by Eigen
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      QuadState(const Eigen::Vector<double, 13>& data 
-          = Eigen::Vector<double, 13>::Zero())
+      QuadState(const Eigen::Matrix<double, 13, 1>& data 
+          = Eigen::Matrix<double, 13, 1>::Zero())
         : data_(data) {}
 
       // Getters
-      Eigen::Vector<double, 3> Position() const;
-      Eigen::Vector<double, 3> Velocity() const;
-      Eigen::Vector<double, 4> Orientation() const;
-      Eigen::Vector<double, 3> Twist() const;
+      Eigen::Vector3d Position() const;
+      Eigen::Vector3d Velocity() const;
+      Eigen::Vector4d Orientation() const;
+      Eigen::Vector3d Twist() const;
   };
 }

@@ -37,7 +37,7 @@ namespace mediation_layer {
       //
       // If the quadcopter is friendly, the position returned is accurate.
       // If the quadcopter is enemy, the position returned is corrupted by noise.
-      bool Position(const std::string& quad_name, Eigen::Vector<double, 3>& position);
+      bool Position(const std::string& quad_name, Eigen::Vector3d& position);
 
       // Returns the orientation of the quadcopter. If quad_name is invalid, returns
       // false, else returns true. Stores the data in 'orientation'. Orientation
@@ -45,7 +45,7 @@ namespace mediation_layer {
       //
       // If the quadcopter is friendly, the yaw returned is accurate.
       // If the quadcopter is enemy, the yaw returned is corrupted by noise.
-      bool Orientation(const std::string& quad_name, Eigen::Vector<double, 4>& orientation);
+      bool Orientation(const std::string& quad_name, Eigen::Vector4d& orientation);
 
       // Returns the velocity of a quadcopter. If quad_name is invalid, returns
       // false, else returns true. Stores the data in 'velocity'.
@@ -53,7 +53,7 @@ namespace mediation_layer {
       // If the quadcopter is friendly, the velocity returned is accurate.
       // If the quadcopter is enemy, return false --- no access to enemy
       // velocity.
-      bool Velocity(const std::string& quad_name, Eigen::Vector<double, 3>& velocity);
+      bool Velocity(const std::string& quad_name, Eigen::Vector3d& velocity);
 
 
     private:

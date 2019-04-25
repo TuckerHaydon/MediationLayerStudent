@@ -3,13 +3,13 @@
 #include "plane3d.h"
 
 namespace mediation_layer {
-  Eigen::Vector<double, 4> Plane3D::Equation() const {
+  Eigen::Vector4d Plane3D::Equation() const {
     // Determine the equation for the plane. The equation can be found in the
     // following manner:
     //  1) Take the cross product of two vectors in the plane: v
     //  2) A = v(0), B = v(1), C = v(2), D = dot(v, -point) where point is any
     //     point on the plane
-    Eigen::Vector<double, 4> equation;
+    Eigen::Vector4d equation;
     const Vec3D cross_vec = this->edges_[0].AsVector().cross(this->edges_[1].AsVector());
     equation(0) = cross_vec[0];
     equation(1) = cross_vec[1];
@@ -29,7 +29,7 @@ namespace mediation_layer {
   }
 
   Point3D Plane3D::ClosestPoint(const Point3D& point) const {
-    const Eigen::Vector<double, 4> equation = this->Equation();
+    const Eigen::Vector4d equation = this->Equation();
     const double A = equation(0);
     const double B = equation(1);
     const double C = equation(2);

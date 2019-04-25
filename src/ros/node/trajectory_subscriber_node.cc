@@ -21,10 +21,10 @@ namespace mediation_layer {
       // Required data structure. Formatted as follows:
       //   [ pos(3), vel(3), acc(3), yaw(1), time(1)]
       std::vector<
-        Eigen::Vector<double, 11>, 
-        Eigen::aligned_allocator<Eigen::Vector<double, 11>>> data;
+        Eigen::Matrix<double, 11, 1>, 
+        Eigen::aligned_allocator<Eigen::Matrix<double, 11, 1>>> data;
     for(const mg_msgs::PVAYStamped& instant: msg.trajectory) {
-      Eigen::Vector<double, 11> local_instant;
+      Eigen::Matrix<double, 11, 1> local_instant;
       local_instant(0) = instant.pos.x;
       local_instant(1) = instant.pos.y;
       local_instant(2) = instant.pos.z;

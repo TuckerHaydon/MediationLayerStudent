@@ -7,7 +7,7 @@ namespace mediation_layer {
     QuadState quad_state;
     this->quad_state_guard_->Read(quad_state);
 
-    const Eigen::Vector<double, 3> quad_position = quad_state.Position();
+    const Eigen::Vector3d quad_position = quad_state.Position();
 
     visualization_msgs::Marker marker;
     marker.header.frame_id = this->options_.frame_id;

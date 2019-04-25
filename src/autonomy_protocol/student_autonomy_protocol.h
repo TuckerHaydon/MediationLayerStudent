@@ -17,9 +17,9 @@ namespace mediation_layer {
           const Map3D& map3d,
           std::map<
             std::string, 
-            Eigen::Vector<double, 3>, 
+            Eigen::Vector3d, 
             std::less<std::string>, 
-            Eigen::aligned_allocator<std::pair<const std::string, Eigen::Vector<double, 3>>>> balloon_map)
+            Eigen::aligned_allocator<std::pair<const std::string, Eigen::Vector3d>>> balloon_map)
         : AutonomyProtocol(
             friendly_names,
             enemy_names,

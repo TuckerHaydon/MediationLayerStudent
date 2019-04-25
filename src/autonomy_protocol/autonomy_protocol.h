@@ -46,9 +46,9 @@ namespace mediation_layer {
       Map3D map3d_;
       std::map<
         std::string, 
-        Eigen::Vector<double, 3>, 
+        Eigen::Vector3d, 
         std::less<std::string>, 
-        Eigen::aligned_allocator<std::pair<const std::string, Eigen::Vector<double, 3>>>> balloon_map_;
+        Eigen::aligned_allocator<std::pair<const std::string, Eigen::Vector3d>>> balloon_map_;
       volatile std::atomic<bool> ok_{true};
 
     public:
@@ -62,9 +62,9 @@ namespace mediation_layer {
           const Map3D& map3d,
           std::map<
             std::string, 
-            Eigen::Vector<double, 3>, 
+            Eigen::Vector3d, 
             std::less<std::string>, 
-            Eigen::aligned_allocator<std::pair<const std::string, Eigen::Vector<double, 3>>>> balloon_map)
+            Eigen::aligned_allocator<std::pair<const std::string, Eigen::Vector3d>>> balloon_map)
         : friendly_names_(friendly_names),
           enemy_names_(enemy_names),
           snapshot_(snapshot),

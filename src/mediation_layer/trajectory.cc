@@ -7,15 +7,15 @@ namespace mediation_layer {
     return this->data_.size();
   }
 
-  const Eigen::Vector<double, 3> Trajectory::Position(const size_t idx) const {
+  const Eigen::Vector3d Trajectory::Position(const size_t idx) const {
     return this->data_[idx].segment(0, 3);
   }
 
-  const Eigen::Vector<double, 3> Trajectory::Velocity(const size_t idx) const {
+  const Eigen::Vector3d Trajectory::Velocity(const size_t idx) const {
     return this->data_[idx].segment(3, 3);
   }
 
-  const Eigen::Vector<double, 3> Trajectory::Acceleration(const size_t idx) const {
+  const Eigen::Vector3d Trajectory::Acceleration(const size_t idx) const {
     return this->data_[idx].segment(6,3);
   }
 
@@ -27,11 +27,11 @@ namespace mediation_layer {
     return this->data_[idx](10);
   }
 
-  const Eigen::Vector<double, 9> Trajectory::PVA(const size_t idx) const {
+  const Eigen::Matrix<double, 9, 1> Trajectory::PVA(const size_t idx) const {
     return this->data_[idx].segment(0,9);
   }
 
-  const Eigen::Vector<double, 11> Trajectory::PVAYT(const size_t idx) const {
+  const Eigen::Matrix<double, 11, 1> Trajectory::PVAYT(const size_t idx) const {
     return this->data_[idx];
   }
 }
