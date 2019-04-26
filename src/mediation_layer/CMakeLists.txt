@@ -15,6 +15,7 @@ set(SOURCE_FILES
   trajectory_dispatcher.cc
   trajectory_warden.cc
   trajectory_vetter.cc
+  balloon_watchdog.cc
 )
 
 add_library(${TARGET} STATIC ${SOURCE_FILES})

@@ -21,18 +21,18 @@
 #include "trajectory.h"
 #include "trajectory_subscriber_node.h"
 #include "trajectory_publisher_node.h"
+#include "trajectory_dispatcher.h"
 
 #include "quad_state_warden.h"
 #include "quad_state.h"
 #include "quad_state_subscriber_node.h"
 #include "quad_state_dispatcher.h"
-
-#include "trajectory_dispatcher.h"
-#include "mediation_layer.h"
-
 #include "quad_state_guard.h"
 
+#include "mediation_layer.h"
 #include "view_manager.h"
+
+#include "balloon_watchdog.h"
 
 using namespace game_engine;
 
@@ -127,6 +127,11 @@ int main(int argc, char** argv) {
   if(false == nh.getParam("quad_state_topics", quad_state_topics)) {
     std::cerr << "Required parameter not found on server: quad_state_topics" << std::endl;
     std::exit(EXIT_FAILURE);
+  }
+
+  std::vector<std::string> quad_names;
+  for(const auto& kv: quad_state_topics) {
+    quad_names.push_back(kv.first);
   }
 
   // Initialize the QuadStateWarden. The QuadStateWarden enables safe, multi-threaded
@@ -269,6 +274,43 @@ int main(int argc, char** argv) {
             environment_view_options);
       });
 
+  // Balloon Status
+  std::map<std::string, std::string> balloon_status_topics;
+  if(false == nh.getParam("balloon_status_topics", balloon_status_topics)) {
+    std::cerr << "Required parameter not found on server: balloon_status_topics" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+
+  auto red_balloon_status_publisher_node 
+    = std::make_shared<BalloonStatusPublisherNode>(balloon_status_topics["red"]);
+  auto blue_balloon_status_publisher_node 
+    = std::make_shared<BalloonStatusPublisherNode>(balloon_status_topics["blue"]);
+
+  auto red_balloon_watchdog = std::make_shared<BalloonWatchdog>();
+  auto blue_balloon_watchdog = std::make_shared<BalloonWatchdog>();
+
+  std::thread red_balloon_watchdog_thread(
+      [&]() {
+        red_balloon_watchdog->Run(
+            red_balloon_status_publisher_node,
+            quad_state_warden,
+            quad_names,
+            red_balloon_position
+            );
+      }
+  );
+
+  std::thread blue_balloon_watchdog_thread(
+      [&]() {
+        blue_balloon_watchdog->Run(
+            blue_balloon_status_publisher_node,
+            quad_state_warden,
+            quad_names,
+            blue_balloon_position
+            );
+      }
+  );
+
   // Kill program thread. This thread sleeps for a second and then checks if the
   // 'kill_program' variable has been set. If it has, it shuts ros down and
   // sends stop signals to any other threads that might be running.
@@ -288,6 +330,8 @@ int main(int argc, char** argv) {
         trajectory_dispatcher->Stop();
         quad_state_dispatcher->Stop();
 
+        red_balloon_watchdog->Stop();
+        blue_balloon_watchdog->Stop();
         trajectory_warden_in->Stop();
         trajectory_warden_out->Stop();
         quad_state_warden->Stop();
@@ -304,6 +348,8 @@ int main(int argc, char** argv) {
   quad_state_dispatcher_thread.join();
   mediation_layer_thread.join();
   view_manager_thread.join();
+  red_balloon_watchdog_thread.join();
+  blue_balloon_watchdog_thread.join();
 
   return EXIT_SUCCESS;
 }

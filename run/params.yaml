@@ -10,12 +10,16 @@ proposed_trajectory_topics:
 updated_trajectory_topics:
   "phoenix": "/phoenix/updated_trajectory"
 
+balloon_status_topics:
+  "red": "/game_engine/red_balloon_status"
+  "blue": "/game_engine/blue_balloon_status"
+
 map_file_path: "/home/aerial-robotics/Workspace/GameEngine/resources/maps/arena1.map"
 quad_mesh_file_path: "file:///home/aerial-robotics/Workspace/GameEngine/resources/meshes/quad.stl"
 balloon_mesh_file_path: "file:///home/aerial-robotics/Workspace/GameEngine/resources/meshes/balloon.stl"
 
 blue_balloon_position: [9, 1, 1]
-red_balloon_position:  [9, 4, 1]
+red_balloon_position:  [1, 1, 1]
 
 initial_quad_positions:
   "phoenix": "1.9 2 1"
