@@ -21,18 +21,20 @@ namespace game_engine {
           const std::shared_ptr<GameSnapshot> snapshot,
           const std::shared_ptr<TrajectoryWarden> trajectory_warden_out,
           const Map3D& map3d,
-          std::map<
-            std::string, 
-            Eigen::Vector3d, 
-            std::less<std::string>, 
-            Eigen::aligned_allocator<std::pair<const std::string, Eigen::Vector3d>>> balloon_map)
+          const Eigen::Vector3d& red_balloon_position,
+          const Eigen::Vector3d& blue_balloon_position,
+          const std::shared_ptr<BalloonStatus> red_balloon_status,
+          const std::shared_ptr<BalloonStatus> blue_balloon_status)
         : AutonomyProtocol(
             friendly_names,
             enemy_names,
             snapshot,
             trajectory_warden_out,
             map3d,
-            balloon_map) {}
+            red_balloon_position,
+            blue_balloon_position,
+            red_balloon_status,
+            blue_balloon_status) {}
 
       std::unordered_map<std::string, Trajectory> UpdateTrajectories() override;
   };

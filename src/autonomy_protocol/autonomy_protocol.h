@@ -14,6 +14,7 @@
 #include "trajectory_warden.h"
 #include "game_snapshot.h"
 #include "map3d.h"
+#include "balloon_status.h"
 
 namespace game_engine {
   // The AutonomyProtocol interfaces with the GameSimulator and enables an
@@ -44,11 +45,11 @@ namespace game_engine {
       std::shared_ptr<GameSnapshot> snapshot_;
       std::shared_ptr<TrajectoryWarden> trajectory_warden_out_;
       Map3D map3d_;
-      std::map<
-        std::string, 
-        Eigen::Vector3d, 
-        std::less<std::string>, 
-        Eigen::aligned_allocator<std::pair<const std::string, Eigen::Vector3d>>> balloon_map_;
+      Eigen::Vector3d red_balloon_position_;
+      Eigen::Vector3d blue_balloon_position_;
+      std::shared_ptr<BalloonStatus> red_balloon_status_;
+      std::shared_ptr<BalloonStatus> blue_balloon_status_;
+
       volatile std::atomic<bool> ok_{true};
 
     public:
@@ -60,17 +61,20 @@ namespace game_engine {
           const std::shared_ptr<GameSnapshot> snapshot,
           const std::shared_ptr<TrajectoryWarden> trajectory_warden_out,
           const Map3D& map3d,
-          std::map<
-            std::string, 
-            Eigen::Vector3d, 
-            std::less<std::string>, 
-            Eigen::aligned_allocator<std::pair<const std::string, Eigen::Vector3d>>> balloon_map)
+          const Eigen::Vector3d& red_balloon_position,
+          const Eigen::Vector3d& blue_balloon_position,
+          const std::shared_ptr<BalloonStatus> red_balloon_status,
+          const std::shared_ptr<BalloonStatus> blue_balloon_status)
         : friendly_names_(friendly_names),
           enemy_names_(enemy_names),
           snapshot_(snapshot),
           trajectory_warden_out_(trajectory_warden_out),
           map3d_(map3d),
-          balloon_map_(balloon_map) {};
+          red_balloon_position_(red_balloon_position),
+          blue_balloon_position_(blue_balloon_position),
+          red_balloon_status_(red_balloon_status),
+          blue_balloon_status_(blue_balloon_status) {}
+
 
       virtual ~AutonomyProtocol(){}
 

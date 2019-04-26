@@ -17,6 +17,7 @@ set(SOURCE_FILES
   trajectory_publisher_node.cc
   trajectory_subscriber_node.cc
   balloon_status_publisher_node.cc
+  balloon_status_subscriber_node.cc
 )
 
 add_library(${TARGET} STATIC ${SOURCE_FILES})
