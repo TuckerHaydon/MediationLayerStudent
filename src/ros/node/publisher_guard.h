@@ -37,7 +37,7 @@ namespace game_engine {
   //  ******************
   template <class T>
   inline PublisherGuard<T>::PublisherGuard(const std::string& topic) {
-    this->node_handle_ = ros::NodeHandle("~");
+    this->node_handle_ = ros::NodeHandle("/mediation_layer/");
     this->publisher_ = node_handle_.advertise<T>(topic, 1);
   }
 

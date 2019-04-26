@@ -89,7 +89,7 @@ YOU CHANGED"
 
 Finally, push to origin.
 ```bash
-git push -u origin master
+git push origin master
 ```
 
 ## Pulling changes

@@ -37,7 +37,7 @@ namespace game_engine {
 
         // The maximum distance from a quad's current position that a
         // trajectory's first point may deviate in meters
-        double max_distance_from_current_position = 1.00;
+        double max_distance_from_current_position = 0.05;
 
         // The maximum time between trajectory samples in seconds
         double max_delta_t = 0.020;

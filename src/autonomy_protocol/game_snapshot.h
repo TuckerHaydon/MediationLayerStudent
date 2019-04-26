@@ -60,6 +60,6 @@ namespace game_engine {
       Options options_;
       std::vector<std::string> friendly_names_;
       std::vector<std::string> enemy_names_;
-      const std::shared_ptr<QuadStateWarden> quad_state_warden_;
+      std::shared_ptr<QuadStateWarden> quad_state_warden_;
   };
 }

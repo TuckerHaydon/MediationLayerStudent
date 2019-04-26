@@ -18,7 +18,7 @@ blue_balloon_position: [9, 1, 1]
 red_balloon_position:  [9, 4, 1]
 
 initial_quad_positions:
-  "phoenix": "2 2 1"
+  "phoenix": "1.9 2 1"
 
 max_quadcopter_velocity: 2.0
 max_quadcopter_acceleration: 0.4

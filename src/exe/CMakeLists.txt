@@ -84,3 +84,4 @@ set_target_properties(student_autonomy_protocol
   CXX_EXTENSIONS NO
   RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin"
 )
+
