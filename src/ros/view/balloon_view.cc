@@ -15,7 +15,7 @@ namespace game_engine {
     marker.scale.z = 15.0f;
     marker.pose.position.x = this->balloon_position_.x();
     marker.pose.position.y= this->balloon_position_.y();
-    marker.pose.position.z = this->balloon_position_.z() - 0.3; // Heuristic offset
+    marker.pose.position.z = this->balloon_position_.z() - 0.5; // Heuristic offset
     marker.color.r = this->options_.r;
     marker.color.g = this->options_.g;
     marker.color.b = this->options_.b;

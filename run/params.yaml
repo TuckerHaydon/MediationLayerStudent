@@ -14,7 +14,7 @@ balloon_status_topics:
   "red": "/game_engine/red_balloon_status"
   "blue": "/game_engine/blue_balloon_status"
 
-map_file_path: "/home/aerial-robotics/Workspace/GameEngine/resources/maps/arena2.map"
+map_file_path: "/home/aerial-robotics/Workspace/GameEngine/resources/maps/pretournament.map"
 quad_mesh_file_path: "file:///home/aerial-robotics/Workspace/GameEngine/resources/meshes/quad.stl"
 balloon_mesh_file_path: "file:///home/aerial-robotics/Workspace/GameEngine/resources/meshes/balloon.stl"
 
