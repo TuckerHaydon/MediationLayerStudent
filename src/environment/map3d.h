@@ -58,7 +58,7 @@ namespace game_engine {
       std::vector<Plane3D> Walls() const;
 
       // Inflates a map by a set distance. Map boundaries are shrunk and
-      // obstacles are expanded. Shrinking and expanding affects both x and y
+      // obstacles are expanded. Shrinking and expanding affects x, y, and z
       // directions equally, therefore object aspect ratios are not guaranteed
       // to stay the same.
       Map3D Inflate(const double distance) const;

@@ -67,10 +67,14 @@ namespace game_engine {
   }
 
   Map3D Map3D::Inflate(const double distance) const {
-    std::cerr << "Map3D::Inflate not yet implemented!" << std::endl;
-    std::exit(EXIT_FAILURE);
+    const Polyhedron new_boundary = this->boundary_.Shrink(distance);
 
-    return *this;
+    std::vector<Polyhedron> new_obstacles;
+    for(const Polyhedron& obstacle: this->obstacles_) {
+      new_obstacles.push_back(obstacle.Expand(distance));
+    }
+
+    return Map3D(new_boundary, new_obstacles);
   }
 
   std::vector<std::pair<double, double>> Map3D::Extents() const {

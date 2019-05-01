@@ -43,6 +43,21 @@ namespace game_engine {
 
       // Returns the convex hull of the polyhedron
       Polyhedron ConvexHull() const;
+
+      // Returns a point on the interior of the polyhedron. The point is
+      // determined by taking the average of all of the vertices of the
+      // polyhedron. This function requires that the polyhedron be convex.
+      Point3D InteriorPoint() const;
+
+      // Shrinks a polyhedron by a set distance. All componenents of all
+      // vertices are shrunk by the same distance. As a result, aspect ratio is
+      // not necessarily conserved.
+      Polyhedron Shrink(const double distance) const;
+
+      // Expands a polyhedron by a set distance. All componenents of all
+      // vertices are expanded by the same distance. As a result, aspect ratio
+      // is not necessarily conserved.
+      Polyhedron Expand(const double distance) const;
   };
 }
 

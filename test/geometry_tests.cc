@@ -56,14 +56,57 @@ void test_Polyhedron() {
     faces[5] = Plane3D({l1,l2,l3,l4});
   }
  
-  const Polyhedron poly(faces);
+  const Polyhedron poly_(faces);
 
-  const Point3D interior_point(0.5,0.5,0.5);
-  const Point3D exterior_point(-0.5,-0.5,-0.5);
+  { // Interior Point
+    const Polyhedron poly = poly_;
 
-  assert(true  == poly.Contains(interior_point));
-  assert(false == poly.Contains(exterior_point));
+    const Point3D interior_point(0.5,0.5,0.5);
+    const Point3D exterior_point(-0.5,-0.5,-0.5);
 
+    assert(true  == poly.Contains(interior_point));
+    assert(false == poly.Contains(exterior_point));
+  }
+
+  { // Expand
+    const Polyhedron original_poly = poly_;
+    const Polyhedron expanded_poly = original_poly.Expand(1.0);
+
+    const Point3D previous_interior_point(0.5,0.5,0.5);
+    const Point3D previous_exterior_point1(1.5,1.5,1.5);
+    const Point3D previous_exterior_point2(-0.5,-0.5,-0.5);
+    const Point3D new_exterior_point(5.0, 5.0, 5.0);
+
+    assert(true == original_poly.Contains(previous_interior_point));
+    assert(false == original_poly.Contains(previous_exterior_point1));
+    assert(false == original_poly.Contains(previous_exterior_point2));
+    assert(false == original_poly.Contains(new_exterior_point));
+
+    assert(true  == expanded_poly.Contains(previous_interior_point));
+    assert(true  == expanded_poly.Contains(previous_exterior_point1));
+    assert(true  == expanded_poly.Contains(previous_exterior_point2));
+    assert(false == expanded_poly.Contains(new_exterior_point));
+  }
+
+  { // Shrink
+    const Polyhedron original_poly = poly_;
+    const Polyhedron expanded_poly = original_poly.Shrink(0.2);
+
+    const Point3D previous_interior_point1(0.5,0.5,0.5);
+    const Point3D previous_interior_point2(0.75, 0.75, 0.75);
+    const Point3D previous_interior_point3(0.9,0.5,0.5);
+    const Point3D new_exterior_point(0.9,0.9,0.9);
+
+    assert(true == original_poly.Contains(previous_interior_point1));
+    assert(true == original_poly.Contains(previous_interior_point2));
+    assert(true == original_poly.Contains(previous_interior_point3));
+    assert(true == original_poly.Contains(new_exterior_point));
+
+    assert(true  == expanded_poly.Contains(previous_interior_point1));
+    assert(true  == expanded_poly.Contains(previous_interior_point2));
+    assert(false == expanded_poly.Contains(previous_interior_point3));
+    assert(false == expanded_poly.Contains(new_exterior_point));
+  }
 }
 
 void test_Plane3D() { 
@@ -328,7 +371,7 @@ int main(int argc, char** argv) {
   // test_Line3D();
   // test_Polygon();
   test_Plane3D();
-  // test_Polyhedron();
+  test_Polyhedron();
 
   std::cout << "All tests passed!" << std::endl;
   return EXIT_SUCCESS;
