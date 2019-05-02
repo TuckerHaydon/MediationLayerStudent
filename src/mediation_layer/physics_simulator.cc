@@ -233,8 +233,8 @@ namespace game_engine {
             // Input constrain the max acceleration of the PD loop
             Eigen::Matrix<double, 9, 1> t1 = A * pva_intermediate + B1 * pva_intended;
             t1.block(3,0,3,1) = t1.block(3,0,3,1).unaryExpr([](double x){
-               if(x < -0.4) { return -0.4; }
-               if(x >  0.4) { return  0.4; }
+               if(x < -0.8) { return -0.8; }
+               if(x >  0.8) { return  0.8; }
                return x;
                 }).cast<double>();
 
