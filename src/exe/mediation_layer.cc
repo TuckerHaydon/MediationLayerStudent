@@ -33,6 +33,7 @@
 #include "view_manager.h"
 
 #include "balloon_watchdog.h"
+#include "quad_state_watchdog.h"
 
 using namespace game_engine;
 
@@ -134,27 +135,6 @@ int main(int argc, char** argv) {
     quad_names.push_back(kv.first);
   }
 
-  // Initialize the QuadStateWarden. The QuadStateWarden enables safe, multi-threaded
-  // access to quadcopter state data. Internal components that require access to
-  // state data should request access through QuadStateWarden.
-  auto quad_state_warden = std::make_shared<QuadStateWarden>();
-  for(const auto& kv: quad_state_topics) {
-    const std::string& quad_name = kv.first;  
-    quad_state_warden->Register(quad_name);
-  }
-
-  // For every quad, subscribe to its corresponding state topic
-  std::vector<std::shared_ptr<QuadStateSubscriberNode>> state_subscribers;
-  for(const auto& kv: quad_state_topics) {
-    const std::string& quad_name = kv.first;  
-    const std::string& topic = kv.second;  
-    state_subscribers.push_back(
-        std::make_shared<QuadStateSubscriberNode>(
-            topic, 
-            quad_name, 
-            quad_state_warden));
-  }
-
   // Parse the initial quad positions
   std::map<std::string, std::string> initial_quad_positions_string;
   if(false == nh.getParam("initial_quad_positions", initial_quad_positions_string)) {
@@ -175,6 +155,36 @@ int main(int argc, char** argv) {
     initial_quad_positions[quad_name] = Eigen::Vector3d(x,y,z);
   }
 
+  // Initialize the QuadStateWarden. The QuadStateWarden enables safe, multi-threaded
+  // access to quadcopter state data. Internal components that require access to
+  // state data should request access through QuadStateWarden.
+  auto quad_state_warden = std::make_shared<QuadStateWarden>();
+  for(const auto& kv: quad_state_topics) {
+    const std::string& quad_name = kv.first;  
+    quad_state_warden->Register(quad_name);
+
+    const Eigen::Vector3d& initial_quad_position = initial_quad_positions[quad_name];
+    quad_state_warden->Write(quad_name, QuadState(Eigen::Matrix<double, 13, 1>(
+          initial_quad_position(0), initial_quad_position(1), initial_quad_position(2),
+          0,0,0,
+          1,0,0,0,
+          0,0,0
+          )));
+  }
+
+  // For every quad, subscribe to its corresponding state topic
+  std::vector<std::shared_ptr<QuadStateSubscriberNode>> state_subscribers;
+  for(const auto& kv: quad_state_topics) {
+    const std::string& quad_name = kv.first;  
+    const std::string& topic = kv.second;  
+    state_subscribers.push_back(
+        std::make_shared<QuadStateSubscriberNode>(
+            topic, 
+            quad_name, 
+            quad_state_warden));
+  }
+
+
   // Create quad state guards that will be accessed by the mediation layer
   std::unordered_map<std::string, std::shared_ptr<QuadStateGuard>> quad_state_guards;
   for(const auto& kv: quad_state_topics) {
@@ -194,20 +204,6 @@ int main(int argc, char** argv) {
   auto quad_state_dispatcher = std::make_shared<QuadStateDispatcher>();
   std::thread quad_state_dispatcher_thread([&](){
       quad_state_dispatcher->Run(quad_state_warden, quad_state_guards);
-      });
-
-  // Mediation layer thread. The mediation layer runs continuously, forward
-  // integrating the proposed trajectories and modifying them so that the
-  // various agents will not crash into each other. Data is asynchonously read
-  // and written from the TrajectoryWardens
-  auto mediation_layer = std::make_shared<MediationLayer>();
-  std::thread mediation_layer_thread(
-      [&]() {
-        mediation_layer->Run(
-            map,
-            trajectory_warden_in, 
-            trajectory_warden_out, 
-            quad_state_warden);
       });
 
   // Views
@@ -311,6 +307,40 @@ int main(int argc, char** argv) {
       }
   );
 
+  // State watchdog
+  auto quad_state_watchdog_status = std::make_shared<QuadStateWatchdogStatus>();
+  for(const std::string& quad_name: quad_names) {
+    quad_state_watchdog_status->Register(quad_name);
+  }
+
+
+  auto quad_state_watchdog        = std::make_shared<QuadStateWatchdog>();
+  std::thread quad_state_watchdog_thread(
+      [&]() {
+        quad_state_watchdog->Run(
+            quad_state_warden,
+            quad_names,
+            quad_state_watchdog_status,
+            map
+            );
+      }
+  );
+
+  // Mediation layer thread. The mediation layer runs continuously, forward
+  // integrating the proposed trajectories and modifying them so that the
+  // various agents will not crash into each other. Data is asynchonously read
+  // and written from the TrajectoryWardens
+  auto mediation_layer = std::make_shared<MediationLayer>();
+  std::thread mediation_layer_thread(
+      [&]() {
+        mediation_layer->Run(
+            map,
+            trajectory_warden_in, 
+            trajectory_warden_out, 
+            quad_state_warden,
+            quad_state_watchdog_status);
+      });
+
   // Kill program thread. This thread sleeps for a second and then checks if the
   // 'kill_program' variable has been set. If it has, it shuts ros down and
   // sends stop signals to any other threads that might be running.
@@ -330,11 +360,12 @@ int main(int argc, char** argv) {
         trajectory_dispatcher->Stop();
         quad_state_dispatcher->Stop();
 
-        red_balloon_watchdog->Stop();
-        blue_balloon_watchdog->Stop();
         trajectory_warden_in->Stop();
         trajectory_warden_out->Stop();
         quad_state_warden->Stop();
+        red_balloon_watchdog->Stop();
+        blue_balloon_watchdog->Stop();
+        quad_state_watchdog->Stop();
       });
 
   // Spin for ros subscribers
@@ -350,6 +381,7 @@ int main(int argc, char** argv) {
   view_manager_thread.join();
   red_balloon_watchdog_thread.join();
   blue_balloon_watchdog_thread.join();
+  quad_state_watchdog_thread.join();
 
   return EXIT_SUCCESS;
 }

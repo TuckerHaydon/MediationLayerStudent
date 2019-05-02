@@ -34,13 +34,13 @@ namespace game_engine {
 
         // Evaluate whether the current position intersects an obstacle
         bool infraction_occurred = 
-             !map.IsFreeSpace(current_position) 
-          || !map.Contains(current_position);
+             !inflated_map.IsFreeSpace(current_position) 
+          || !inflated_map.Contains(current_position);
 
         if(true == infraction_occurred) {
           std::cerr 
             << quad_name 
-            << " has infracted on the obstacle/boundary constraints. Current position is: " 
+            << " has violated the obstacle/boundary constraints. Current position is: " 
             << current_position.transpose() << std::endl;
           quad_state_watchdog_status->Write(quad_name, true);
         }

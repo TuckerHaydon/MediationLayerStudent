@@ -25,6 +25,6 @@ namespace game_engine {
       QuadStateWatchdogStatus() {}
       void Register(const std::string& quad_name);
       bool Read(const std::string& quad_name) const;
-      void Write(const std::string& quad_name, const bool& infraction_occurred);
+      void Write(const std::string& quad_name, const bool infraction_occurred);
   };
 }
