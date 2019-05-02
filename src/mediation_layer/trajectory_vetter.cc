@@ -25,11 +25,11 @@ namespace game_engine {
     if(this->options_.max_distance_from_current_position
         < (initial_position - current_position).norm()) {
       std::cerr 
-        << "Specified trajectory start point "
+        << "Specified trajectory start point ["
         << initial_position.transpose() 
-        << " deviates from the current quad position"
+        << "] deviates from the current quad position ["
         << current_position.transpose()
-        << " by more than the maximum distance of "
+        << "] by more than the maximum distance of "
         << this->options_.max_distance_from_current_position
         << " meters" 
         << std::endl;
@@ -41,17 +41,17 @@ namespace game_engine {
       const Eigen::Vector3d point = trajectory.Position(idx);
       if(false == map.Contains(point)) {
         std::cerr 
-          << "Specified trajectory point " 
+          << "Specified trajectory point [" 
           << point.transpose() 
-          << " exceeded map bounds" 
+          << "] exceeded map bounds" 
           << std::endl; 
         return false;
       }
       if(false == map.IsFreeSpace(point)) {
         std::cerr 
-          << "Specified trajectory point " 
+          << "Specified trajectory point [" 
           << point.transpose() 
-          << " is contained within an obstacle" 
+          << "] is contained within an obstacle" 
           << std::endl; 
         return false;
       }   
@@ -62,7 +62,7 @@ namespace game_engine {
       const Eigen::Vector3d vel = trajectory.Velocity(idx);
       if(this->options_.max_velocity_magnitude < vel.norm()) {
         std::cerr 
-          << "Specified trajectory velocity " 
+          << "Specified trajectory velocity" 
           << " exceeds maximum velocity constraint of "
           << this->options_.max_velocity_magnitude 
           << " m/s" 
@@ -117,7 +117,7 @@ namespace game_engine {
         = ((next_vel - current_vel) / (next_time - current_time)).norm();
       if(this->options_.max_acceleration_magnitude < mean_value_acceleration) {
         std::cerr 
-          << "Specified mean-value trajectory acceleration " 
+          << "Specified mean-value trajectory acceleration" 
           << " exceeds maximum acceleration constraint of "
           << this->options_.max_acceleration_magnitude 
           << " m/s" 
@@ -141,7 +141,7 @@ namespace game_engine {
 
       if(this->options_.max_delta_t < delta_time) {
         std::cerr
-          << "Time between adjacent trajectory samples "
+          << "Time between adjacent trajectory samples"
           << " exceeds maximum time of "
           << this->options_.max_delta_t 
           << " seconds."
