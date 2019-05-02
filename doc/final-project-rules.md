@@ -42,7 +42,10 @@ touched an obstacle during the flight as a result of disturbances, the
 quadcopter is frozen, forced to land, and the balloon-popping attempt is
 forfeit. This constraint has a strict punishment because violations imperil the
 quadcopters. Teams should take care not to fly too close to obstacles in case
-the wind or another disturbance forces the quadcopter into the obstacle.
+the wind or another disturbance forces the quadcopter into the obstacle. A
+quadcopter is considered to be touching a boundary or obstacle if the
+center-of-mass position of the quadcopter has an L-Infinity distance of **20
+cm** less from any point on any boundary of obstacle.
 
 ### Maximum Velocity
 Quadcopters must not fly in any direction with a velocity magnitude greater than
