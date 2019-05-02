@@ -174,17 +174,49 @@ namespace game_engine {
           }
 
           // Dynamics matrix
+          // State is: [x, x_dot, x_ddot]', x is the physics state
+          //| v_x |    | 0.00 0.00 0.00 1.00 0.00 0.00 0.00 0.00 0.00 | | x_x |
+          //| v_y |    | 0.00 0.00 0.00 0.00 1.00 0.00 0.00 0.00 0.00 | | x_y |
+          //| v_z |    | 0.00 0.00 0.00 0.00 0.00 1.00 0.00 0.00 0.00 | | x_z |
+          //| a_x |    |   kp 0.00 0.00   kd 0.00 0.00 0.00 0.00 0.00 | | v_x |
+          //| a_y | =  | 0.00   kp 0.00 0.00   kd 0.00 0.00 0.00 0.00 | | v_y |
+          //| a_z |    | 0.00 0.00   kp 0.00 0.00   kd 0.00 0.00 0.00 | | v_z |
+          //| j_x |    | 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 | | a_x |
+          //| j_y |    | 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 | | a_y |
+          //| j_z |    | 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 | | a_z |
           Eigen::Matrix<double, 9, 9> A = Eigen::Matrix<double, 9, 9>::Zero();
           A.block(0,3,3,3) = Eigen::Matrix<double, 3, 3>::Identity();
           A.block(3,0,3,3) = Eigen::Matrix<double, 3, 3>::Identity() * 1 * this->options_.kp;
           A.block(3,3,3,3) = Eigen::Matrix<double, 3, 3>::Identity() * 1 * this->options_.kd;
 
-		      // Input matrix
-		      Eigen::Matrix<double, 9, 12> B = Eigen::Matrix<double, 9, 12>::Zero();
-          B.block(3,0,3,3) = Eigen::Matrix<double, 3, 3>::Identity();
-          B.block(3,3,3,3) = Eigen::Matrix<double, 3, 3>::Identity() * -1 * this->options_.kp;
-          B.block(3,6,3,3) = Eigen::Matrix<double, 3, 3>::Identity() * -1 * this->options_.kd;
-          B.block(3,9,3,3) = Eigen::Matrix<double, 3, 3>::Identity();
+		      // Input matrices
+          // Input is: [x, x_dot, x_ddot]', x is the intended state
+          //| v_x |    | 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 | | x_x |
+          //| v_y |    | 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 | | x_y |
+          //| v_z |    | 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 | | x_z |
+          //| a_x |    |  -kp 0.00 0.00  -kd 0.00 0.00 1.00 0.00 0.00 | | v_x |
+          //| a_y | =  | 0.00  -kp 0.00 0.00  -kd 0.00 0.00 1.00 0.00 | | v_y |
+          //| a_z |    | 0.00 0.00  -kp 0.00 0.00  -kd 0.00 0.00 1.00 | | v_z |
+          //| j_x |    | 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 | | a_x |
+          //| j_y |    | 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 | | a_y |
+          //| j_z |    | 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 | | a_z |
+		      Eigen::Matrix<double, 9, 9> B1 = Eigen::Matrix<double, 9, 9>::Zero();
+          B1.block(3,0,3,3) = Eigen::Matrix<double, 3, 3>::Identity() * -1 * this->options_.kp;
+          B1.block(3,3,3,3) = Eigen::Matrix<double, 3, 3>::Identity() * -1 * this->options_.kd;
+          B1.block(3,6,3,3) = Eigen::Matrix<double, 3, 3>::Identity();
+
+          // Input is: [F]'
+          //| v_x |    | 0.00 0.00 0.00 | | F_x |
+          //| v_y |    | 0.00 0.00 0.00 | | F_y |
+          //| v_z |    | 0.00 0.00 0.00 | | F_z |
+          //| a_x |    | 1.00 0.00 0.00 |
+          //| a_y | =  | 0.00 1.00 0.00 |
+          //| a_z |    | 0.00 0.00 1.00 |
+          //| j_x |    | 0.00 0.00 0.00 |
+          //| j_y |    | 0.00 0.00 0.00 |
+          //| j_z |    | 0.00 0.00 0.00 |
+          Eigen::Matrix<double, 9, 3> B2 = Eigen::Matrix<double, 9, 3>::Zero();
+          B2.block(3,0,3,3) = Eigen::Matrix<double, 3, 3>::Identity();
 
           auto DynamicsFunction = [&](
               double time, 
@@ -198,12 +230,18 @@ namespace game_engine {
 							}
 						}
 
-            Eigen::Matrix<double, 12, 1> input = Eigen::Matrix<double, 12, 1>::Zero();
-            // input.block(0,0,3,1) = disturbance_instance.acceleration;
-            input.block(3,0,9,1) = pva_intended;
+            // Input constrain the max acceleration of the PD loop
+            Eigen::Matrix<double, 9, 1> t1 = A * pva_intermediate + B1 * pva_intended;
+            t1.block(3,0,3,1) = t1.block(3,0,3,1).unaryExpr([](double x){
+               if(x < -0.4) { return -0.4; }
+               if(x >  0.4) { return  0.4; }
+               return x;
+                }).cast<double>();
 
-            const Eigen::Matrix<double, 9, 1> t1 = A * pva_intermediate;
-            const Eigen::Matrix<double, 9, 1> t2 = B * input;
+            // Eigen::Vector3d input = disturbance_instance.acceleration;
+            Eigen::Vector3d input = Eigen::Vector3d::Zero();
+            const Eigen::Matrix<double, 9, 1> t2 = B2 * input;
+
             const Eigen::Matrix<double, 9, 1> t3 = t1 + t2;
 
             return t3;

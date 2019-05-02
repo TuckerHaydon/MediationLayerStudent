@@ -53,11 +53,12 @@ namespace game_engine {
         // Number of intermediate RK4 integration steps
         size_t integration_steps = 200;
 
+        // From linear system analysis, kp < 0, kd < 0, kp < -0.25 * kd^2
         // Proportional constant
-        double kp = -25.00;
+        double kp = -25;
 
         // Derivative constant
-        double kd = -10.0;
+        double kd = -10;
 
         // Gauss markov constant
         double alpha = 0.85;
