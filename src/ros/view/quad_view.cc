@@ -18,9 +18,10 @@ namespace game_engine {
     marker.scale.x = 0.6f;
     marker.scale.y = 0.6f;
     marker.scale.z = 0.6f;
-    marker.pose.position.x = quad_position.x();
-    marker.pose.position.y = quad_position.y();
-    marker.pose.position.z = quad_position.z();
+    // Empirical shifts since quad stl does not have origin at center of quad
+    marker.pose.position.x = quad_position.x() - 0.13;
+    marker.pose.position.y = quad_position.y() - 0.10;
+    marker.pose.position.z = quad_position.z() - 0.04;
     marker.pose.orientation.w = 0.5f;
     marker.pose.orientation.x = 0.5f;
     marker.pose.orientation.y = 0.5f;
