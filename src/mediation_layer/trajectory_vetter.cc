@@ -63,9 +63,9 @@ namespace game_engine {
       if(this->options_.max_velocity_magnitude < vel.norm()) {
         std::cerr 
           << "Specified trajectory velocity " 
-          << "exceeds maximum velocity constraint of "
+          << " exceeds maximum velocity constraint of "
           << this->options_.max_velocity_magnitude 
-          << "m/s" 
+          << " m/s" 
           << std::endl; 
         return false;
       }   
@@ -82,9 +82,9 @@ namespace game_engine {
       if(this->options_.max_velocity_magnitude < mean_value_velocity) {
         std::cerr 
           << "Specified mean-value trajectory velocity " 
-          << "exceeds maximum velocity constraint of "
+          << " exceeds maximum velocity constraint of "
           << this->options_.max_velocity_magnitude 
-          << "m/s" 
+          << " m/s" 
           << std::endl; 
         return false;
       }   
@@ -97,9 +97,9 @@ namespace game_engine {
       if(this->options_.max_acceleration_magnitude < acc.norm()) {
         std::cerr 
           << "Specified trajectory acceleration " 
-          << "exceeds maximum acceleration constraint of "
+          << " exceeds maximum acceleration constraint of "
           << this->options_.max_acceleration_magnitude 
-          << "m/s^2" 
+          << " m/s^2" 
           << std::endl; 
         std::cout << acc.transpose() << std::endl;
         std::cout << acc.norm() << std::endl;
@@ -118,9 +118,9 @@ namespace game_engine {
       if(this->options_.max_acceleration_magnitude < mean_value_acceleration) {
         std::cerr 
           << "Specified mean-value trajectory acceleration " 
-          << "exceeds maximum acceleration constraint of "
+          << " exceeds maximum acceleration constraint of "
           << this->options_.max_acceleration_magnitude 
-          << "m/s" 
+          << " m/s" 
           << std::endl; 
         return false;
       }   
@@ -142,7 +142,7 @@ namespace game_engine {
       if(this->options_.max_delta_t < delta_time) {
         std::cerr
           << "Time between adjacent trajectory samples "
-          << "exceeds maximum time of "
+          << " exceeds maximum time of "
           << this->options_.max_delta_t 
           << " seconds."
           << std::endl;
