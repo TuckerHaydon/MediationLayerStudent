@@ -21,7 +21,7 @@ namespace game_engine {
       struct Options {
         // Distance from the center of the balloon that a quad must achieve to
         // 'pop' a balloon in meters
-        double pop_distance = 0.10;
+        double pop_distance = 0.20;
 
         Options() {}
       };
