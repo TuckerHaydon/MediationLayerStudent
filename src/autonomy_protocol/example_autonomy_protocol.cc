@@ -30,76 +30,80 @@ namespace game_engine {
       return trajectory_map;
     }
 
+
     const std::chrono::duration<double> remaining_chrono_time = end_chrono_time - current_chrono_time;
 
     // Number of samples
     const size_t N = remaining_chrono_time/dt_chrono;
 
     // Radius
-    const double radius = 0.9;
+    const double radius = 0.5;
 
     // Angular speed in radians/s
-    constexpr double omega = 2*M_PI/11;
+    constexpr double omega = 2*M_PI/30;
 
-    // Center of the circle
-    const Eigen::Vector3d circle_center(1,2,1);
-    for(const std::string& quad_name: this->friendly_names_) {
-      // Load the current position
-      Eigen::Vector3d current_pos;
-      this->snapshot_->Position(quad_name, current_pos);
+    const std::string& quad_name = this->friendly_names_[0];
 
-      // Transform the current position into an angle
-      const Eigen::Vector3d r = current_pos - circle_center;
-      const double theta_start = std::atan2(r.y(), r.x());
+    // Load the current position
+    Eigen::Vector3d current_pos;
+    this->snapshot_->Position(quad_name, current_pos);
+
+    // Place the center of the circle 1 radius in the y-direction from the
+    // starting position
+    static Eigen::Vector3d circle_center = current_pos + Eigen::Vector3d(0, radius, 0);
+
+    // Transform the current position into an angle
+    const Eigen::Vector3d r = current_pos - circle_center;
+    const double theta_start = std::atan2(r.y(), r.x());
   
-      // TrajectoryVector3D is an std::vector object defined in the trajectory.h
-      // file. It's aliased for convenience.
-      TrajectoryVector3D trajectory_vector;
-      for(size_t idx = 0; idx < N; ++idx) {
-        // chrono::duration<double> maintains high-precision floating point time in seconds
-        // use the count function to cast into floating point
-        const std::chrono::duration<double> flight_chrono_time 
-          = current_chrono_time.time_since_epoch() + idx * dt_chrono;
-        const double flight_time = flight_chrono_time.count();
+    // TrajectoryVector3D is an std::vector object defined in the trajectory.h
+    // file. It's aliased for convenience.
+    TrajectoryVector3D trajectory_vector;
+    for(size_t idx = 0; idx < N; ++idx) {
+      // chrono::duration<double> maintains high-precision floating point time in seconds
+      // use the count function to cast into floating point
+      const std::chrono::duration<double> flight_chrono_time 
+        = current_chrono_time.time_since_epoch() + idx * dt_chrono;
+      const double flight_time = flight_chrono_time.count();
   
-        // Angle in radians
-        const double theta = theta_start + omega * idx * dt;
+      // Angle in radians
+      const double theta = theta_start + omega * idx * dt;
   
-        // Circle centered at (1,2,1)
-        const double x = 1.0 + radius * std::cos(theta);
-        const double y = 2.0 + radius * std::sin(theta);
-        const double z = 1.0;
+      // Circle 
+      const double x = circle_center.x() + radius * std::cos(theta);
+      const double y = circle_center.y() + radius * std::sin(theta);
+      const double z = circle_center.z();
   
-        // Chain rule
-        const double vx = -radius * std::sin(theta) * omega;
-        const double vy =  radius * std::cos(theta) * omega;
-        const double vz = 0.0;
+      // Chain rule
+      const double vx = -radius * std::sin(theta) * omega;
+      const double vy =  radius * std::cos(theta) * omega;
+      const double vz = 0.0;
   
-        // Chain rule
-        const double ax = -radius * std::cos(theta) * omega * omega;
-        const double ay = -radius * std::sin(theta) * omega * omega;
-        const double az = 0.0;
+      // Chain rule
+      const double ax = -radius * std::cos(theta) * omega * omega;
+      const double ay = -radius * std::sin(theta) * omega * omega;
+      const double az = 0.0;
   
-        const double yaw = 0.0;
+      const double yaw = 0.0;
   
-        // The trajectory requires the time to be specified as a floating point
-        // number that measures the number of seconds since the unix epoch.
-        const double time = flight_chrono_time.count();
+      // The trajectory requires the time to be specified as a floating point
+      // number that measures the number of seconds since the unix epoch.
+      const double time = flight_chrono_time.count();
   
-        // Push an Eigen instance onto the trajectory vector
-        trajectory_vector.push_back(Eigen::Matrix<double, 11, 1>(
-              x,   y,   z,
-              vx,  vy,  vz,
-              ax,  ay,  az,
-              yaw,
-              time
-              ));
-      }
-  
-      // Construct a trajectory from the trajectory vector
-      Trajectory trajectory(trajectory_vector);
-      trajectory_map[quad_name] = trajectory; 
+      // Push an Eigen instance onto the trajectory vector
+      trajectory_vector.push_back(Eigen::Matrix<double, 11, 1>(
+            x,   y,   z,
+            vx,  vy,  vz,
+            ax,  ay,  az,
+            yaw,
+            time
+            ));
     }
+  
+    // Construct a trajectory from the trajectory vector
+    Trajectory trajectory(trajectory_vector);
+    trajectory_map[quad_name] = trajectory; 
+    
 
     return trajectory_map;
   }
