@@ -17,23 +17,10 @@ namespace game_engine {
 
       TrajectoryVetter trajectory_vetter;
       while(true == this->ok_) {
-        Trajectory trajectory;
-        trajectory_warden_in->Await(key, trajectory);
-
-        // Determine if trajectory has violated constraints
-        if(false == trajectory_vetter.Vet(
-              trajectory,
-              map,
-              quad_state_warden,
-              key)) {
-          std::cerr << "Trajectory did not pass vetting. Rejected." << std::endl;
-          continue;
-        }
-
         // Determine if quad has violated state constraints. If it has, freeze
         // it in place
         if(true == quad_state_watchdog_status->Read(key)) {
-          std::cout << key << " has flown too close to obstacle of boundary. Freezing." << std::endl;
+          std::cout << key << " has flown too close to obstacle or boundary. Freezing." << std::endl;
 
           QuadState current_quad_state;
           quad_state_warden->Read(key, current_quad_state);
@@ -56,6 +43,18 @@ namespace game_engine {
           const Trajectory freeze_trajectory(freeze_trajectory_vector);
 
           trajectory_warden_out->Write(key, freeze_trajectory_vector);
+          continue;
+        }
+
+        // Determine if trajectory has violated constraints
+        Trajectory trajectory;
+        trajectory_warden_in->Await(key, trajectory);
+        if(false == trajectory_vetter.Vet(
+              trajectory,
+              map,
+              quad_state_warden,
+              key)) {
+          std::cerr << "Trajectory did not pass vetting. Rejected." << std::endl;
           continue;
         }
 
