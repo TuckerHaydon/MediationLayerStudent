@@ -65,7 +65,10 @@ void Example() {
   solver_options.polynomial_order = 8;   // Fit an 8th-order polynomial
   solver_options.continuity_order = 4;   // Require continuity to the 4th order
   solver_options.derivative_order = 2;   // Minimize the 2nd order (acceleration)
-  solver_options.polish = true;          // Polish the solution
+
+  osqp_set_default_settings(&solver_options.osqp_settings);
+  solver_options.osqp_settings.polish = true;       // Polish the solution, getting the best answer possible
+  solver_options.osqp_settings.verbose = false;     // Suppress the printout
 
   // Use p4::PolynomialSolver object to solve for polynomial trajectories
   p4::PolynomialSolver solver(solver_options);
@@ -146,7 +149,10 @@ void DerivativeExperiments() {
   solver_options.polynomial_order = 8;   // Fit an 8th-order polynomial
   solver_options.continuity_order = 4;   // Require continuity to the 4th order
   solver_options.derivative_order = 0;   // TODO: VARY THE DERIVATIVE ORDER
-  solver_options.polish = true;          // Polish the solution
+
+  osqp_set_default_settings(&solver_options.osqp_settings);
+  solver_options.osqp_settings.polish = true;       // Polish the solution, getting the best answer possible
+  solver_options.osqp_settings.verbose = false;     // Suppress the printout
 
   // Use p4::PolynomialSolver object to solve for polynomial trajectories
   p4::PolynomialSolver solver(solver_options);
@@ -227,7 +233,10 @@ void ArrivalTimeExperiments() {
   solver_options.polynomial_order = 8;   // Fit an 8th-order polynomial
   solver_options.continuity_order = 4;   // Require continuity to the 4th order
   solver_options.derivative_order = 4;   // Minimize snap
-  solver_options.polish = true;          // Polish the solution
+
+  osqp_set_default_settings(&solver_options.osqp_settings);
+  solver_options.osqp_settings.polish = true;       // Polish the solution, getting the best answer possible
+  solver_options.osqp_settings.verbose = false;     // Suppress the printout
 
   // Use p4::PolynomialSolver object to solve for polynomial trajectories
   p4::PolynomialSolver solver(solver_options);
@@ -308,7 +317,10 @@ void NumWaypointExperiments() {
   solver_options.polynomial_order = 8;   // Fit an 8th-order polynomial
   solver_options.continuity_order = 4;   // Require continuity to the 4th order
   solver_options.derivative_order = 4;   // Minimize snap
-  solver_options.polish = true;          // Polish the solution
+
+  osqp_set_default_settings(&solver_options.osqp_settings);
+  solver_options.osqp_settings.polish = true;       // Polish the solution, getting the best answer possible
+  solver_options.osqp_settings.verbose = false;     // Suppress the printout
 
   // Use p4::PolynomialSolver object to solve for polynomial trajectories
   p4::PolynomialSolver solver(solver_options);
