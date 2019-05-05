@@ -25,21 +25,23 @@ namespace game_engine {
           QuadState current_quad_state;
           quad_state_warden->Read(key, current_quad_state);
 
-          const Eigen::Vector3d current_quad_position = current_quad_state.Position();
+          static const Eigen::Vector3d freeze_quad_position = current_quad_state.Position();
 
           const double current_time = 
             std::chrono::duration_cast<std::chrono::duration<double>>(
               std::chrono::system_clock::now().time_since_epoch()).count();
 
           TrajectoryVector3D freeze_trajectory_vector;
-          freeze_trajectory_vector.push_back(Eigen::Matrix<double, 11, 1>(
-                current_quad_position.x(), current_quad_position.y(), current_quad_position.z(),
-                0,0,0,
-                0,0,0,
-                0,
-                current_time
-                )
-            );
+          for(size_t idx = 0; idx < 100; ++idx) {
+            freeze_trajectory_vector.push_back(Eigen::Matrix<double, 11, 1>(
+                  freeze_quad_position.x(), freeze_quad_position.y(), freeze_quad_position.z(),
+                  0,0,0,
+                  0,0,0,
+                  0,
+                  current_time + idx * 0.01
+                  )
+              );
+          }
           const Trajectory freeze_trajectory(freeze_trajectory_vector);
 
           trajectory_warden_out->Write(key, freeze_trajectory_vector);

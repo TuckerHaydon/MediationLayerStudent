@@ -285,7 +285,7 @@ namespace game_engine {
         // Require a trajectory to be published
         const size_t trajectory_size = trajectory.Size();
         if(trajectory_size == 0) {
-          // std::cout << "PhysicsSimulator::Run -- Trajectory not specified." << std::endl;
+          std::cout << "PhysicsSimulator::Run -- Empty Trajectory. Freezing." << std::endl;
           continue;
         }
 
@@ -399,11 +399,7 @@ namespace game_engine {
                 }).cast<double>();
 
             Eigen::Vector3d input = disturbance_instance.acceleration;
-            // Eigen::Vector3d input = Eigen::Vector3d::Zero();
             const Eigen::Matrix<double, 9, 1> t2 = B2 * input;
-            // std::cout << t1.block(3,0,3,1).transpose() << std::endl;
-            // std::cout << t2.block(3,0,3,1).transpose() << std::endl;
-            // std::cout << std::endl;
 
             const Eigen::Matrix<double, 9, 1> t3 = t1 + t2;
 

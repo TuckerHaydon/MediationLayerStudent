@@ -44,21 +44,17 @@ namespace game_engine {
         // Time in seconds in which to forward-simulate
         std::chrono::microseconds simulation_time = std::chrono::milliseconds(20);
 
-        // Time in ms over which the wind is assumed constant. Must
-        // determine a new wind force every wind_zoh_time seconds. In effect,
-        // must allocate a vector of size simulation_time/wind_zoh_time, precaclulate the
-        // wind acceleration based on a model, and apply it to every quadcopter
-        std::chrono::microseconds wind_zoh_time = std::chrono::milliseconds(1);
-
         // Number of intermediate RK4 integration steps
-        size_t integration_steps = 200;
+        size_t integration_steps = 20;
 
         // From linear system analysis, kp < 0, kd < 0, kp < -0.25 * kd^2
         // Proportional constant
-        double kp = -25.0;
+        // double kp = -25.0;
+        double kp = -1.0;
 
         // Derivative constant
-        double kd = -10.0;
+        // double kd = -10.0;
+        double kd = -2.0;
 
         // Time in seconds to calculate wind history
         double max_time = 300.0;
@@ -70,14 +66,14 @@ namespace game_engine {
         // double sigma_u_x = 0.3;
         // double sigma_u_y = 0.3;
         // double sigma_u_z = 0.2;
-        double sigma_u_x = 0.0;
-        double sigma_u_y = 0.0;
-        double sigma_u_z = 0.5;
+        double sigma_u_x = 0.1;
+        double sigma_u_y = 0.1;
+        double sigma_u_z = 0.05;
 
         // Scale length of VonKarman model
-        double L_u_x = 15.0;
-        double L_u_y = 15.0;
-        double L_u_z = 15.0;
+        double L_u_x = 1.5;
+        double L_u_y = 1.5;
+        double L_u_z = 1.5;
 
         // Quad speed for VonKarman model
         double V = 1.0;
