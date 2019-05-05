@@ -15,6 +15,15 @@ namespace game_engine {
       ) const {
 
     const size_t trajectory_size = trajectory.Size();
+    if(trajectory_size < 2) { 
+      std::cerr << "Specified trajectory for "
+        << quad_name 
+        << " has a size of "
+        << trajectory_size 
+        << ". Trajectories must have a size of 2 or greater. Rejecting." 
+        << std::endl;                                                                                                                                     
+      return false;
+    }
 
     // Initial position constraints
     QuadState current_quad_state;
