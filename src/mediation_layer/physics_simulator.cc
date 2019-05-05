@@ -3,28 +3,28 @@
 #include "physics_simulator.h"
 #include "runge_kutta_4.h"
 
+#include <fftw3.h>
+
 namespace game_engine {
   namespace{
-		/* mvnrnd
-    * Generates a multivariate gaussian sample.
-    * mu:     gaussian mean
-    * sigma:  gaussian covariance 
-    */
-    Eigen::MatrixXd mvnrnd(const Eigen::VectorXd& mu, 
-                           const Eigen::MatrixXd& sigma) {
-      // A Mersenne Twister pseudo-random generator of 32-bit numbers with a
-      // state size of 19937 bits.
-      std::mt19937 gen{ std::random_device{}() };
+    // Generates a multivariate gaussian sample.
+    // mu:     mean
+    // sigma:  covariance 
+    // gen:    random number generator
+    Eigen::VectorXd mvnrnd(
+        const Eigen::VectorXd& mu, 
+        const Eigen::MatrixXd& sigma,
+        std::mt19937& gen) {
       
       // Normal distribution
-      std::normal_distribution<> dist;
+      std::normal_distribution<double> dist(0.0, 1.0);
       
       // Find the square root of the covariance matrix. Based off of
       // diagonalization decomposition (VDV'). Multiply V sqrt(D).
       Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigen_solver(sigma);
       Eigen::MatrixXd sqrt_sigma = eigen_solver.eigenvectors() * 
         eigen_solver.eigenvalues().cwiseSqrt().asDiagonal();
-
+    
       // Conjour a multivariate gaussian sample. Generate a vector with three
       // unit gaussian samples. Multiply it by the square root of the
       // covariance matrix and add it to the mean.
@@ -33,6 +33,18 @@ namespace game_engine {
         Eigen::MatrixXd(mu.rows(), mu.cols()).unaryExpr(
           [&](auto x) { return dist(gen); });
     } 
+
+    // Samples a VonKarman PSD at a given spatial frequency, Omega
+    // Reference: 
+    // https://en.wikipedia.org/wiki/Von_Kármán_wind_turbulence_model
+    Eigen::VectorXd VonKarman(
+        const Eigen::VectorXd& Omega, 
+        const double& sigma_u, 
+        const double& L_u) {
+      return
+        (2 * L_u * std::pow(sigma_u, 2) / M_PI) *
+        (1 + (1.339 * L_u * Omega.array()).pow(2)).pow(-(5.0/6.0));
+    }
 
     struct WindInstance {
       // Floating point time in seconds since the epoch
@@ -44,6 +56,133 @@ namespace game_engine {
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
       WindInstance() {}
     };
+
+    // Returns a time-history of wind-acceleration generated to have have a
+    // VonKarman PSD. Returns a pair of vectors <time, acceleration>
+    std::pair<std::vector<double>, std::vector<double>> GenerateWindAccelerationVector(
+        const double max_time,
+        const double max_frequency,
+        const double sigma_u,
+        const double L_u,
+        const double V,
+        std::mt19937& gen) {
+
+      // Number of samples
+      const size_t N = std::floor(max_time * max_frequency) + 1;
+      // Frequency spacing
+      const double df = max_frequency / N;
+
+      // Vector of frequencies to sample VonKarman PSD at
+      Eigen::VectorXd Omega_vec;
+      Omega_vec.resize(N);
+      for(size_t idx = 0; idx < N; ++idx) {
+        Omega_vec(idx,0) = (2 * M_PI / V) * (idx * df);
+      }
+
+      // Sample the VonKarman distribution
+      const Eigen::VectorXd S = VonKarman(Omega_vec, sigma_u, L_u);
+
+      // Prepare for fft
+      Eigen::VectorXcd noise_freq;
+      noise_freq.resize(N);
+      {
+        fftw_complex *in, *out;
+        fftw_plan p;
+        in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
+        out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
+        p = fftw_plan_dft_1d(N, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
+
+        // Calculate white noise 
+        for(size_t idx = 0; idx < N; ++idx) {
+          Eigen::VectorXd mu;
+          mu.resize(N,1);
+          mu.fill(0);
+
+          Eigen::MatrixXd sigma;
+          sigma.resize(N,N);
+          sigma.setIdentity();
+
+          in[idx][0] =  mvnrnd(Eigen::Matrix<double,1,1>(0), Eigen::Matrix<double,1,1>::Identity(), gen)(0);
+          in[idx][1] =  mvnrnd(Eigen::Matrix<double,1,1>(0), Eigen::Matrix<double,1,1>::Identity(), gen)(0);
+        }
+
+        // FFT of white noise
+        fftw_execute(p);
+        fftw_destroy_plan(p);
+
+        // Copy FFT to Eigen
+        for(size_t idx = 0; idx < N; ++idx) {
+          noise_freq(idx,0).real(out[idx][0]);
+          noise_freq(idx,0).imag(out[idx][1]);
+        }
+
+        // Free fft
+        fftw_free(in); 
+        fftw_free(out);
+      }
+
+      // Transform PSD samples to amplitude
+      const Eigen::VectorXcd A = S.array().sqrt();
+
+      // Push white noise through amplitude filter
+      const Eigen::VectorXcd wind_freq 
+        = A.cwiseProduct(noise_freq);
+
+      // Take the inverse fourier transform
+      Eigen::VectorXcd wind_complex_time;
+      wind_complex_time.resize(N);
+      {
+        fftw_complex *in, *out;
+        fftw_plan p;
+        in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
+        out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
+        p = fftw_plan_dft_1d(N, in, out, FFTW_BACKWARD, FFTW_ESTIMATE);
+
+        // Copy wind vector into fftw buffer
+        for(size_t idx = 0; idx < N; ++idx) {
+          in[idx][0] = wind_freq(idx,0).real();
+          in[idx][1] = wind_freq(idx,0).imag();
+        }
+
+        // FFT
+        fftw_execute(p);
+        fftw_destroy_plan(p);
+
+        // Copy FFT to Eigen
+        for(size_t idx = 0; idx < N; ++idx) {
+          wind_complex_time(idx,0).real(out[idx][0]);
+          wind_complex_time(idx,0).imag(out[idx][1]);
+        }
+
+        // Divide by N to normalize since FFTW does not normalize
+        wind_complex_time = wind_complex_time/N;
+
+        // Free fft
+        fftw_free(in); 
+        fftw_free(out);
+      }
+
+      // Extract real parts and scale
+      Eigen::VectorXd wind_time;
+      wind_time.resize(N);
+      for(size_t idx = 0; idx < N; ++idx) {
+        wind_time(idx,0) = std::sqrt(2) * wind_complex_time(idx,0).real();
+      }
+
+
+      // Push into std::vector
+      std::vector<double> time_vec;
+      std::vector<double> wind_vec;
+      time_vec.reserve(N);
+      wind_vec.reserve(N);
+
+      for(size_t idx = 0; idx < N; ++idx) {
+        time_vec.push_back(max_time/N * idx);
+        wind_vec.push_back(wind_time(idx,0));
+      }
+
+      return std::make_pair(time_vec, wind_vec);
+    }
   }
 
   void PhysicsSimulator::Run(
@@ -53,12 +192,50 @@ namespace game_engine {
     // System time
     const auto start_time = std::chrono::system_clock::now();
 
-    // Wind
-    Eigen::Vector3d last_wind_acceleration(0,0,0);
-    const size_t wind_vector_size 
-      = static_cast<size_t>(std::ceil(
-            this->options_.simulation_time / 
-            this->options_.wind_zoh_time));
+    // Generate wind
+    std::mt19937 gen{ std::random_device{}() };
+    // std::mt19937 gen{ 0 };
+
+    const auto x_wind_samples = GenerateWindAccelerationVector(
+        this->options_.max_time,
+        this->options_.max_frequency,
+        this->options_.sigma_u_x,
+        this->options_.L_u_x,
+        this->options_.V,
+        gen);
+
+    const auto y_wind_samples = GenerateWindAccelerationVector(
+        this->options_.max_time,
+        this->options_.max_frequency,
+        this->options_.sigma_u_y,
+        this->options_.L_u_y,
+        this->options_.V,
+        gen);
+
+    const auto z_wind_samples = GenerateWindAccelerationVector(
+        this->options_.max_time,
+        this->options_.max_frequency,
+        this->options_.sigma_u_z,
+        this->options_.L_u_z,
+        this->options_.V,
+        gen);
+
+    const size_t wind_vector_size = x_wind_samples.first.size();
+
+    std::vector<WindInstance> wind_instances;
+    for(size_t wind_idx = 0; wind_idx < wind_vector_size; ++wind_idx) {
+      WindInstance wind_instance;
+      wind_instance.time = 
+        std::chrono::duration_cast<std::chrono::duration<double>>(start_time.time_since_epoch()).count()
+        + x_wind_samples.first[wind_idx];
+      wind_instance.acceleration = Eigen::Vector3d(
+        x_wind_samples.second[wind_idx],
+        y_wind_samples.second[wind_idx],
+        z_wind_samples.second[wind_idx]
+          );
+
+      wind_instances.push_back(wind_instance);
+    }
 
     // Integrator
     RungeKutta4<Eigen::Matrix<double, 9, 1>> rk4;
@@ -90,23 +267,6 @@ namespace game_engine {
     while(true == this->ok_) {
       // Current time
       const auto current_time = std::chrono::system_clock::now();
-
-      // Acceleration vector caused by the wind. Using a first-order
-      // guass-markov model
-      std::vector<WindInstance> wind_instances(wind_vector_size);
-      for(size_t wind_idx = 0; wind_idx < wind_vector_size; ++wind_idx) {
-        const Eigen::Vector3d noise = mvnrnd(this->options_.mu, this->options_.sigma);
-        const Eigen::Vector3d wind_acceleration = this->options_.alpha * last_wind_acceleration + noise;
-        WindInstance wind_instance;
-        wind_instance.time 
-          = std::chrono::duration_cast<std::chrono::duration<double>>
-          ((current_time + wind_idx * this->options_.wind_zoh_time)
-           .time_since_epoch()).count();
-        wind_instance.acceleration = wind_acceleration;
-
-        wind_instances[wind_idx] = wind_instance;
-        last_wind_acceleration = wind_acceleration;
-      }
 
       // Forward integrate all quadcopter trajectories, injecting noise. The
       // integration period is specified in the options structure.
@@ -238,9 +398,12 @@ namespace game_engine {
                return x;
                 }).cast<double>();
 
-            // Eigen::Vector3d input = disturbance_instance.acceleration;
-            Eigen::Vector3d input = Eigen::Vector3d::Zero();
+            Eigen::Vector3d input = disturbance_instance.acceleration;
+            // Eigen::Vector3d input = Eigen::Vector3d::Zero();
             const Eigen::Matrix<double, 9, 1> t2 = B2 * input;
+            // std::cout << t1.block(3,0,3,1).transpose() << std::endl;
+            // std::cout << t2.block(3,0,3,1).transpose() << std::endl;
+            // std::cout << std::endl;
 
             const Eigen::Matrix<double, 9, 1> t3 = t1 + t2;
 

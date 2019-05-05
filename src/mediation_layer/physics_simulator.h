@@ -55,22 +55,32 @@ namespace game_engine {
 
         // From linear system analysis, kp < 0, kd < 0, kp < -0.25 * kd^2
         // Proportional constant
-        double kp = -25;
+        double kp = -25.0;
 
         // Derivative constant
-        double kd = -10;
+        double kd = -10.0;
 
-        // Gauss markov constant
-        double alpha = 0.85;
+        // Time in seconds to calculate wind history
+        double max_time = 300.0;
 
-        // Gauss markov noise mean
-        Eigen::Vector3d mu = Eigen::Vector3d(0,0,0);
+        // Frequency to sample wind history
+        double max_frequency = 1.0;
 
-        // Gauss markov noise covariance
-        Eigen::Matrix3d sigma = (Eigen::Matrix3d() << 
-         3e-0,     0,      0,
-            0,  3e-0,     0,
-            0,     0,   2e-0).finished();
+        // Standard deviation of VonKarman model
+        // double sigma_u_x = 0.3;
+        // double sigma_u_y = 0.3;
+        // double sigma_u_z = 0.2;
+        double sigma_u_x = 0.0;
+        double sigma_u_y = 0.0;
+        double sigma_u_z = 0.5;
+
+        // Scale length of VonKarman model
+        double L_u_x = 15.0;
+        double L_u_y = 15.0;
+        double L_u_z = 15.0;
+
+        // Quad speed for VonKarman model
+        double V = 1.0;
 
         std::map<
           std::string, 

@@ -32,6 +32,7 @@ target_link_libraries(${TARGET} PUBLIC
   lib_environment
   lib_util
   lib_ros_node
+  fftw3
   Eigen3::Eigen
 )
 
