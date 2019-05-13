@@ -18,10 +18,10 @@ map_file_path: "/home/aerial-robotics/Workspace/GameEngine/resources/maps/pretou
 quad_mesh_file_path: "file:///home/aerial-robotics/Workspace/GameEngine/resources/meshes/quad.stl"
 balloon_mesh_file_path: "file:///home/aerial-robotics/Workspace/GameEngine/resources/meshes/balloon.stl"
 
-blue_balloon_position: [5.0, 2.5, 3.5]
-red_balloon_position:  [5.0, 2.5, 1.5]
+blue_balloon_position: [9.0, 1.0, 1.0]
+red_balloon_position:  [1.0, 1.0, 1.0]
 
 initial_quad_positions:
-  "phoenix": "9.0 1.0 1.0"
+  "phoenix": "5.0 4.0 1.0"
 
 
