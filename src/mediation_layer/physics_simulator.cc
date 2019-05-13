@@ -285,7 +285,7 @@ namespace game_engine {
         // Require a trajectory to be published
         const size_t trajectory_size = trajectory.Size();
         if(trajectory_size == 0) {
-          std::cout << "PhysicsSimulator::Run -- Empty Trajectory. Freezing." << std::endl;
+          // std::cout << "PhysicsSimulator::Run -- Empty Trajectory. Freezing." << std::endl;
           continue;
         }
 
