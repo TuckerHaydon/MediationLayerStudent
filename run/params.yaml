@@ -18,10 +18,10 @@ map_file_path: "/home/aerial-robotics/Workspace/GameEngine/resources/maps/tourna
 quad_mesh_file_path: "file:///home/aerial-robotics/Workspace/GameEngine/resources/meshes/quad.stl"
 balloon_mesh_file_path: "file:///home/aerial-robotics/Workspace/GameEngine/resources/meshes/balloon.stl"
 
-blue_balloon_position: [-22.65, 17.85, -3.4]
-red_balloon_position:  [-17.73, 15.60, -3.4]
+blue_balloon_position: [-22.5, 17.5, -3.5]
+red_balloon_position:  [-17.5, 15.5, -3.5]
 
 initial_quad_positions:
-  "phoenix": "-19.0 17.0 -4.0"
+  "phoenix": "-14.0 16.0 -4.0"
 
 
