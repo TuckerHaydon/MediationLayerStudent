@@ -1,0 +1,41 @@
+[
+  # Bottom
+  [ 
+    [ AX,AY,AZ,BX,BY,BZ ],
+    [ BX,BY,BZ,CX,CY,CZ ],
+    [ CX,CY,CZ,DX,DY,DZ ],
+    [ DX,DY,DZ,AX,AY,AZ ]
+  ],
+  # Top
+  [
+    [ EX,EY,EZ,HX,HY,HZ ],
+    [ HX,HY,HZ,GX,GY,GZ ],
+    [ GX,GY,GZ,FX,FY,FZ ],
+    [ FX,FY,FZ,EX,EY,EZ ]
+  ],
+  # Sides
+  [
+    [ DX,DY,DZ,CX,CY,CZ ],
+    [ CX,CY,CZ,GX,GY,GZ ],
+    [ GX,GY,GZ,HX,HY,HZ ],
+    [ HX,HY,HZ,DX,DY,DZ ]
+  ],
+  [
+    [ AX,AY,AZ,EX,EY,EZ ],
+    [ EX,EY,EZ,FX,FY,FZ ],
+    [ FX,FY,FZ,BX,BY,BZ ],
+    [ BX,BY,BZ,AX,AY,AZ ]
+  ],
+  [
+    [ AX,AY,AZ,DX,DY,DZ ],
+    [ DX,DY,DZ,HX,HY,HZ ],
+    [ HX,HY,HZ,EX,EY,EZ ],
+    [ EX,EY,EZ,AX,AY,AZ ]
+  ],
+  [
+    [ BX,BY,BZ,FX,FY,FZ ],
+    [ FX,FY,FZ,GX,GY,GZ ],
+    [ GX,GY,GZ,CX,CY,CZ ],
+    [ CX,CY,CZ,BX,BY,BZ ]
+  ]
+]
